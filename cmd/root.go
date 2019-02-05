@@ -78,5 +78,8 @@ func mustDialAPI() *grpc.ClientConn {
 
 // contextWithToken returns a context with access token in it.
 func contextWithToken() context.Context {
+	if rootArgs.token == "" {
+		cliLog.Fatal().Msg("--token missing")
+	}
 	return auth.WithAccessToken(context.Background(), rootArgs.token)
 }
