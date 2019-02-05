@@ -1,1 +1,1 @@
-# adbcloud
+# ArangoDB Cloud Command Line Utility
