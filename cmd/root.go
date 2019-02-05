@@ -83,3 +83,12 @@ func contextWithToken() context.Context {
 	}
 	return auth.WithAccessToken(context.Background(), rootArgs.token)
 }
+
+// reqOption returns given value if not empty.
+// Fails with clear error message when not set.
+func reqOption(key, value string) string {
+	if value == "" {
+		cliLog.Fatal().Msgf("--%s missing", key)
+	}
+	return value
+}
