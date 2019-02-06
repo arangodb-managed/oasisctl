@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 	"github.com/arangodb-managed/apis/common/auth"
 )
 
@@ -33,6 +34,7 @@ var (
 	rootArgs struct {
 		token    string
 		endpoint string
+		format   format.Options
 	}
 )
 
@@ -82,4 +84,13 @@ func contextWithToken() context.Context {
 		cliLog.Fatal().Msg("--token missing")
 	}
 	return auth.WithAccessToken(context.Background(), rootArgs.token)
+}
+
+// reqOption returns given value if not empty.
+// Fails with clear error message when not set.
+func reqOption(key, value string) string {
+	if value == "" {
+		cliLog.Fatal().Msgf("--%s missing", key)
+	}
+	return value
 }

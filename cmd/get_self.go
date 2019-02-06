@@ -15,6 +15,8 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
+
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 )
 
 var (
@@ -31,12 +33,17 @@ func init() {
 }
 
 func getSelfCmdRun(cmd *cobra.Command, args []string) {
+	// Connect
 	conn := mustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
 	ctx := contextWithToken()
+
+	// Fetch user info
 	user, err := iamc.GetThisUser(ctx, &common.Empty{})
 	if err != nil {
 		cliLog.Fatal().Err(err).Msg("Failed to get user info")
 	}
-	fmt.Printf("%v\n", user)
+
+	// Show result
+	fmt.Println(format.User(user, rootArgs.format))
 }

@@ -15,6 +15,8 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 )
 
 var (
@@ -31,12 +33,17 @@ func init() {
 }
 
 func getOrganizationsCmdRun(cmd *cobra.Command, args []string) {
+	// Connect
 	conn := mustDialAPI()
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := contextWithToken()
+
+	// Fetch organizations
 	list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
 	if err != nil {
 		cliLog.Fatal().Err(err).Msg("Failed to list organizations")
 	}
-	fmt.Printf("%v\n", list)
+
+	// Show result
+	fmt.Println(format.OrganizationList(list.Items, rootArgs.format))
 }
