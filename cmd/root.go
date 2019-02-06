@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 	"github.com/arangodb-managed/apis/common/auth"
 )
 
@@ -33,6 +34,7 @@ var (
 	rootArgs struct {
 		token    string
 		endpoint string
+		format   format.Options
 	}
 )
 

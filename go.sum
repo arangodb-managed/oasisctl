@@ -1,7 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/arangodb-managed/apis v0.0.2 h1:ru+dZK7MEEwixyLhzaY6mHSE+IQMYi5r938jsJaKfjU=
-github.com/arangodb-managed/apis v0.0.2/go.mod h1:uDpRDxoghFK5dugu4QW98yVSdxprw72NgkT2GA6hesY=
+github.com/arangodb-managed/apis v0.0.3 h1:o1vOLbceN5HQaFWtSlgzr1MK/MAyXZ3oWtDJ1hdICjs=
+github.com/arangodb-managed/apis v0.0.3/go.mod h1:uDpRDxoghFK5dugu4QW98yVSdxprw72NgkT2GA6hesY=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

@@ -11,9 +11,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ryanuber/columnize"
 	"github.com/spf13/cobra"
 
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
 
@@ -57,13 +57,7 @@ func createOrganizationCmdRun(cmd *cobra.Command, args []string) {
 		cliLog.Fatal().Err(err).Msg("Failed to create organization")
 	}
 
+	// Show result
 	fmt.Println("Success!")
-	fmt.Println(formatOrganization(result))
-}
-
-func formatOrganization(o *rm.Organization) string {
-	rows := []string{
-		fmt.Sprintf("Name | %s", o.GetName()),
-	}
-	return columnize.SimpleFormat(rows)
+	fmt.Println(format.Organization(result, rootArgs.format))
 }

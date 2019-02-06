@@ -11,11 +11,12 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ryanuber/columnize"
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+
+	"github.com/arangodb-managed/adbcloud/pkg/format"
 )
 
 var (
@@ -43,14 +44,6 @@ func getOrganizationsCmdRun(cmd *cobra.Command, args []string) {
 		cliLog.Fatal().Err(err).Msg("Failed to list organizations")
 	}
 
-	// Format list
-	if len(list.Items) == 0 {
-		fmt.Println("None")
-	} else {
-		rows := make([]string, 0, len(list.Items))
-		for _, item := range list.Items {
-			rows = append(rows, fmt.Sprintf("%s | %s | %s", item.GetId(), item.GetName(), item.GetDescription()))
-		}
-		fmt.Println(columnize.SimpleFormat(rows))
-	}
+	// Show result
+	fmt.Println(format.OrganizationList(list.Items, rootArgs.format))
 }
