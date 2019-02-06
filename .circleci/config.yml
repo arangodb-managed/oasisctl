@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.11.5
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: cp go.sum go.sum.orig
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum.orig" }}
+      - run: |
+          go get
+          make bootstrap
+          make all
+      - run: |
+          make test
+      - store_test_results:
+          path: bin/test/
+      - store_artifacts: # upload test summary for display in Artifacts
+          path: bin/test/
+          destination: raw-test-output
+      - save_cache:
+          key: go-mod-v1-{{ checksum "go.sum.orig" }}
+          paths:
+            - "/go/pkg/mod"
+
+workflows:
+  version: 2
+  build_test_push_deploy:
+    jobs:
+      - build

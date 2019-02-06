@@ -1,0 +1,21 @@
+{
+    "git.ignoreLimitWarning": true,
+    "fileHeaderComment.parameter":{
+        "*":{
+            "commentprefix": "//",
+            "company": "ArangoDB Inc, Cologne, Germany",
+        }
+    },
+    "fileHeaderComment.template":{
+        "*":[
+            "${commentprefix} ",
+            "${commentprefix} DISCLAIMER",
+            "${commentprefix} ",
+            "${commentprefix} Copyright ${year} ArangoDB Inc, Cologne, Germany",
+            "${commentprefix} ",
+            "${commentprefix} Author ${author}",
+            "${commentprefix} ",
+            ""
+        ]
+    },
+}
