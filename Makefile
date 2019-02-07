@@ -1,3 +1,4 @@
+SHELL = bash
 PROJECT := adbcloud
 
 COMMIT := $(shell git rev-parse --short HEAD)
@@ -19,7 +20,8 @@ binaries:
 .PHONY: test
 test:
 	mkdir -p bin/test
-	go test -coverprofile=bin/test/coverage.out -v ./... 2>&1 | tee bin/test/test-output.txt | go-junit-report > bin/test/unit-tests.xml
+	go test -coverprofile=bin/test/coverage.out -v ./... | tee bin/test/test-output.txt ; exit "$${PIPESTATUS[0]}"
+	cat bin/test/test-output.txt | go-junit-report > bin/test/unit-tests.xml
 	go tool cover -html=bin/test/coverage.out -o bin/test/coverage.html
 
 bootstrap:
