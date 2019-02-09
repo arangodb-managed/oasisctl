@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/arangodb-managed/adbcloud/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/format"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
 

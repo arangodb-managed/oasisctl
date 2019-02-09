@@ -16,7 +16,7 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
-	"github.com/arangodb-managed/adbcloud/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/format"
 )
 
 var (

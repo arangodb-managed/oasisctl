@@ -13,7 +13,7 @@ import (
 
 	_ "github.com/gogo/protobuf/types"
 
-	"github.com/arangodb-managed/adbcloud/cmd"
+	"github.com/arangodb-managed/oasis/cmd"
 )
 
 func main() {

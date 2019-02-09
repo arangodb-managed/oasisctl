@@ -18,15 +18,16 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/arangodb-managed/adbcloud/pkg/format"
 	"github.com/arangodb-managed/apis/common/auth"
+	"github.com/arangodb-managed/oasis/pkg/format"
 )
 
 var (
 	// RootCmd is the root (and only) command of this service
 	RootCmd = &cobra.Command{
-		Use:   "adbcloud",
-		Short: "ArangoDB Cloud",
+		Use:   "oasis",
+		Short: "ArangoDB Oasis",
+		Long:  "ArangoDB Oasis. The Managed Cloud for ArangoDB",
 		Run:   showUsage,
 	}
 
@@ -40,7 +41,7 @@ var (
 
 const (
 	// Prefix of all environment variables
-	envKeyPrefix  = "ADBCLOUD_"
+	envKeyPrefix  = "OASIS_"
 	apiPortSuffix = ":443"
 )
 
@@ -49,8 +50,8 @@ func init() {
 	// Persistent flags
 	defaultToken := envOrDefault("TOKEN", "")
 	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.adbtest.xyz")
-	f.StringVar(&rootArgs.token, "token", defaultToken, "Token used to authenticate at ArangoDB Cloud")
-	f.StringVar(&rootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Cloud")
+	f.StringVar(&rootArgs.token, "token", defaultToken, "Token used to authenticate at ArangoDB Oasis")
+	f.StringVar(&rootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
 }
 
 // Show usage of the given command
@@ -67,13 +68,13 @@ func envOrDefault(envKeySuffix string, defaultValue string) string {
 	return defaultValue
 }
 
-// mustDialAPI dials the ArangoDB Cloud API
+// mustDialAPI dials the ArangoDB Oasis API
 func mustDialAPI() *grpc.ClientConn {
 	// Set up a connection to the server.
 	tc := credentials.NewTLS(&tls.Config{})
 	conn, err := grpc.Dial(rootArgs.endpoint+apiPortSuffix, grpc.WithTransportCredentials(tc))
 	if err != nil {
-		cliLog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Cloud API")
+		cliLog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Oasis API")
 	}
 	return conn
 }
