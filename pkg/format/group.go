@@ -18,9 +18,9 @@ func Group(x *iam.Group, opts Options) string {
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
-		//kv{"url", x.GetUrl()},
+		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
-		//kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
+		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
 	)
 }
 
@@ -32,7 +32,7 @@ func GroupList(list []*iam.Group, opts Options) string {
 			kv{"id", x.GetId()},
 			kv{"name", x.GetName()},
 			kv{"description", x.GetDescription()},
-			//kv{"url", x.GetUrl()},
+			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
 	})

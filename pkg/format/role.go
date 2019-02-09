@@ -22,9 +22,9 @@ func Role(x *iam.Role, opts Options) string {
 		kv{"description", x.GetDescription()},
 		kv{"predefined", x.GetIsPredefined()},
 		kv{"permissions", strings.Join(x.GetPermissions(), ", ")},
-		//kv{"url", x.GetUrl()},
+		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
-		//kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
+		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
 	)
 }
 
@@ -38,7 +38,7 @@ func RoleList(list []*iam.Role, opts Options) string {
 			kv{"description", x.GetDescription()},
 			kv{"predefined", x.GetIsPredefined()},
 			kv{"permissions", strings.Join(x.GetPermissions(), ", ")},
-			//kv{"url", x.GetUrl()},
+			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
 	})
