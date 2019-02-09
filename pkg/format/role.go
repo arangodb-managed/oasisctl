@@ -24,7 +24,7 @@ func Role(x *iam.Role, opts Options) string {
 		kv{"permissions", strings.Join(x.GetPermissions(), ", ")},
 		//kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(x.GetCreatedAt(), "-")},
+		//kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
 	)
 }
 

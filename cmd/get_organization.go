@@ -35,7 +35,7 @@ var (
 func init() {
 	getCmd.AddCommand(getOrganizationCmd)
 	f := getOrganizationCmd.Flags()
-	f.StringVarP(&getProjectsArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	f.StringVarP(&getOrganizationArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
 func getOrganizationCmdRun(cmd *cobra.Command, args []string) {

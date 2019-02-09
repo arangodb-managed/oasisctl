@@ -20,7 +20,7 @@ func Organization(x *rm.Organization, opts Options) string {
 		kv{"description", x.GetDescription()},
 		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(x.GetCreatedAt(), "-")},
+		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
 	)
 }
 

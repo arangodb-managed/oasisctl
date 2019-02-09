@@ -87,3 +87,11 @@ func formatTime(x *types.Timestamp, nilValue ...string) string {
 	t, _ := types.TimestampFromProto(x)
 	return humanize.Time(t)
 }
+
+// formatBool returns a human readable checkmark for the given boolean
+func formatBool(x bool) string {
+	if x {
+		return "\u2713"
+	}
+	return "-"
+}
