@@ -11,6 +11,7 @@ package format
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/dustin/go-humanize"
@@ -73,6 +74,7 @@ func formatList(opts Options, list interface{}, getData func(int) []kv) string {
 		}
 		lines = append(lines, strings.Join(row, "|^|"))
 	}
+	sort.Strings(lines[1:])
 	return columnize.Format(lines, listConfig)
 }
 
