@@ -13,8 +13,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/arangodb-managed/oasis/pkg/format"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/format"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 		Short: "Create a new organization",
 		Run:   createOrganizationCmdRun,
 	}
-	createOrganizationOptions struct {
+	createOrganizationArgs struct {
 		name        string
 		description string
 	}
@@ -34,14 +34,14 @@ func init() {
 	createCmd.AddCommand(createOrganizationCmd)
 
 	f := createOrganizationCmd.Flags()
-	f.StringVar(&createOrganizationOptions.name, "name", "", "Name of the organization")
-	f.StringVar(&createOrganizationOptions.description, "description", "", "Description of the organization")
+	f.StringVarP(&createOrganizationArgs.name, "name", "n", "", "Name of the organization")
+	f.StringVarP(&createOrganizationArgs.description, "description", "d", "", "Description of the organization")
 }
 
 func createOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createOrganizationOptions.name)
-	description := createOrganizationOptions.description
+	name := reqOption("name", createOrganizationArgs.name)
+	description := createOrganizationArgs.description
 
 	// Connect
 	conn := mustDialAPI()

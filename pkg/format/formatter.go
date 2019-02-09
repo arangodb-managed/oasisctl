@@ -13,6 +13,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/dustin/go-humanize"
+	"github.com/gogo/protobuf/types"
 	"github.com/ryanuber/columnize"
 )
 
@@ -72,4 +74,16 @@ func formatList(opts Options, list interface{}, getData func(int) []kv) string {
 		lines = append(lines, strings.Join(row, "|^|"))
 	}
 	return columnize.Format(lines, listConfig)
+}
+
+// formatTime returns a human readable version of the given timestamp.
+func formatTime(x *types.Timestamp, nilValue ...string) string {
+	if x == nil {
+		if len(nilValue) > 0 {
+			return nilValue[0]
+		}
+		return ""
+	}
+	t, _ := types.TimestampFromProto(x)
+	return humanize.Time(t)
 }
