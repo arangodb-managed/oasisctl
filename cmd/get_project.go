@@ -28,7 +28,8 @@ var (
 		Run:   getProjectCmdRun,
 	}
 	getProjectArgs struct {
-		projectID string
+		organizationID string
+		projectID      string
 	}
 )
 
@@ -36,6 +37,7 @@ func init() {
 	getCmd.AddCommand(getProjectCmd)
 	f := getProjectCmd.Flags()
 	f.StringVarP(&getProjectArgs.projectID, "project-id", "p", defaultProject(), "Identifier of the project")
+	f.StringVarP(&getProjectArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
 func getProjectCmdRun(cmd *cobra.Command, args []string) {
@@ -45,7 +47,7 @@ func getProjectCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch project
-	item := mustSelectProject(ctx, getProjectArgs.projectID, rmc)
+	item := mustSelectProject(ctx, getProjectArgs.projectID, getProjectArgs.organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.Project(item, rootArgs.format))
@@ -54,9 +56,9 @@ func getProjectCmdRun(cmd *cobra.Command, args []string) {
 // mustSelectProject fetches the project with given ID.
 // If no ID is specified, all projects are fetched from the selected organization
 // and if the list is exactly 1 long, that project is returned.
-func mustSelectProject(ctx context.Context, id string, rmc rm.ResourceManagerServiceClient) *rm.Project {
+func mustSelectProject(ctx context.Context, id, orgID string, rmc rm.ResourceManagerServiceClient) *rm.Project {
 	if id == "" {
-		org := mustSelectOrganization(ctx, "", rmc)
+		org := mustSelectOrganization(ctx, orgID, rmc)
 		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})
 		if err != nil {
 			cliLog.Fatal().Err(err).Msg("Failed to list projects")
