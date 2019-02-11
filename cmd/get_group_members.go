@@ -56,5 +56,5 @@ func getGroupMembersCmdRun(cmd *cobra.Command, args []string) {
 	}
 
 	// Show result
-	fmt.Println(format.GroupMemberList(list.GetItems(), rootArgs.format))
+	fmt.Println(format.GroupMemberList(ctx, list.GetItems(), iamc, rootArgs.format))
 }
