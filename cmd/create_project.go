@@ -35,8 +35,8 @@ func init() {
 	createCmd.AddCommand(createProjectCmd)
 
 	f := createProjectCmd.Flags()
-	f.StringVarP(&createProjectArgs.name, "name", "n", "", "Name of the organization")
-	f.StringVarP(&createProjectArgs.description, "description", "d", "", "Description of the organization")
+	f.StringVarP(&createProjectArgs.name, "name", "n", "", "Name of the project")
+	f.StringVarP(&createProjectArgs.description, "description", "d", "", "Description of the project")
 	f.StringVarP(&createProjectArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization to create the project in")
 }
 
