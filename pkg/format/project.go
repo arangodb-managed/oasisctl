@@ -12,8 +12,8 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
 
-// Organization returns a single organization formatted for humans.
-func Organization(x *rm.Organization, opts Options) string {
+// Project returns a single project formatted for humans.
+func Project(x *rm.Project, opts Options) string {
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
@@ -24,8 +24,8 @@ func Organization(x *rm.Organization, opts Options) string {
 	)
 }
 
-// OrganizationList returns a list of organizations formatted for humans.
-func OrganizationList(list []*rm.Organization, opts Options) string {
+// ProjectList returns a list of projects formatted for humans.
+func ProjectList(list []*rm.Project, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{

@@ -9,11 +9,11 @@
 package format
 
 import (
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	iam "github.com/arangodb-managed/apis/iam/v1"
 )
 
-// Organization returns a single organization formatted for humans.
-func Organization(x *rm.Organization, opts Options) string {
+// Group returns a single group formatted for humans.
+func Group(x *iam.Group, opts Options) string {
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
@@ -24,8 +24,8 @@ func Organization(x *rm.Organization, opts Options) string {
 	)
 }
 
-// OrganizationList returns a list of organizations formatted for humans.
-func OrganizationList(list []*rm.Organization, opts Options) string {
+// GroupList returns a list of groups formatted for humans.
+func GroupList(list []*iam.Group, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{

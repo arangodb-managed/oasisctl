@@ -89,9 +89,13 @@ func contextWithToken() context.Context {
 
 // reqOption returns given value if not empty.
 // Fails with clear error message when not set.
-func reqOption(key, value string) string {
-	if value == "" {
-		cliLog.Fatal().Msgf("--%s missing", key)
+func reqOption(key, value string, args []string, argIndex int) string {
+	if value != "" {
+		return value
 	}
-	return value
+	if len(args) > argIndex {
+		return args[argIndex]
+	}
+	cliLog.Fatal().Msgf("--%s missing", key)
+	return ""
 }

@@ -9,29 +9,35 @@
 package format
 
 import (
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"strings"
+
+	iam "github.com/arangodb-managed/apis/iam/v1"
 )
 
-// Organization returns a single organization formatted for humans.
-func Organization(x *rm.Organization, opts Options) string {
+// Role returns a single role formatted for humans.
+func Role(x *iam.Role, opts Options) string {
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
+		kv{"predefined", x.GetIsPredefined()},
+		kv{"permissions", strings.Join(x.GetPermissions(), ", ")},
 		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
 		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
 	)
 }
 
-// OrganizationList returns a list of organizations formatted for humans.
-func OrganizationList(list []*rm.Organization, opts Options) string {
+// RoleList returns a list of roles formatted for humans.
+func RoleList(list []*iam.Role, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
 			kv{"id", x.GetId()},
 			kv{"name", x.GetName()},
 			kv{"description", x.GetDescription()},
+			kv{"predefined", x.GetIsPredefined()},
+			kv{"permissions", strings.Join(x.GetPermissions(), ", ")},
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
