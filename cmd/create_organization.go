@@ -40,7 +40,7 @@ func init() {
 
 func createOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createOrganizationArgs.name)
+	name := reqOption("name", createOrganizationArgs.name, args, 0)
 	description := createOrganizationArgs.description
 
 	// Connect

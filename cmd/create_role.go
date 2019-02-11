@@ -45,7 +45,7 @@ func init() {
 
 func createRoleCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createRoleArgs.name)
+	name := reqOption("name", createRoleArgs.name, args, 0)
 	description := createRoleArgs.description
 	permissions := createRoleArgs.permissions
 

@@ -43,7 +43,7 @@ func init() {
 
 func createGroupCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createGroupArgs.name)
+	name := reqOption("name", createGroupArgs.name, args, 0)
 	description := createGroupArgs.description
 
 	// Connect

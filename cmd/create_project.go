@@ -42,7 +42,7 @@ func init() {
 
 func createProjectCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createProjectArgs.name)
+	name := reqOption("name", createProjectArgs.name, args, 0)
 	description := createProjectArgs.description
 
 	// Connect
