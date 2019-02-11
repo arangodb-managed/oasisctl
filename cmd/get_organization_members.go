@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
+	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/pkg/format"
@@ -40,6 +41,7 @@ func init() {
 func getOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
 	// Connect
 	conn := mustDialAPI()
+	iamc := iam.NewIAMServiceClient(conn)
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := contextWithToken()
 
@@ -52,5 +54,5 @@ func getOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
 	}
 
 	// Show result
-	fmt.Println(format.OrganizationMemberList(list.GetItems(), rootArgs.format))
+	fmt.Println(format.OrganizationMemberList(ctx, list.GetItems(), iamc, rootArgs.format))
 }
