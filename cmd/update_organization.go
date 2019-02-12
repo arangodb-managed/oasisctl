@@ -18,10 +18,10 @@ import (
 )
 
 var (
-	// updateOrganizationCmd deletes an organization that the user has access to
+	// updateOrganizationCmd updates an organization that the user has access to
 	updateOrganizationCmd = &cobra.Command{
 		Use:   "organization",
-		Short: "Delete an organization the authenticated user has access to",
+		Short: "Update an organization the authenticated user has access to",
 		Run:   updateOrganizationCmdRun,
 	}
 	updateOrganizationArgs struct {
@@ -50,24 +50,24 @@ func updateOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, organizationID, rmc)
+	item := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Set changes
 	f := cmd.Flags()
 	hasChanges := false
 	if f.Changed("name") {
-		org.Name = updateOrganizationArgs.name
+		item.Name = updateOrganizationArgs.name
 		hasChanges = true
 	}
 	if f.Changed("description") {
-		org.Description = updateOrganizationArgs.description
+		item.Description = updateOrganizationArgs.description
 		hasChanges = true
 	}
 	if !hasChanges {
 		fmt.Println("No changes")
 	} else {
 		// Update project
-		updated, err := rmc.UpdateOrganization(ctx, org)
+		updated, err := rmc.UpdateOrganization(ctx, item)
 		if err != nil {
 			cliLog.Fatal().Err(err).Msg("Failed to update organization")
 		}
