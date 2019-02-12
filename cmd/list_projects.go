@@ -20,26 +20,27 @@ import (
 )
 
 var (
-	// getProjectsCmd fetches projects of the given organization
-	getProjectsCmd = &cobra.Command{
+	// listProjectsCmd fetches projects of the given organization
+	listProjectsCmd = &cobra.Command{
 		Use:   "projects",
-		Short: "Get all projects of the given organization",
-		Run:   getProjectsCmdRun,
+		Short: "List all projects of the given organization",
+		Run:   listProjectsCmdRun,
 	}
-	getProjectsArgs struct {
+	listProjectsArgs struct {
 		organizationID string
 	}
 )
 
 func init() {
-	getCmd.AddCommand(getProjectsCmd)
-	f := getProjectsCmd.Flags()
-	f.StringVarP(&getProjectsArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	listCmd.AddCommand(listProjectsCmd)
+	f := listProjectsCmd.Flags()
+	f.StringVarP(&listProjectsArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
-func getProjectsCmdRun(cmd *cobra.Command, args []string) {
+func listProjectsCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", listProjectsArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -47,7 +48,7 @@ func getProjectsCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, getProjectsArgs.organizationID, rmc)
+	org := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Fetch projects in organization
 	list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})

@@ -43,7 +43,8 @@ func init() {
 
 func getOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	inviteID, argsUsed := optOption("invite-id", getOrganizationInviteArgs.inviteID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -51,8 +52,8 @@ func getOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := contextWithToken()
 
-	// Fetch project
-	item := mustSelectOrganizationInvite(ctx, getOrganizationInviteArgs.inviteID, getOrganizationInviteArgs.organizationID, rmc)
+	// Fetch organization invite
+	item := mustSelectOrganizationInvite(ctx, inviteID, getOrganizationInviteArgs.organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.OrganizationInvite(ctx, item, iamc, rootArgs.format))

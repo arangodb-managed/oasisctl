@@ -38,7 +38,8 @@ func init() {
 
 func deleteProjectCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	projectID, argsUsed := optOption("project-id", deleteProjectArgs.projectID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -46,7 +47,7 @@ func deleteProjectCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch project
-	item := mustSelectProject(ctx, deleteProjectArgs.projectID, deleteProjectArgs.organizationID, rmc)
+	item := mustSelectProject(ctx, projectID, deleteProjectArgs.organizationID, rmc)
 
 	// Delete project
 	if _, err := rmc.DeleteProject(ctx, item); err != nil {

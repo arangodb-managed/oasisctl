@@ -21,28 +21,29 @@ import (
 )
 
 var (
-	// getGroupMembersCmd fetches the members of a group the user is a part of
-	getGroupMembersCmd = &cobra.Command{
+	// listGroupMembersCmd fetches the members of a group the user is a part of
+	listGroupMembersCmd = &cobra.Command{
 		Use:   "members",
-		Short: "Get members of a group the authenticated user is a member of",
-		Run:   getGroupMembersCmdRun,
+		Short: "List members of a group the authenticated user is a member of",
+		Run:   listGroupMembersCmdRun,
 	}
-	getGroupMembersArgs struct {
+	listGroupMembersArgs struct {
 		groupID        string
 		organizationID string
 	}
 )
 
 func init() {
-	getGroupCmd.AddCommand(getGroupMembersCmd)
-	f := getGroupMembersCmd.Flags()
-	f.StringVarP(&getGroupMembersArgs.groupID, "group-id", "g", defaultGroup(), "Identifier of the group")
-	f.StringVarP(&getGroupMembersArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	listGroupCmd.AddCommand(listGroupMembersCmd)
+	f := listGroupMembersCmd.Flags()
+	f.StringVarP(&listGroupMembersArgs.groupID, "group-id", "g", defaultGroup(), "Identifier of the group")
+	f.StringVarP(&listGroupMembersArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
-func getGroupMembersCmdRun(cmd *cobra.Command, args []string) {
+func listGroupMembersCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	groupID, argsUsed := reqOption("group-id", listGroupMembersArgs.groupID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -51,7 +52,7 @@ func getGroupMembersCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch group
-	group := mustSelectGroup(ctx, getGroupMembersArgs.groupID, getGroupMembersArgs.organizationID, iamc, rmc)
+	group := mustSelectGroup(ctx, groupID, listGroupMembersArgs.organizationID, iamc, rmc)
 
 	list, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: group.GetId()})
 	if err != nil {

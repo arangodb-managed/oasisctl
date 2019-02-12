@@ -39,7 +39,8 @@ func init() {
 
 func acceptOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	inviteID, argsUsed := optOption("invite-id", acceptOrganizationInviteArgs.inviteID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -47,7 +48,7 @@ func acceptOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch invite
-	invite := mustSelectOrganizationInvite(ctx, acceptOrganizationInviteArgs.inviteID, acceptOrganizationInviteArgs.organizationID, rmc)
+	invite := mustSelectOrganizationInvite(ctx, inviteID, acceptOrganizationInviteArgs.organizationID, rmc)
 
 	// Accept invite
 	if _, err := rmc.AcceptOrganizationInvite(ctx, invite); err != nil {
