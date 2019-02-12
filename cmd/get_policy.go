@@ -39,7 +39,8 @@ func init() {
 
 func getPolicyCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	url, argsUsed := optOption("url", getPolicyArgs.url, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -47,7 +48,7 @@ func getPolicyCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch policy
-	item, err := iamc.GetPolicy(ctx, &common.URLOptions{Url: getPolicyArgs.url})
+	item, err := iamc.GetPolicy(ctx, &common.URLOptions{Url: url})
 	if err != nil {
 		cliLog.Fatal().Err(err).Msg("Failed to get policy")
 	}

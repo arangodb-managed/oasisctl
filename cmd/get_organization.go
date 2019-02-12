@@ -40,7 +40,8 @@ func init() {
 
 func getOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", getOrganizationArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -48,7 +49,7 @@ func getOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	item := mustSelectOrganization(ctx, getOrganizationArgs.organizationID, rmc)
+	item := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.Organization(item, rootArgs.format))

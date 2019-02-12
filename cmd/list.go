@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// getEffectiveCmd is based for other commands
-	getEffectiveCmd = &cobra.Command{
-		Use:   "effective",
-		Short: "Get information",
+	// listCmd is root for various `list ...` commands
+	listCmd = &cobra.Command{
+		Use:   "list",
+		Short: "List resources",
 		Run:   showUsage,
 	}
 )
 
 func init() {
-	getCmd.AddCommand(getEffectiveCmd)
+	RootCmd.AddCommand(listCmd)
 }

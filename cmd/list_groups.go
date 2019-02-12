@@ -21,26 +21,27 @@ import (
 )
 
 var (
-	// getGroupsCmd fetches groups of the given organization
-	getGroupsCmd = &cobra.Command{
+	// listGroupsCmd fetches groups of the given organization
+	listGroupsCmd = &cobra.Command{
 		Use:   "groups",
-		Short: "Get all groups of the given organization",
-		Run:   getGroupsCmdRun,
+		Short: "List all groups of the given organization",
+		Run:   listGroupsCmdRun,
 	}
-	getGroupsArgs struct {
+	listGroupsArgs struct {
 		organizationID string
 	}
 )
 
 func init() {
-	getCmd.AddCommand(getGroupsCmd)
-	f := getGroupsCmd.Flags()
-	f.StringVarP(&getGroupsArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	listCmd.AddCommand(listGroupsCmd)
+	f := listGroupsCmd.Flags()
+	f.StringVarP(&listGroupsArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
-func getGroupsCmdRun(cmd *cobra.Command, args []string) {
+func listGroupsCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", listGroupsArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -49,7 +50,7 @@ func getGroupsCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, getGroupsArgs.organizationID, rmc)
+	org := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Fetch groups in organization
 	list, err := iamc.ListGroups(ctx, &common.ListOptions{ContextId: org.GetId()})

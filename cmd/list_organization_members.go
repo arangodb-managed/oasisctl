@@ -21,26 +21,27 @@ import (
 )
 
 var (
-	// getOrganizationMembersCmd fetches the members of an organization the user is a part of
-	getOrganizationMembersCmd = &cobra.Command{
+	// listOrganizationMembersCmd fetches the members of an organization the user is a part of
+	listOrganizationMembersCmd = &cobra.Command{
 		Use:   "members",
-		Short: "Get members of an organization the authenticated user is a member of",
-		Run:   getOrganizationMembersCmdRun,
+		Short: "List members of an organization the authenticated user is a member of",
+		Run:   listOrganizationMembersCmdRun,
 	}
-	getOrganizationMembersArgs struct {
+	listOrganizationMembersArgs struct {
 		organizationID string
 	}
 )
 
 func init() {
-	getOrganizationCmd.AddCommand(getOrganizationMembersCmd)
-	f := getOrganizationMembersCmd.Flags()
-	f.StringVarP(&getOrganizationMembersArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	listOrganizationCmd.AddCommand(listOrganizationMembersCmd)
+	f := listOrganizationMembersCmd.Flags()
+	f.StringVarP(&listOrganizationMembersArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
-func getOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
+func listOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", listOrganizationMembersArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -49,7 +50,7 @@ func getOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, getOrganizationMembersArgs.organizationID, rmc)
+	org := mustSelectOrganization(ctx, organizationID, rmc)
 
 	list, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
