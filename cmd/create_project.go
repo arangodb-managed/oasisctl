@@ -42,8 +42,9 @@ func init() {
 
 func createProjectCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createProjectArgs.name, args, 0)
+	name, argsUsed := reqOption("name", createProjectArgs.name, args, 0)
 	description := createProjectArgs.description
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()

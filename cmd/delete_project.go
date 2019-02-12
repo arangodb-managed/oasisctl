@@ -37,6 +37,9 @@ func init() {
 }
 
 func deleteProjectCmdRun(cmd *cobra.Command, args []string) {
+	// Validate arguments
+	mustCheckNumberOfArgs(args, 0)
+
 	// Connect
 	conn := mustDialAPI()
 	rmc := rm.NewResourceManagerServiceClient(conn)
