@@ -41,6 +41,9 @@ func init() {
 }
 
 func getGroupMembersCmdRun(cmd *cobra.Command, args []string) {
+	// Validate arguments
+	mustCheckNumberOfArgs(args, 0)
+
 	// Connect
 	conn := mustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)

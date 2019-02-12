@@ -45,9 +45,10 @@ func init() {
 
 func createRoleCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	name := reqOption("name", createRoleArgs.name, args, 0)
+	name, argsUsed := reqOption("name", createRoleArgs.name, args, 0)
 	description := createRoleArgs.description
 	permissions := createRoleArgs.permissions
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()

@@ -41,7 +41,8 @@ func init() {
 
 func createOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	email := reqOption("email", createOrganizationInviteArgs.email, args, 0)
+	email, argsUsed := reqOption("email", createOrganizationInviteArgs.email, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
