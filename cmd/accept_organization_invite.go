@@ -47,7 +47,7 @@ func acceptOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch invite
-	invite := mustSelectOrganizationInvite(ctx, getOrganizationInviteArgs.inviteID, getOrganizationInviteArgs.organizationID, rmc)
+	invite := mustSelectOrganizationInvite(ctx, acceptOrganizationInviteArgs.inviteID, acceptOrganizationInviteArgs.organizationID, rmc)
 
 	// Accept invite
 	if _, err := rmc.AcceptOrganizationInvite(ctx, invite); err != nil {
