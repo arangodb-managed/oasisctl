@@ -37,7 +37,8 @@ func init() {
 
 func deleteOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", deleteOrganizationArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -45,7 +46,7 @@ func deleteOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	item := mustSelectOrganization(ctx, deleteOrganizationArgs.organizationID, rmc)
+	item := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Delete project
 	if _, err := rmc.DeleteOrganization(ctx, item); err != nil {

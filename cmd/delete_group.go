@@ -39,7 +39,8 @@ func init() {
 
 func deleteGroupCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	groupID, argsUsed := optOption("group-id", deleteGroupArgs.groupID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -48,7 +49,7 @@ func deleteGroupCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch group
-	item := mustSelectGroup(ctx, deleteGroupArgs.groupID, deleteGroupArgs.organizationID, iamc, rmc)
+	item := mustSelectGroup(ctx, groupID, deleteGroupArgs.organizationID, iamc, rmc)
 
 	// Delete group
 	if _, err := iamc.DeleteGroup(ctx, item); err != nil {

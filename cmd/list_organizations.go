@@ -20,19 +20,19 @@ import (
 )
 
 var (
-	// getOrganizationsCmd fetches organizations the user is a part of
-	getOrganizationsCmd = &cobra.Command{
+	// listOrganizationsCmd fetches organizations the user is a part of
+	listOrganizationsCmd = &cobra.Command{
 		Use:   "organizations",
-		Short: "Get all organizations the authenticated user is a member of",
-		Run:   getOrganizationsCmdRun,
+		Short: "List all organizations the authenticated user is a member of",
+		Run:   listOrganizationsCmdRun,
 	}
 )
 
 func init() {
-	getCmd.AddCommand(getOrganizationsCmd)
+	listCmd.AddCommand(listOrganizationsCmd)
 }
 
-func getOrganizationsCmdRun(cmd *cobra.Command, args []string) {
+func listOrganizationsCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
 	mustCheckNumberOfArgs(args, 0)
 

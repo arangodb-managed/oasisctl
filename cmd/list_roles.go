@@ -21,26 +21,27 @@ import (
 )
 
 var (
-	// getRolesCmd fetches roles of the given organization
-	getRolesCmd = &cobra.Command{
+	// listRolesCmd fetches roles of the given organization
+	listRolesCmd = &cobra.Command{
 		Use:   "roles",
-		Short: "Get all roles of the given organization",
-		Run:   getRolesCmdRun,
+		Short: "List all roles of the given organization",
+		Run:   listRolesCmdRun,
 	}
-	getRolesArgs struct {
+	listRolesArgs struct {
 		organizationID string
 	}
 )
 
 func init() {
-	getCmd.AddCommand(getRolesCmd)
-	f := getRolesCmd.Flags()
-	f.StringVarP(&getRolesArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
+	listCmd.AddCommand(listRolesCmd)
+	f := listRolesCmd.Flags()
+	f.StringVarP(&listRolesArgs.organizationID, "organization-id", "o", defaultOrganization(), "Identifier of the organization")
 }
 
-func getRolesCmdRun(cmd *cobra.Command, args []string) {
+func listRolesCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	organizationID, argsUsed := optOption("organization-id", listRolesArgs.organizationID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -49,7 +50,7 @@ func getRolesCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, getRolesArgs.organizationID, rmc)
+	org := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Fetch roles in organization
 	list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org.GetId()})

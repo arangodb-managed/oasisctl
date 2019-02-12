@@ -92,23 +92,35 @@ func contextWithToken() context.Context {
 // Returns: option-value, number-of-args-used(0|argIndex+1)
 func reqOption(key, value string, args []string, argIndex int) (string, int) {
 	if value != "" {
-		return value,0
+		return value, 0
 	}
 	if len(args) > argIndex {
-		return args[argIndex], argIndex+1
+		return args[argIndex], argIndex + 1
 	}
 	cliLog.Fatal().Msgf("--%s missing", key)
-	return "",0
+	return "", 0
+}
+
+// optOption returns given value if not empty.
+// Returns: option-value, number-of-args-used(0|argIndex+1)
+func optOption(key, value string, args []string, argIndex int) (string, int) {
+	if value != "" {
+		return value, 0
+	}
+	if len(args) > argIndex {
+		return args[argIndex], argIndex + 1
+	}
+	return "", 0
 }
 
 // mustCheckNumberOfArgs compares the number of arguments with the expected
-// number of arguments. 
+// number of arguments.
 // If there is a difference a fatal error is raised.
 func mustCheckNumberOfArgs(args []string, expectedNumberOfArgs int) {
-	if  len(args) > expectedNumberOfArgs{
+	if len(args) > expectedNumberOfArgs {
 		cliLog.Fatal().Msg("Too many arguments")
 	}
-	if  len(args) < expectedNumberOfArgs{
+	if len(args) < expectedNumberOfArgs {
 		cliLog.Fatal().Msg("Too few arguments")
 	}
 }

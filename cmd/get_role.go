@@ -43,7 +43,8 @@ func init() {
 
 func getRoleCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	roleID, argsUsed := optOption("role-id", getRoleArgs.roleID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -52,7 +53,7 @@ func getRoleCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch role
-	item := mustSelectRole(ctx, getRoleArgs.roleID, getRoleArgs.organizationID, iamc, rmc)
+	item := mustSelectRole(ctx, roleID, getRoleArgs.organizationID, iamc, rmc)
 
 	// Show result
 	fmt.Println(format.Role(item, rootArgs.format))

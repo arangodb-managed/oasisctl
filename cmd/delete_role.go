@@ -39,7 +39,8 @@ func init() {
 
 func deleteRoleCmdRun(cmd *cobra.Command, args []string) {
 	// Validate arguments
-	mustCheckNumberOfArgs(args, 0)
+	roleID, argsUsed := optOption("role-id", deleteRoleArgs.roleID, args, 0)
+	mustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := mustDialAPI()
@@ -48,7 +49,7 @@ func deleteRoleCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch role
-	item := mustSelectRole(ctx, deleteRoleArgs.roleID, deleteRoleArgs.organizationID, iamc, rmc)
+	item := mustSelectRole(ctx, roleID, deleteRoleArgs.organizationID, iamc, rmc)
 
 	// Delete role
 	if _, err := iamc.DeleteRole(ctx, item); err != nil {
