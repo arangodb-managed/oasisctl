@@ -25,7 +25,6 @@ var (
 	}
 	deleteOrganizationArgs struct {
 		organizationID string
-		projectID      string
 	}
 )
 
