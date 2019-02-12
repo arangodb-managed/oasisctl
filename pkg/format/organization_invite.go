@@ -36,6 +36,7 @@ func OrganizationInvite(ctx context.Context, x *rm.OrganizationInvite, iamc iam.
 		kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
 		kv{"user", userName},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
+		kv{"url", x.GetUrl()},
 	)
 }
 
@@ -61,6 +62,7 @@ func OrganizationInviteList(ctx context.Context, list []*rm.OrganizationInvite, 
 			kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
 			kv{"user", userName},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
+			kv{"url", x.GetUrl()},
 		}
 	})
 }
