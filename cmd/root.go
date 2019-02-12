@@ -25,10 +25,11 @@ import (
 var (
 	// RootCmd is the root (and only) command of this service
 	RootCmd = &cobra.Command{
-		Use:   "oasis",
-		Short: "ArangoDB Oasis",
-		Long:  "ArangoDB Oasis. The Managed Cloud for ArangoDB",
-		Run:   showUsage,
+		Use:              "oasis",
+		Short:            "ArangoDB Oasis",
+		Long:             "ArangoDB Oasis. The Managed Cloud for ArangoDB",
+		Run:              showUsage,
+		PersistentPreRun: rootCmdPersistentPreRun,
 	}
 
 	cliLog   = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
@@ -48,15 +49,23 @@ const (
 func init() {
 	f := RootCmd.PersistentFlags()
 	// Persistent flags
-	defaultToken := envOrDefault("TOKEN", "")
 	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.adbtest.xyz")
-	f.StringVar(&rootArgs.token, "token", defaultToken, "Token used to authenticate at ArangoDB Oasis")
+	f.StringVar(&rootArgs.token, "token", "", "Token used to authenticate at ArangoDB Oasis")
 	f.StringVar(&rootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
 }
 
 // Show usage of the given command
 func showUsage(cmd *cobra.Command, args []string) {
 	cmd.Usage()
+}
+
+// Called before actual command run.
+// This function is used to hide a default token (from environment variable)
+// from the usage output.
+func rootCmdPersistentPreRun(cmd *cobra.Command, args []string) {
+	if rootArgs.token == "" {
+		rootArgs.token = envOrDefault("TOKEN", "")
+	}
 }
 
 // envOrDefault returns the value from an environment value with given key
