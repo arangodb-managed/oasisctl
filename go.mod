@@ -1,7 +1,7 @@
 module github.com/arangodb-managed/oasis
 
 require (
-	github.com/arangodb-managed/apis v0.0.11-0.20190214101546-5ac5ee3b2ddd
+	github.com/arangodb-managed/apis v0.1.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.2.0
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

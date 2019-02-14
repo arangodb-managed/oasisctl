@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/arangodb-managed/apis v0.0.11-0.20190214101546-5ac5ee3b2ddd h1:JuwAsGEPKodFClbKwyCICgZJII4sJCkkgFmHSZkS3q4=
-github.com/arangodb-managed/apis v0.0.11-0.20190214101546-5ac5ee3b2ddd/go.mod h1:vtp/dnU4HmnM5Zq3lfHRNDqdVUMC+CVfUaONgfdOCMI=
+github.com/arangodb-managed/apis v0.1.0 h1:mswY1Lku6kcfAX+axiEjZT+YM9NwF1V9mJf+wtgpF3Y=
+github.com/arangodb-managed/apis v0.1.0/go.mod h1:vtp/dnU4HmnM5Zq3lfHRNDqdVUMC+CVfUaONgfdOCMI=
 github.com/atotto/clipboard v0.1.1/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
