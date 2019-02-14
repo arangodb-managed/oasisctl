@@ -13,6 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
 
@@ -48,7 +49,7 @@ func deleteOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	item := mustSelectOrganization(ctx, organizationID, rmc)
 
 	// Delete project
-	if _, err := rmc.DeleteOrganization(ctx, item); err != nil {
+	if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 		cliLog.Fatal().Err(err).Msg("Failed to delete organization")
 	}
 

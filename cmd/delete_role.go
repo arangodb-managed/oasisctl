@@ -13,6 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
@@ -52,7 +53,7 @@ func deleteRoleCmdRun(cmd *cobra.Command, args []string) {
 	item := mustSelectRole(ctx, roleID, deleteRoleArgs.organizationID, iamc, rmc)
 
 	// Delete role
-	if _, err := iamc.DeleteRole(ctx, item); err != nil {
+	if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 		cliLog.Fatal().Err(err).Msg("Failed to delete role")
 	}
 
