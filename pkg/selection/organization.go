@@ -27,7 +27,7 @@ func MustSelectOrganization(ctx context.Context, log zerolog.Logger, id string, 
 			log.Fatal().Err(err).Msg("Failed to list organizations")
 		}
 		if len(list.Items) != 1 {
-			log.Fatal().Err(err).Msg("You're member of %d organizations. Please specify one explicitly.")
+			log.Fatal().Err(err).Msgf("You're member of %d organizations. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0]
 	}

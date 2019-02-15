@@ -90,6 +90,18 @@ func formatTime(x *types.Timestamp, nilValue ...string) string {
 	return humanize.Time(t)
 }
 
+// formatDuration returns a human readable version of the given duration.
+func formatDuration(x *types.Duration, nilValue ...string) string {
+	if x == nil {
+		if len(nilValue) > 0 {
+			return nilValue[0]
+		}
+		return ""
+	}
+	d, _ := types.DurationFromProto(x)
+	return d.String()
+}
+
 // formatBool returns a human readable checkmark for the given boolean
 func formatBool(x bool) string {
 	if x {
