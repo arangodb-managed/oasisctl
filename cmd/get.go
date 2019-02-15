@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// getCmd is root for various `get ...` commands
-	getCmd = &cobra.Command{
+	// GetCmd is root for various `get ...` commands
+	GetCmd = &cobra.Command{
 		Use:   "get",
 		Short: "Get information",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(getCmd)
+	RootCmd.AddCommand(GetCmd)
 }

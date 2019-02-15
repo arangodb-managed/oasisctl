@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// rejectCmd is root for various `reject ...` commands
-	rejectCmd = &cobra.Command{
+	// RejectCmd is root for various `reject ...` commands
+	RejectCmd = &cobra.Command{
 		Use:   "reject",
 		Short: "Reject invites",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(rejectCmd)
+	RootCmd.AddCommand(RejectCmd)
 }

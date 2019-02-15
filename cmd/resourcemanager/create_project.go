@@ -1,0 +1,72 @@
+//
+// DISCLAIMER
+//
+// Copyright 2019 ArangoDB Inc, Cologne, Germany
+//
+// Author Ewout Prangsma
+//
+
+package rm
+
+import (
+	"github.com/arangodb-managed/oasis/cmd"
+	"fmt"
+
+	"github.com/spf13/cobra"
+
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
+)
+
+var (
+	// createProjectCmd creates a new project
+	createProjectCmd = &cobra.Command{
+		Use:   "project",
+		Short: "Create a new project",
+		Run:   createProjectCmdRun,
+	}
+	createProjectArgs struct {
+		name           string
+		description    string
+		organizationID string
+	}
+)
+
+func init() {
+	cmd.CreateCmd.AddCommand(createProjectCmd)
+
+	f := createProjectCmd.Flags()
+	f.StringVarP(&createProjectArgs.name, "name", "n", "", "Name of the project")
+	f.StringVarP(&createProjectArgs.description, "description", "d", "", "Description of the project")
+	f.StringVarP(&createProjectArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the project in")
+}
+
+func createProjectCmdRun(c *cobra.Command, args []string) {
+	// Validate arguments
+	name, argsUsed := cmd.ReqOption("name", createProjectArgs.name, args, 0)
+	description := createProjectArgs.description
+	cmd.MustCheckNumberOfArgs(args, argsUsed)
+
+	// Connect
+	conn := cmd.MustDialAPI()
+	rmc := rm.NewResourceManagerServiceClient(conn)
+	ctx := cmd.ContextWithToken()
+
+	// Fetch organization
+	org := selection.MustSelectOrganization(ctx, cmd.CLILog, createProjectArgs.organizationID, rmc)
+
+	// Create project
+	result, err := rmc.CreateProject(ctx, &rm.Project{
+		OrganizationId: org.GetId(),
+		Name:           name,
+		Description:    description,
+	})
+	if err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to create project")
+	}
+
+	// Show result
+	fmt.Println("Success!")
+	fmt.Println(format.Project(result, cmd.RootArgs.Format))
+}

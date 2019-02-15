@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// updateCmd is root for various `update ...` commands
-	updateCmd = &cobra.Command{
+	// UpdateCmd is root for various `update ...` commands
+	UpdateCmd = &cobra.Command{
 		Use:   "update",
 		Short: "Update resources",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(updateCmd)
+	RootCmd.AddCommand(UpdateCmd)
 }
