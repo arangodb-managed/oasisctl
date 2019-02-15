@@ -75,7 +75,7 @@ func updateCACertificateCmdRun(c *cobra.Command, args []string) {
 	if !hasChanges {
 		fmt.Println("No changes")
 	} else {
-		// Update role
+		// Update CA certificate
 		updated, err := cryptoc.UpdateCACertificate(ctx, item)
 		if err != nil {
 			cmd.CLILog.Fatal().Err(err).Msg("Failed to update CA certificate")

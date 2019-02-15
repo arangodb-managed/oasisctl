@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	// deleteCACertificateCmd deletes a role that the user has access to
+	// deleteCACertificateCmd deletes a CA certificate that the user has access to
 	deleteCACertificateCmd = &cobra.Command{
 		Use:   "cacertificate",
 		Short: "Delete a CA certificate the authenticated user has access to",

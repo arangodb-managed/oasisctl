@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	// listCACertificatesCmd fetches roles of the given project
+	// listCACertificatesCmd fetches CA certificates of the given project
 	listCACertificatesCmd = &cobra.Command{
 		Use:   "cacertificates",
 		Short: "List all CA certificates of the given project",
@@ -56,7 +56,7 @@ func listCACertificatesCmdRun(c *cobra.Command, args []string) {
 	// Fetch project
 	project := selection.MustSelectProject(ctx, cmd.CLILog, projectID, listCACertificatesArgs.organizationID, rmc)
 
-	// Fetch roles in organization
+	// Fetch CA certificates in project
 	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
 	if err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to list CA certificates")
