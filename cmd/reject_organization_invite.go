@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -47,7 +48,7 @@ func rejectOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch invite
-	invite := mustSelectOrganizationInvite(ctx, inviteID, rejectOrganizationInviteArgs.organizationID, rmc)
+	invite := selection.MustSelectOrganizationInvite(ctx, cliLog, inviteID, rejectOrganizationInviteArgs.organizationID, rmc)
 
 	// Reject invite
 	if _, err := rmc.RejectOrganizationInvite(ctx, invite); err != nil {

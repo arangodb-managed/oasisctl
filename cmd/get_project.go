@@ -9,15 +9,14 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -51,30 +50,8 @@ func getProjectCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch project
-	item := mustSelectProject(ctx, projectID, getProjectArgs.organizationID, rmc)
+	item := selection.MustSelectProject(ctx, cliLog, projectID, getProjectArgs.organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.Project(item, rootArgs.format))
-}
-
-// mustSelectProject fetches the project with given ID.
-// If no ID is specified, all projects are fetched from the selected organization
-// and if the list is exactly 1 long, that project is returned.
-func mustSelectProject(ctx context.Context, id, orgID string, rmc rm.ResourceManagerServiceClient) *rm.Project {
-	if id == "" {
-		org := mustSelectOrganization(ctx, orgID, rmc)
-		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})
-		if err != nil {
-			cliLog.Fatal().Err(err).Msg("Failed to list projects")
-		}
-		if len(list.Items) != 1 {
-			cliLog.Fatal().Err(err).Msg("You have access to %d projects. Please specify one explicitly.")
-		}
-		return list.Items[0]
-	}
-	result, err := rmc.GetProject(ctx, &common.IDOptions{Id: id})
-	if err != nil {
-		cliLog.Fatal().Err(err).Str("project", id).Msg("Failed to get project")
-	}
-	return result
 }

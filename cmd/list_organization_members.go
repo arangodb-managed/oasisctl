@@ -18,6 +18,7 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -50,7 +51,7 @@ func listOrganizationMembersCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, cliLog, organizationID, rmc)
 
 	list, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {

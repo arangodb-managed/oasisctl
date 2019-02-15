@@ -16,6 +16,7 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -50,7 +51,7 @@ func deleteGroupCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch group
-	item := mustSelectGroup(ctx, groupID, deleteGroupArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectGroup(ctx, cliLog, groupID, deleteGroupArgs.organizationID, iamc, rmc)
 
 	// Delete group
 	if _, err := iamc.DeleteGroup(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {

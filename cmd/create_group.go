@@ -16,6 +16,7 @@ import (
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -54,7 +55,7 @@ func createGroupCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, createGroupArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, cliLog, createGroupArgs.organizationID, rmc)
 
 	// Create group
 	result, err := iamc.CreateGroup(ctx, &iam.Group{

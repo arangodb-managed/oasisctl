@@ -15,6 +15,7 @@ import (
 
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -52,7 +53,7 @@ func updateProjectCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch project
-	item := mustSelectProject(ctx, projectID, updateProjectArgs.organizationID, rmc)
+	item := selection.MustSelectProject(ctx, cliLog, projectID, updateProjectArgs.organizationID, rmc)
 
 	// Set changes
 	f := cmd.Flags()

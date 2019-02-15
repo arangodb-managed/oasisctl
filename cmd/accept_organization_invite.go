@@ -15,6 +15,7 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -48,7 +49,7 @@ func acceptOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch invite
-	invite := mustSelectOrganizationInvite(ctx, inviteID, acceptOrganizationInviteArgs.organizationID, rmc)
+	invite := selection.MustSelectOrganizationInvite(ctx, cliLog, inviteID, acceptOrganizationInviteArgs.organizationID, rmc)
 
 	// Accept invite
 	if _, err := rmc.AcceptOrganizationInvite(ctx, invite); err != nil {

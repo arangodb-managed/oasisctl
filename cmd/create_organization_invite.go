@@ -16,6 +16,7 @@ import (
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -51,7 +52,7 @@ func createOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	org := mustSelectOrganization(ctx, createOrganizationInviteArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, cliLog, createOrganizationInviteArgs.organizationID, rmc)
 
 	// Create invite
 	result, err := rmc.CreateOrganizationInvite(ctx, &rm.OrganizationInvite{

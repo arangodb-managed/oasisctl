@@ -15,6 +15,7 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -46,7 +47,7 @@ func deleteOrganizationCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch organization
-	item := mustSelectOrganization(ctx, organizationID, rmc)
+	item := selection.MustSelectOrganization(ctx, cliLog, organizationID, rmc)
 
 	// Delete project
 	if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {

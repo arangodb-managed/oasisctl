@@ -16,6 +16,7 @@ import (
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -54,7 +55,7 @@ func updateGroupCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch group
-	item := mustSelectGroup(ctx, groupID, updateGroupArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectGroup(ctx, cliLog, groupID, updateGroupArgs.organizationID, iamc, rmc)
 
 	// Set changes
 	f := cmd.Flags()

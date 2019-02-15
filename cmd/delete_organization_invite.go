@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -47,7 +48,7 @@ func deleteOrganizationInviteCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch invite
-	item := mustSelectOrganizationInvite(ctx, inviteID, deleteOrganizationInviteArgs.organizationID, rmc)
+	item := selection.MustSelectOrganizationInvite(ctx, cliLog, inviteID, deleteOrganizationInviteArgs.organizationID, rmc)
 
 	// Delete invite
 	if _, err := rmc.DeleteOrganizationInvite(ctx, item); err != nil {

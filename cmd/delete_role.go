@@ -16,6 +16,7 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -50,7 +51,7 @@ func deleteRoleCmdRun(cmd *cobra.Command, args []string) {
 	ctx := contextWithToken()
 
 	// Fetch role
-	item := mustSelectRole(ctx, roleID, deleteRoleArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectRole(ctx, cliLog, roleID, deleteRoleArgs.organizationID, iamc, rmc)
 
 	// Delete role
 	if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
