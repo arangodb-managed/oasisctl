@@ -23,5 +23,8 @@ func DefaultGroup() string { return envOrDefault("GROUP", "") }
 // DefaultRole returns the default value for a role identifier
 func DefaultRole() string { return envOrDefault("ROLE", "") }
 
+// DefaultCACertificate returns the default value for a CA certificate identifier
+func DefaultCACertificate() string { return envOrDefault("CACERTIFICATE", "") }
+
 // DefaultURL returns the default value for a URL
 func DefaultURL() string { return envOrDefault("URL", "") }
