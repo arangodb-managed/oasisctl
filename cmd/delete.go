@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// deleteCmd is root for various `delete ...` commands
-	deleteCmd = &cobra.Command{
+	// DeleteCmd is root for various `delete ...` commands
+	DeleteCmd = &cobra.Command{
 		Use:   "delete",
 		Short: "Delete resources",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(deleteCmd)
+	RootCmd.AddCommand(DeleteCmd)
 }

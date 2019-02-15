@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// createCmd is root for various `create ...` commands
-	createCmd = &cobra.Command{
+	// CreateCmd is root for various `create ...` commands
+	CreateCmd = &cobra.Command{
 		Use:   "create",
 		Short: "Create resources",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(createCmd)
+	RootCmd.AddCommand(CreateCmd)
 }

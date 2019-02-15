@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// acceptCmd is root for various `accept ...` commands
-	acceptCmd = &cobra.Command{
+	// AcceptCmd is root for various `accept ...` commands
+	AcceptCmd = &cobra.Command{
 		Use:   "accept",
 		Short: "Accept invites",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(acceptCmd)
+	RootCmd.AddCommand(AcceptCmd)
 }

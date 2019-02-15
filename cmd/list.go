@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	// listCmd is root for various `list ...` commands
-	listCmd = &cobra.Command{
+	// ListCmd is root for various `list ...` commands
+	ListCmd = &cobra.Command{
 		Use:   "list",
 		Short: "List resources",
-		Run:   showUsage,
+		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	RootCmd.AddCommand(listCmd)
+	RootCmd.AddCommand(ListCmd)
 }
