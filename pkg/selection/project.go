@@ -28,7 +28,7 @@ func MustSelectProject(ctx context.Context, log zerolog.Logger, id, orgID string
 			log.Fatal().Err(err).Msg("Failed to list projects")
 		}
 		if len(list.Items) != 1 {
-			log.Fatal().Err(err).Msg("You have access to %d projects. Please specify one explicitly.")
+			log.Fatal().Err(err).Msgf("You have access to %d projects. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0]
 	}
