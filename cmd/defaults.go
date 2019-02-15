@@ -26,5 +26,11 @@ func DefaultRole() string { return envOrDefault("ROLE", "") }
 // DefaultCACertificate returns the default value for a CA certificate identifier
 func DefaultCACertificate() string { return envOrDefault("CACERTIFICATE", "") }
 
+// DefaultProvider returns the default value for a provider identifier
+func DefaultProvider() string { return envOrDefault("PROVIDER", "") }
+
+// DefaultRegion returns the default value for a region identifier
+func DefaultRegion() string { return envOrDefault("REGION", "") }
+
 // DefaultURL returns the default value for a URL
 func DefaultURL() string { return envOrDefault("URL", "") }
