@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
@@ -52,10 +53,12 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+				regionID, _ := cmd.ReqOption("region-id", cargs.regionID, nil, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
+				cryptoc := crypto.NewCryptoServiceClient(conn)
 				datac := data.NewDataServiceClient(conn)
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
@@ -63,15 +66,18 @@ func init() {
 				// Fetch project
 				project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
+				// Select cacertificate 
+				cacert := selection.MustSelectCACertificate(ctx, log, cargs.cacertificateID, project.GetId(), project.GetOrganizationId(), cryptoc, rmc)
+
 				// Create ca certificate
 				result, err := datac.CreateDeployment(ctx, &data.Deployment{
 					ProjectId:   project.GetId(),
 					Name:        name,
 					Description: cargs.description,
-					RegionId:    cargs.regionID,
+					RegionId:    regionID,
 					Version:     cargs.version,
 					Certificates: &data.Deployment_CertificateSpec{
-						CaCertificateId: cargs.cacertificateID,
+						CaCertificateId: cacert.GetId(),
 					},
 				})
 				if err != nil {
