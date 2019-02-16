@@ -66,7 +66,7 @@ func init() {
 				// Fetch project
 				project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
-				// Select cacertificate 
+				// Select cacertificate (to use in deployment)
 				cacert := selection.MustSelectCACertificate(ctx, log, cargs.cacertificateID, project.GetId(), project.GetOrganizationId(), cryptoc, rmc)
 
 				// Create ca certificate
