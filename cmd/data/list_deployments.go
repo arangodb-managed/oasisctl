@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
@@ -36,10 +37,15 @@ var (
 )
 
 func init() {
-	cmd.ListCmd.AddCommand(listDeploymentsCmd)
-	f := listDeploymentsCmd.Flags()
-	f.StringVarP(&listDeploymentsArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&listDeploymentsArgs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
+	cmd.InitCommand(
+		cmd.ListCmd,
+		listDeploymentsCmd,
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &listDeploymentsArgs
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
+		},
+	)
 }
 
 func listDeploymentsCmdRun(c *cobra.Command, args []string) {

@@ -15,6 +15,7 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -132,4 +133,13 @@ func MustCheckNumberOfArgs(args []string, expectedNumberOfArgs int) {
 	if len(args) < expectedNumberOfArgs {
 		CLILog.Fatal().Msg("Too few arguments")
 	}
+}
+
+// InitCommand adds the given command to the given parent and called the flag initialization
+// function.
+func InitCommand(parent, cmd *cobra.Command, flagInit func(c *cobra.Command, f *flag.FlagSet)) {
+	if parent != nil {
+		parent.AddCommand(cmd)
+	}
+	flagInit(cmd, cmd.Flags())
 }
