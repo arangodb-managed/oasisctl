@@ -22,75 +22,67 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
-var (
-	// updateDeploymentCmd updates a CA certificate that the user has access to
-	updateDeploymentCmd = &cobra.Command{
-		Use:   "cacertificate",
-		Short: "Update a CA certificate the authenticated user has access to",
-		Run:   updateDeploymentCmdRun,
-	}
-	updateDeploymentArgs struct {
-		deploymentID   string
-		organizationID string
-		projectID      string
-		name           string
-		description    string
-	}
-)
-
 func init() {
 	cmd.InitCommand(
 		cmd.UpdateCmd,
-		updateDeploymentCmd,
+		&cobra.Command{
+			Use:   "cacertificate",
+			Short: "Update a CA certificate the authenticated user has access to",
+		},
 		func(c *cobra.Command, f *flag.FlagSet) {
-			cargs := &updateDeploymentArgs
+			cargs := &struct {
+				deploymentID   string
+				organizationID string
+				projectID      string
+				name           string
+				description    string
+			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the deployment")
+
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
+
+				// Connect
+				conn := cmd.MustDialAPI()
+				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
+				ctx := cmd.ContextWithToken()
+
+				// Fetch deployment
+				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Set changes
+				f := c.Flags()
+				hasChanges := false
+				if f.Changed("name") {
+					item.Name = cargs.name
+					hasChanges = true
+				}
+				if f.Changed("description") {
+					item.Description = cargs.description
+					hasChanges = true
+				}
+				if !hasChanges {
+					fmt.Println("No changes")
+				} else {
+					// Update deployment
+					updated, err := datac.UpdateDeployment(ctx, item)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to update deployment")
+					}
+
+					// Show result
+					fmt.Println("Updated deployment!")
+					fmt.Println(format.Deployment(updated, cmd.RootArgs.Format))
+				}
+			}
 		},
 	)
-}
-
-func updateDeploymentCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	log := cmd.CLILog
-	cargs := updateDeploymentArgs
-	deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
-
-	// Connect
-	conn := cmd.MustDialAPI()
-	datac := data.NewDataServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	ctx := cmd.ContextWithToken()
-
-	// Fetch deployment
-	item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
-
-	// Set changes
-	f := c.Flags()
-	hasChanges := false
-	if f.Changed("name") {
-		item.Name = cargs.name
-		hasChanges = true
-	}
-	if f.Changed("description") {
-		item.Description = cargs.description
-		hasChanges = true
-	}
-	if !hasChanges {
-		fmt.Println("No changes")
-	} else {
-		// Update deployment
-		updated, err := datac.UpdateDeployment(ctx, item)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed to update deployment")
-		}
-
-		// Show result
-		fmt.Println("Updated deployment!")
-		fmt.Println(format.Deployment(updated, cmd.RootArgs.Format))
-	}
 }

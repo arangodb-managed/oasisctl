@@ -22,49 +22,41 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
-var (
-	// getDeploymentCmd fetches a deployment that the user has access to
-	getDeploymentCmd = &cobra.Command{
-		Use:   "deployment",
-		Short: "Get a deployment the authenticated user has access to",
-		Run:   getDeploymentCmdRun,
-	}
-	getDeploymentArgs struct {
-		deploymentID   string
-		organizationID string
-		projectID      string
-	}
-)
-
 func init() {
 	cmd.InitCommand(
 		cmd.GetCmd,
-		getDeploymentCmd,
+		&cobra.Command{
+			Use:   "deployment",
+			Short: "Get a deployment the authenticated user has access to",
+		},
 		func(c *cobra.Command, f *flag.FlagSet) {
-			cargs := &getDeploymentArgs
+			cargs := &struct {
+				deploymentID   string
+				organizationID string
+				projectID      string
+			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
+
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
+
+				// Connect
+				conn := cmd.MustDialAPI()
+				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
+				ctx := cmd.ContextWithToken()
+
+				// Fetch deployment
+				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Show result
+				fmt.Println(format.Deployment(item, cmd.RootArgs.Format))
+			}
 		},
 	)
-}
-
-func getDeploymentCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	log := cmd.CLILog
-	cargs := getDeploymentArgs
-	deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
-
-	// Connect
-	conn := cmd.MustDialAPI()
-	datac := data.NewDataServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	ctx := cmd.ContextWithToken()
-
-	// Fetch deployment
-	item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
-
-	// Show result
-	fmt.Println(format.Deployment(item, cmd.RootArgs.Format))
 }
