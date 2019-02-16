@@ -46,8 +46,10 @@ func init() {
 
 func createGroupCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createGroupArgs.name, args, 0)
-	description := createGroupArgs.description
+	log := cmd.CLILog
+	cargs := createGroupArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+	description := cargs.description
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -57,7 +59,7 @@ func createGroupCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, createGroupArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
 
 	// Create group
 	result, err := iamc.CreateGroup(ctx, &iam.Group{
@@ -66,7 +68,7 @@ func createGroupCmdRun(c *cobra.Command, args []string) {
 		Description:    description,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create group")
+		log.Fatal().Err(err).Msg("Failed to create group")
 	}
 
 	// Show result

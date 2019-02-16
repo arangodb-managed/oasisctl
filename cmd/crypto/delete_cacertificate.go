@@ -45,7 +45,9 @@ func init() {
 
 func deleteCACertificateCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	cacertID, argsUsed := cmd.OptOption("cacertificate-id", deleteCACertificateArgs.cacertID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteCACertificateArgs
+	cacertID, argsUsed := cmd.OptOption("cacertificate-id", cargs.cacertID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -55,11 +57,11 @@ func deleteCACertificateCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch CA certificate
-	item := selection.MustSelectCACertificate(ctx, cmd.CLILog, cacertID, deleteCACertificateArgs.projectID, deleteCACertificateArgs.organizationID, cryptoc, rmc)
+	item := selection.MustSelectCACertificate(ctx, log, cacertID, cargs.projectID, cargs.organizationID, cryptoc, rmc)
 
 	// Delete CA certificate
 	if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete CA certificate")
+		log.Fatal().Err(err).Msg("Failed to delete CA certificate")
 	}
 
 	// Show result

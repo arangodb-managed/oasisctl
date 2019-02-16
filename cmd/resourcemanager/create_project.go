@@ -44,7 +44,9 @@ func init() {
 
 func createProjectCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createProjectArgs.name, args, 0)
+	log := cmd.CLILog
+	cargs := createProjectArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
 	description := createProjectArgs.description
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
@@ -54,7 +56,7 @@ func createProjectCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, createProjectArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
 
 	// Create project
 	result, err := rmc.CreateProject(ctx, &rm.Project{
@@ -63,7 +65,7 @@ func createProjectCmdRun(c *cobra.Command, args []string) {
 		Description:    description,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create project")
+		log.Fatal().Err(err).Msg("Failed to create project")
 	}
 
 	// Show result

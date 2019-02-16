@@ -40,7 +40,9 @@ func init() {
 
 func rejectOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	inviteID, argsUsed := cmd.OptOption("invite-id", rejectOrganizationInviteArgs.inviteID, args, 0)
+	log := cmd.CLILog
+	cargs := rejectOrganizationInviteArgs
+	inviteID, argsUsed := cmd.OptOption("invite-id", cargs.inviteID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -49,11 +51,11 @@ func rejectOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch invite
-	invite := selection.MustSelectOrganizationInvite(ctx, cmd.CLILog, inviteID, rejectOrganizationInviteArgs.organizationID, rmc)
+	invite := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Reject invite
 	if _, err := rmc.RejectOrganizationInvite(ctx, invite); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to reject organization invite")
+		log.Fatal().Err(err).Msg("Failed to reject organization invite")
 	}
 
 	// Show result

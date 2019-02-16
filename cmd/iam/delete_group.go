@@ -43,7 +43,9 @@ func init() {
 
 func deleteGroupCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	groupID, argsUsed := cmd.OptOption("group-id", deleteGroupArgs.groupID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteGroupArgs
+	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,11 +55,11 @@ func deleteGroupCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch group
-	item := selection.MustSelectGroup(ctx, cmd.CLILog, groupID, deleteGroupArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectGroup(ctx, log, groupID, cargs.organizationID, iamc, rmc)
 
 	// Delete group
 	if _, err := iamc.DeleteGroup(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete group")
+		log.Fatal().Err(err).Msg("Failed to delete group")
 	}
 
 	// Show result

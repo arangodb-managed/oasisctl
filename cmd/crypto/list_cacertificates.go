@@ -44,7 +44,9 @@ func init() {
 
 func listCACertificatesCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	projectID, argsUsed := cmd.OptOption("project-id", listCACertificatesArgs.projectID, args, 0)
+	log := cmd.CLILog
+	cargs := listCACertificatesArgs
+	projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -54,12 +56,12 @@ func listCACertificatesCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch project
-	project := selection.MustSelectProject(ctx, cmd.CLILog, projectID, listCACertificatesArgs.organizationID, rmc)
+	project := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
 	// Fetch CA certificates in project
 	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list CA certificates")
+		log.Fatal().Err(err).Msg("Failed to list CA certificates")
 	}
 
 	// Show result

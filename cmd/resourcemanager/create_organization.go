@@ -41,8 +41,10 @@ func init() {
 
 func createOrganizationCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createOrganizationArgs.name, args, 0)
-	description := createOrganizationArgs.description
+	log := cmd.CLILog
+	cargs := createOrganizationArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+	description := cargs.description
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -56,7 +58,7 @@ func createOrganizationCmdRun(c *cobra.Command, args []string) {
 		Description: description,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create organization")
+		log.Fatal().Err(err).Msg("Failed to create organization")
 	}
 
 	// Show result

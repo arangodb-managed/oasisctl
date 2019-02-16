@@ -49,7 +49,9 @@ func init() {
 
 func updateCACertificateCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	cacertID, argsUsed := cmd.OptOption("cacertificate-id", updateCACertificateArgs.cacertID, args, 0)
+	log := cmd.CLILog
+	cargs := updateCACertificateArgs
+	cacertID, argsUsed := cmd.OptOption("cacertificate-id", cargs.cacertID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -59,17 +61,17 @@ func updateCACertificateCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch CA certificate
-	item := selection.MustSelectCACertificate(ctx, cmd.CLILog, cacertID, updateCACertificateArgs.projectID, updateCACertificateArgs.organizationID, cryptoc, rmc)
+	item := selection.MustSelectCACertificate(ctx, log, cacertID, cargs.projectID, cargs.organizationID, cryptoc, rmc)
 
 	// Set changes
 	f := c.Flags()
 	hasChanges := false
 	if f.Changed("name") {
-		item.Name = updateCACertificateArgs.name
+		item.Name = cargs.name
 		hasChanges = true
 	}
 	if f.Changed("description") {
-		item.Description = updateCACertificateArgs.description
+		item.Description = cargs.description
 		hasChanges = true
 	}
 	if !hasChanges {
@@ -78,7 +80,7 @@ func updateCACertificateCmdRun(c *cobra.Command, args []string) {
 		// Update CA certificate
 		updated, err := cryptoc.UpdateCACertificate(ctx, item)
 		if err != nil {
-			cmd.CLILog.Fatal().Err(err).Msg("Failed to update CA certificate")
+			log.Fatal().Err(err).Msg("Failed to update CA certificate")
 		}
 
 		// Show result

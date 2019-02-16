@@ -42,7 +42,9 @@ func init() {
 
 func getProjectCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	projectID, argsUsed := cmd.OptOption("project-id", getProjectArgs.projectID, args, 0)
+	log := cmd.CLILog
+	cargs := getProjectArgs
+	projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -51,7 +53,7 @@ func getProjectCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch project
-	item := selection.MustSelectProject(ctx, cmd.CLILog, projectID, getProjectArgs.organizationID, rmc)
+	item := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.Project(item, cmd.RootArgs.Format))

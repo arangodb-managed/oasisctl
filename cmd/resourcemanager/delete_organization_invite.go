@@ -40,7 +40,9 @@ func init() {
 
 func deleteOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	inviteID, argsUsed := cmd.OptOption("invite-id", deleteOrganizationInviteArgs.inviteID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteOrganizationInviteArgs
+	inviteID, argsUsed := cmd.OptOption("invite-id", cargs.inviteID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -49,11 +51,11 @@ func deleteOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch invite
-	item := selection.MustSelectOrganizationInvite(ctx, cmd.CLILog, inviteID, deleteOrganizationInviteArgs.organizationID, rmc)
+	item := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Delete invite
 	if _, err := rmc.DeleteOrganizationInvite(ctx, item); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete organization invite")
+		log.Fatal().Err(err).Msg("Failed to delete organization invite")
 	}
 
 	// Show result

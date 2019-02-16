@@ -39,7 +39,9 @@ func init() {
 
 func deleteOrganizationCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", deleteOrganizationArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteOrganizationArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -48,11 +50,11 @@ func deleteOrganizationCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	item := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	item := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	// Delete project
 	if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete organization")
+		log.Fatal().Err(err).Msg("Failed to delete organization")
 	}
 
 	// Show result

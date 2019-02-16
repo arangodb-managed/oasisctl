@@ -40,7 +40,9 @@ func init() {
 
 func getProviderCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	providerID, argsUsed := cmd.OptOption("provider-id", getProviderArgs.providerID, args, 0)
+	log := cmd.CLILog
+	cargs := getProviderArgs
+	providerID, argsUsed := cmd.OptOption("provider-id", cargs.providerID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -49,7 +51,7 @@ func getProviderCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch provider
-	item := selection.MustSelectProvider(ctx, cmd.CLILog, providerID, platformc)
+	item := selection.MustSelectProvider(ctx, log, providerID, platformc)
 
 	// Show result
 	fmt.Println(format.Provider(item, cmd.RootArgs.Format))

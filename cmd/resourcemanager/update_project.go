@@ -45,7 +45,9 @@ func init() {
 
 func updateProjectCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	projectID, argsUsed := cmd.OptOption("project-id", updateProjectArgs.projectID, args, 0)
+	log := cmd.CLILog
+	cargs := updateProjectArgs
+	projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -54,17 +56,17 @@ func updateProjectCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch project
-	item := selection.MustSelectProject(ctx, cmd.CLILog, projectID, updateProjectArgs.organizationID, rmc)
+	item := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
 	// Set changes
 	f := c.Flags()
 	hasChanges := false
 	if f.Changed("name") {
-		item.Name = updateProjectArgs.name
+		item.Name = cargs.name
 		hasChanges = true
 	}
 	if f.Changed("description") {
-		item.Description = updateProjectArgs.description
+		item.Description = cargs.description
 		hasChanges = true
 	}
 	if !hasChanges {
@@ -73,7 +75,7 @@ func updateProjectCmdRun(c *cobra.Command, args []string) {
 		// Update project
 		updated, err := rmc.UpdateProject(ctx, item)
 		if err != nil {
-			cmd.CLILog.Fatal().Err(err).Msg("Failed to update project")
+			log.Fatal().Err(err).Msg("Failed to update project")
 		}
 
 		// Show result

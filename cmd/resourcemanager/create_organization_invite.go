@@ -43,7 +43,9 @@ func init() {
 
 func createOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	email, argsUsed := cmd.ReqOption("email", createOrganizationInviteArgs.email, args, 0)
+	log := cmd.CLILog
+	cargs := createOrganizationInviteArgs
+	email, argsUsed := cmd.ReqOption("email", cargs.email, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,7 +55,7 @@ func createOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, createOrganizationInviteArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
 
 	// Create invite
 	result, err := rmc.CreateOrganizationInvite(ctx, &rm.OrganizationInvite{
@@ -61,7 +63,7 @@ func createOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 		Email:          email,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create organization invite")
+		log.Fatal().Err(err).Msg("Failed to create organization invite")
 	}
 
 	// Show result

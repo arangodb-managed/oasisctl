@@ -42,7 +42,9 @@ func init() {
 
 func getRegionCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	regionID, argsUsed := cmd.OptOption("region-id", getRegionArgs.regionID, args, 0)
+	log := cmd.CLILog
+	cargs := getRegionArgs
+	regionID, argsUsed := cmd.OptOption("region-id", cargs.regionID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -51,7 +53,7 @@ func getRegionCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch region
-	item := selection.MustSelectRegion(ctx, cmd.CLILog, regionID, getRegionArgs.providerID, platformc)
+	item := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, platformc)
 
 	// Show result
 	fmt.Println(format.Region(item, cmd.RootArgs.Format))

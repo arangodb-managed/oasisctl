@@ -52,7 +52,9 @@ func init() {
 
 func createCACertificateCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createCACertificateArgs.name, args, 0)
+	log := cmd.CLILog
+	cargs := createCACertificateArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
 	description := createCACertificateArgs.description
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
@@ -63,12 +65,12 @@ func createCACertificateCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch project
-	project := selection.MustSelectProject(ctx, cmd.CLILog, createCACertificateArgs.projectID, createCACertificateArgs.organizationID, rmc)
+	project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
 	// Create ca certificate
 	var lifetime *types.Duration
-	if createCACertificateArgs.lifetime > 0 {
-		lifetime = types.DurationProto(createCACertificateArgs.lifetime)
+	if cargs.lifetime > 0 {
+		lifetime = types.DurationProto(cargs.lifetime)
 	}
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId:   project.GetId(),
@@ -77,7 +79,7 @@ func createCACertificateCmdRun(c *cobra.Command, args []string) {
 		Lifetime:    lifetime,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create CA certificate")
+		log.Fatal().Err(err).Msg("Failed to create CA certificate")
 	}
 
 	// Show result

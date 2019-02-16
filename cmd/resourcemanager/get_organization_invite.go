@@ -43,7 +43,9 @@ func init() {
 
 func getOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	inviteID, argsUsed := cmd.OptOption("invite-id", getOrganizationInviteArgs.inviteID, args, 0)
+	log := cmd.CLILog
+	cargs := getOrganizationInviteArgs
+	inviteID, argsUsed := cmd.OptOption("invite-id", cargs.inviteID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,7 +55,7 @@ func getOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization invite
-	item := selection.MustSelectOrganizationInvite(ctx, cmd.CLILog, inviteID, getOrganizationInviteArgs.organizationID, rmc)
+	item := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Show result
 	fmt.Println(format.OrganizationInvite(ctx, item, iamc, cmd.RootArgs.Format))

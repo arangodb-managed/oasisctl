@@ -35,6 +35,7 @@ func init() {
 
 func listOrganizationsCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
+	log := cmd.CLILog
 	cmd.MustCheckNumberOfArgs(args, 0)
 
 	// Connect
@@ -45,7 +46,7 @@ func listOrganizationsCmdRun(c *cobra.Command, args []string) {
 	// Fetch organizations
 	list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list organizations")
+		log.Fatal().Err(err).Msg("Failed to list organizations")
 	}
 
 	// Show result

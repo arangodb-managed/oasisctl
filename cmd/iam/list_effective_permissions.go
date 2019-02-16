@@ -40,7 +40,9 @@ func init() {
 
 func listEffectivePermissionsCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	url, argsUsed := cmd.ReqOption("url", listEffectivePermissionsArgs.url, args, 0)
+	log := cmd.CLILog
+	cargs := listEffectivePermissionsArgs
+	url, argsUsed := cmd.ReqOption("url", cargs.url, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -51,7 +53,7 @@ func listEffectivePermissionsCmdRun(c *cobra.Command, args []string) {
 	// Fetch permissions
 	list, err := iamc.GetEffectivePermissions(ctx, &common.URLOptions{Url: url})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list organizations")
+		log.Fatal().Err(err).Msg("Failed to list organizations")
 	}
 
 	// Show result

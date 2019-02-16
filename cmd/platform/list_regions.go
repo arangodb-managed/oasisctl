@@ -41,7 +41,9 @@ func init() {
 
 func listRegionsCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	providerID, argsUsed := cmd.OptOption("provider-id", listRegionsArgs.providerID, args, 0)
+	log := cmd.CLILog
+	cargs := listRegionsArgs
+	providerID, argsUsed := cmd.OptOption("provider-id", cargs.providerID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -50,12 +52,12 @@ func listRegionsCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch provider
-	provider := selection.MustSelectProvider(ctx, cmd.CLILog, providerID, platformc)
+	provider := selection.MustSelectProvider(ctx, log, providerID, platformc)
 
 	// Fetch regions in provider
 	list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list regions")
+		log.Fatal().Err(err).Msg("Failed to list regions")
 	}
 
 	// Show result

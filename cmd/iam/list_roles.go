@@ -42,7 +42,9 @@ func init() {
 
 func listRolesCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", listRolesArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := listRolesArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -52,12 +54,12 @@ func listRolesCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	// Fetch roles in organization
 	list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list roles")
+		log.Fatal().Err(err).Msg("Failed to list roles")
 	}
 
 	// Show result

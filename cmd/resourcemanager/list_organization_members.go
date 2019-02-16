@@ -42,7 +42,9 @@ func init() {
 
 func listOrganizationMembersCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", listOrganizationMembersArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := listOrganizationMembersArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -52,11 +54,11 @@ func listOrganizationMembersCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	list, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list organization members")
+		log.Fatal().Err(err).Msg("Failed to list organization members")
 	}
 
 	// Show result

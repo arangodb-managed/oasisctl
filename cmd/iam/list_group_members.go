@@ -44,7 +44,9 @@ func init() {
 
 func listGroupMembersCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	groupID, argsUsed := cmd.ReqOption("group-id", listGroupMembersArgs.groupID, args, 0)
+	log := cmd.CLILog
+	cargs := listGroupMembersArgs
+	groupID, argsUsed := cmd.ReqOption("group-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -54,11 +56,11 @@ func listGroupMembersCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch group
-	group := selection.MustSelectGroup(ctx, cmd.CLILog, groupID, listGroupMembersArgs.organizationID, iamc, rmc)
+	group := selection.MustSelectGroup(ctx, log, groupID, cargs.organizationID, iamc, rmc)
 
 	list, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: group.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list group members")
+		log.Fatal().Err(err).Msg("Failed to list group members")
 	}
 
 	// Show result

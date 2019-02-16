@@ -42,7 +42,9 @@ func init() {
 
 func listOrganizationInvitesCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", listOrganizationInvitesArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := listOrganizationInvitesArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -52,11 +54,11 @@ func listOrganizationInvitesCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	list, err := rmc.ListOrganizationInvites(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list organization invites")
+		log.Fatal().Err(err).Msg("Failed to list organization invites")
 	}
 
 	// Show result

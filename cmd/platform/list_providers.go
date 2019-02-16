@@ -35,6 +35,7 @@ func init() {
 
 func listProvidersCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
+	log := cmd.CLILog
 	cmd.MustCheckNumberOfArgs(args, 0)
 
 	// Connect
@@ -45,7 +46,7 @@ func listProvidersCmdRun(c *cobra.Command, args []string) {
 	// Fetch providers
 	list, err := platformc.ListProviders(ctx, &common.ListOptions{})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list providers")
+		log.Fatal().Err(err).Msg("Failed to list providers")
 	}
 
 	// Show result
