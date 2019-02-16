@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
@@ -35,8 +35,8 @@ func init() {
 	cmd.CreateCmd.AddCommand(createOrganizationCmd)
 
 	f := createOrganizationCmd.Flags()
-	f.StringVarP(&createOrganizationArgs.name, "name", "n", "", "Name of the organization")
-	f.StringVarP(&createOrganizationArgs.description, "description", "d", "", "Description of the organization")
+	f.StringVar(&createOrganizationArgs.name, "name", "", "Name of the organization")
+	f.StringVar(&createOrganizationArgs.description, "description", "", "Description of the organization")
 }
 
 func createOrganizationCmdRun(c *cobra.Command, args []string) {

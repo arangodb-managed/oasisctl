@@ -41,8 +41,8 @@ func init() {
 	f := updateRoleCmd.Flags()
 	f.StringVarP(&updateRoleArgs.roleID, "role-id", "r", cmd.DefaultRole(), "Identifier of the role")
 	f.StringVarP(&updateRoleArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateRoleArgs.name, "name", "n", "", "Name of the role")
-	f.StringVarP(&updateRoleArgs.description, "description", "d", "", "Description of the role")
+	f.StringVar(&updateRoleArgs.name, "name", "", "Name of the role")
+	f.StringVar(&updateRoleArgs.description, "description", "", "Description of the role")
 }
 
 func updateRoleCmdRun(c *cobra.Command, args []string) {

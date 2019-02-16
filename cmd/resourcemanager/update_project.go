@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
@@ -39,8 +39,8 @@ func init() {
 	f := updateProjectCmd.Flags()
 	f.StringVarP(&updateProjectArgs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 	f.StringVarP(&updateProjectArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateProjectArgs.name, "name", "n", "", "Name of the project")
-	f.StringVarP(&updateProjectArgs.description, "description", "d", "", "Description of the project")
+	f.StringVar(&updateProjectArgs.name, "name", "", "Name of the project")
+	f.StringVar(&updateProjectArgs.description, "description", "", "Description of the project")
 }
 
 func updateProjectCmdRun(c *cobra.Command, args []string) {

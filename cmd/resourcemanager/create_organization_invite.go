@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
@@ -37,7 +37,7 @@ func init() {
 	createOrganizationCmd.AddCommand(createOrganizationInviteCmd)
 
 	f := createOrganizationInviteCmd.Flags()
-	f.StringVarP(&createOrganizationInviteArgs.email, "email", "e", "", "Email address of the person to invite")
+	f.StringVar(&createOrganizationInviteArgs.email, "email", "", "Email address of the person to invite")
 	f.StringVarP(&createOrganizationInviteArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the invite in")
 }
 

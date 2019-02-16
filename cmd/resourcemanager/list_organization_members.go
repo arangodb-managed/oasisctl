@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 

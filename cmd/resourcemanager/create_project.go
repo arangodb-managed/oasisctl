@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
@@ -37,8 +37,8 @@ func init() {
 	cmd.CreateCmd.AddCommand(createProjectCmd)
 
 	f := createProjectCmd.Flags()
-	f.StringVarP(&createProjectArgs.name, "name", "n", "", "Name of the project")
-	f.StringVarP(&createProjectArgs.description, "description", "d", "", "Description of the project")
+	f.StringVar(&createProjectArgs.name, "name", "", "Name of the project")
+	f.StringVar(&createProjectArgs.description, "description", "", "Description of the project")
 	f.StringVarP(&createProjectArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the project in")
 }
 

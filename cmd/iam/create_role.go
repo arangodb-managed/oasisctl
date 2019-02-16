@@ -40,8 +40,8 @@ func init() {
 	cmd.CreateCmd.AddCommand(createRoleCmd)
 
 	f := createRoleCmd.Flags()
-	f.StringVarP(&createRoleArgs.name, "name", "n", "", "Name of the role")
-	f.StringVarP(&createRoleArgs.description, "description", "d", "", "Description of the role")
+	f.StringVar(&createRoleArgs.name, "name", "", "Name of the role")
+	f.StringVar(&createRoleArgs.description, "description", "", "Description of the role")
 	f.StringSliceVarP(&createRoleArgs.permissions, "permission", "p", nil, "Permissions granted by the role")
 	f.StringVarP(&createRoleArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the role in")
 }

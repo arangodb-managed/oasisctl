@@ -39,8 +39,8 @@ func init() {
 	cmd.CreateCmd.AddCommand(createGroupCmd)
 
 	f := createGroupCmd.Flags()
-	f.StringVarP(&createGroupArgs.name, "name", "n", "", "Name of the group")
-	f.StringVarP(&createGroupArgs.description, "description", "d", "", "Description of the group")
+	f.StringVar(&createGroupArgs.name, "name", "", "Name of the group")
+	f.StringVar(&createGroupArgs.description, "description", "", "Description of the group")
 	f.StringVarP(&createGroupArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the group in")
 }
 

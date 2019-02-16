@@ -41,8 +41,8 @@ func init() {
 	f := updateGroupCmd.Flags()
 	f.StringVarP(&updateGroupArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group")
 	f.StringVarP(&updateGroupArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateGroupArgs.name, "name", "n", "", "Name of the group")
-	f.StringVarP(&updateGroupArgs.description, "description", "d", "", "Description of the group")
+	f.StringVar(&updateGroupArgs.name, "name", "", "Name of the group")
+	f.StringVar(&updateGroupArgs.description, "description", "", "Description of the group")
 }
 
 func updateGroupCmdRun(c *cobra.Command, args []string) {

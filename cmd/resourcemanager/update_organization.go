@@ -38,8 +38,8 @@ func init() {
 	cmd.UpdateCmd.AddCommand(updateOrganizationCmd)
 	f := updateOrganizationCmd.Flags()
 	f.StringVarP(&updateOrganizationArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateOrganizationArgs.name, "name", "n", "", "Name of the organization")
-	f.StringVarP(&updateOrganizationArgs.description, "description", "d", "", "Description of the organization")
+	f.StringVar(&updateOrganizationArgs.name, "name", "", "Name of the organization")
+	f.StringVar(&updateOrganizationArgs.description, "description", "", "Description of the organization")
 }
 
 func updateOrganizationCmdRun(c *cobra.Command, args []string) {
