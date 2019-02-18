@@ -43,5 +43,5 @@ update-modules:
 	rm -f go.mod go.sum 
 	go mod init
 	go get -u \
-		github.com/arangodb-managed/apis@v0.1.0
+		github.com/arangodb-managed/apis@invite-info
 	go mod tidy
