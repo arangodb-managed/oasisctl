@@ -6,7 +6,7 @@
 // Author Ewout Prangsma
 //
 
-package crypto
+package data
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	crypto "github.com/arangodb-managed/apis/crypto/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
@@ -31,32 +31,32 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				cacertID       string
+				deploymentID   string
 				organizationID string
 				projectID      string
 				name           string
 				description    string
 			}{}
-			f.StringVarP(&cargs.cacertID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate")
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
-			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
-			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
+			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
+			f.StringVar(&cargs.description, "description", "", "Description of the deployment")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				cacertID, argsUsed := cmd.OptOption("cacertificate-id", cargs.cacertID, args, 0)
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
-				cryptoc := crypto.NewCryptoServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch CA certificate
-				item := selection.MustSelectCACertificate(ctx, log, cacertID, cargs.projectID, cargs.organizationID, cryptoc, rmc)
+				// Fetch deployment
+				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
 				// Set changes
 				f := c.Flags()
@@ -72,15 +72,15 @@ func init() {
 				if !hasChanges {
 					fmt.Println("No changes")
 				} else {
-					// Update CA certificate
-					updated, err := cryptoc.UpdateCACertificate(ctx, item)
+					// Update deployment
+					updated, err := datac.UpdateDeployment(ctx, item)
 					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to update CA certificate")
+						log.Fatal().Err(err).Msg("Failed to update deployment")
 					}
 
 					// Show result
-					fmt.Println("Updated CA certificate!")
-					fmt.Println(format.CACertificate(updated, cmd.RootArgs.Format))
+					fmt.Println("Updated deployment!")
+					fmt.Println(format.Deployment(updated, cmd.RootArgs.Format))
 				}
 			}
 		},

@@ -43,7 +43,9 @@ func init() {
 
 func getGroupCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	groupID, argsUsed := cmd.OptOption("group-id", getGroupArgs.groupID, args, 0)
+	log := cmd.CLILog
+	cargs := getGroupArgs
+	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,7 +55,7 @@ func getGroupCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch group
-	item := selection.MustSelectGroup(ctx, cmd.CLILog, groupID, getGroupArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectGroup(ctx, log, groupID, cargs.organizationID, iamc, rmc)
 
 	// Show result
 	fmt.Println(format.Group(item, cmd.RootArgs.Format))

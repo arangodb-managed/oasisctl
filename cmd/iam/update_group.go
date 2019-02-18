@@ -41,13 +41,15 @@ func init() {
 	f := updateGroupCmd.Flags()
 	f.StringVarP(&updateGroupArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group")
 	f.StringVarP(&updateGroupArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateGroupArgs.name, "name", "n", "", "Name of the group")
-	f.StringVarP(&updateGroupArgs.description, "description", "d", "", "Description of the group")
+	f.StringVar(&updateGroupArgs.name, "name", "", "Name of the group")
+	f.StringVar(&updateGroupArgs.description, "description", "", "Description of the group")
 }
 
 func updateGroupCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	groupID, argsUsed := cmd.OptOption("group-id", updateGroupArgs.groupID, args, 0)
+	log := cmd.CLILog
+	cargs := updateGroupArgs
+	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -57,17 +59,17 @@ func updateGroupCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch group
-	item := selection.MustSelectGroup(ctx, cmd.CLILog, groupID, updateGroupArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectGroup(ctx, log, groupID, cargs.organizationID, iamc, rmc)
 
 	// Set changes
 	f := c.Flags()
 	hasChanges := false
 	if f.Changed("name") {
-		item.Name = updateGroupArgs.name
+		item.Name = cargs.name
 		hasChanges = true
 	}
 	if f.Changed("description") {
-		item.Description = updateGroupArgs.description
+		item.Description = cargs.description
 		hasChanges = true
 	}
 	if !hasChanges {
@@ -76,7 +78,7 @@ func updateGroupCmdRun(c *cobra.Command, args []string) {
 		// Update group
 		updated, err := iamc.UpdateGroup(ctx, item)
 		if err != nil {
-			cmd.CLILog.Fatal().Err(err).Msg("Failed to update group")
+			log.Fatal().Err(err).Msg("Failed to update group")
 		}
 
 		// Show result

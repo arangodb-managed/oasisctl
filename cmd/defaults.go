@@ -32,5 +32,8 @@ func DefaultProvider() string { return envOrDefault("PROVIDER", "") }
 // DefaultRegion returns the default value for a region identifier
 func DefaultRegion() string { return envOrDefault("REGION", "") }
 
+// DefaultDeployment returns the default value for a deployment identifier
+func DefaultDeployment() string { return envOrDefault("DEPLOYMENT", "") }
+
 // DefaultURL returns the default value for a URL
 func DefaultURL() string { return envOrDefault("URL", "") }

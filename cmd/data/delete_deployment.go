@@ -6,7 +6,7 @@
 // Author Ewout Prangsma
 //
 
-package crypto
+package data
 
 import (
 	"fmt"
@@ -14,50 +14,54 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	crypto "github.com/arangodb-managed/apis/crypto/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
-	"github.com/arangodb-managed/oasis/pkg/format"
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.GetCmd,
+		cmd.DeleteCmd,
 		&cobra.Command{
-			Use:   "cacertificate",
-			Short: "Get a CA certificate the authenticated user has access to",
+			Use:   "deployment",
+			Short: "Delete a deployment the authenticated user has access to",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				cacertID       string
 				organizationID string
 				projectID      string
+				deploymentID   string
 			}{}
-			f.StringVarP(&cargs.cacertID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate")
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				cacertID, argsUsed := cmd.OptOption("cacertificate-id", cargs.cacertID, args, 0)
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
-				cryptoc := crypto.NewCryptoServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch CA certificate
-				item := selection.MustSelectCACertificate(ctx, log, cacertID, cargs.projectID, cargs.organizationID, cryptoc, rmc)
+				// Fetch deployment
+				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Delete deployment
+				if _, err := datac.DeleteDeployment(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
+					cmd.CLILog.Fatal().Err(err).Msg("Failed to delete deployment")
+				}
 
 				// Show result
-				fmt.Println(format.CACertificate(item, cmd.RootArgs.Format))
+				fmt.Println("Deleted deployment!")
 			}
-
 		},
 	)
 }

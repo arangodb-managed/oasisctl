@@ -9,8 +9,8 @@
 package rm
 
 import (
-	"github.com/arangodb-managed/oasis/cmd"
 	"fmt"
+	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
@@ -35,14 +35,16 @@ func init() {
 	cmd.CreateCmd.AddCommand(createOrganizationCmd)
 
 	f := createOrganizationCmd.Flags()
-	f.StringVarP(&createOrganizationArgs.name, "name", "n", "", "Name of the organization")
-	f.StringVarP(&createOrganizationArgs.description, "description", "d", "", "Description of the organization")
+	f.StringVar(&createOrganizationArgs.name, "name", "", "Name of the organization")
+	f.StringVar(&createOrganizationArgs.description, "description", "", "Description of the organization")
 }
 
 func createOrganizationCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createOrganizationArgs.name, args, 0)
-	description := createOrganizationArgs.description
+	log := cmd.CLILog
+	cargs := createOrganizationArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+	description := cargs.description
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -56,7 +58,7 @@ func createOrganizationCmdRun(c *cobra.Command, args []string) {
 		Description: description,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create organization")
+		log.Fatal().Err(err).Msg("Failed to create organization")
 	}
 
 	// Show result

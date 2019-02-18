@@ -40,17 +40,19 @@ func init() {
 	cmd.CreateCmd.AddCommand(createRoleCmd)
 
 	f := createRoleCmd.Flags()
-	f.StringVarP(&createRoleArgs.name, "name", "n", "", "Name of the role")
-	f.StringVarP(&createRoleArgs.description, "description", "d", "", "Description of the role")
+	f.StringVar(&createRoleArgs.name, "name", "", "Name of the role")
+	f.StringVar(&createRoleArgs.description, "description", "", "Description of the role")
 	f.StringSliceVarP(&createRoleArgs.permissions, "permission", "p", nil, "Permissions granted by the role")
 	f.StringVarP(&createRoleArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the role in")
 }
 
 func createRoleCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createRoleArgs.name, args, 0)
-	description := createRoleArgs.description
-	permissions := createRoleArgs.permissions
+	log := cmd.CLILog
+	cargs := createRoleArgs
+	name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+	description := cargs.description
+	permissions := cargs.permissions
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -60,7 +62,7 @@ func createRoleCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, createRoleArgs.organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
 
 	// Create role
 	result, err := iamc.CreateRole(ctx, &iam.Role{
@@ -70,7 +72,7 @@ func createRoleCmdRun(c *cobra.Command, args []string) {
 		Permissions:    permissions,
 	})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create role")
+		log.Fatal().Err(err).Msg("Failed to create role")
 	}
 
 	// Show result

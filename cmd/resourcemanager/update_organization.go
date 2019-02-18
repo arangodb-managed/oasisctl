@@ -38,13 +38,15 @@ func init() {
 	cmd.UpdateCmd.AddCommand(updateOrganizationCmd)
 	f := updateOrganizationCmd.Flags()
 	f.StringVarP(&updateOrganizationArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&updateOrganizationArgs.name, "name", "n", "", "Name of the organization")
-	f.StringVarP(&updateOrganizationArgs.description, "description", "d", "", "Description of the organization")
+	f.StringVar(&updateOrganizationArgs.name, "name", "", "Name of the organization")
+	f.StringVar(&updateOrganizationArgs.description, "description", "", "Description of the organization")
 }
 
 func updateOrganizationCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", updateOrganizationArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := updateOrganizationArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,17 +55,17 @@ func updateOrganizationCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	item := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	item := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	// Set changes
 	f := c.Flags()
 	hasChanges := false
 	if f.Changed("name") {
-		item.Name = updateOrganizationArgs.name
+		item.Name = cargs.name
 		hasChanges = true
 	}
 	if f.Changed("description") {
-		item.Description = updateOrganizationArgs.description
+		item.Description = cargs.description
 		hasChanges = true
 	}
 	if !hasChanges {
@@ -72,7 +74,7 @@ func updateOrganizationCmdRun(c *cobra.Command, args []string) {
 		// Update project
 		updated, err := rmc.UpdateOrganization(ctx, item)
 		if err != nil {
-			cmd.CLILog.Fatal().Err(err).Msg("Failed to update organization")
+			log.Fatal().Err(err).Msg("Failed to update organization")
 		}
 
 		// Show result

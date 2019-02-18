@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	platform "github.com/arangodb-managed/apis/platform/v1"
 
@@ -20,39 +21,38 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
-var (
-	// getRegionCmd fetches a region that the user has access to
-	getRegionCmd = &cobra.Command{
-		Use:   "region",
-		Short: "Get a region the authenticated user has access to",
-		Run:   getRegionCmdRun,
-	}
-	getRegionArgs struct {
-		regionID   string
-		providerID string
-	}
-)
-
 func init() {
-	cmd.GetCmd.AddCommand(getRegionCmd)
-	f := getRegionCmd.Flags()
-	f.StringVarP(&getRegionArgs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
-	f.StringVarP(&getRegionArgs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
-}
+	cmd.InitCommand(
+		cmd.GetCmd,
+		&cobra.Command{
+			Use:   "region",
+			Short: "Get a region the authenticated user has access to",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				regionID   string
+				providerID string
+			}{}
+			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
+			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
 
-func getRegionCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	regionID, argsUsed := cmd.OptOption("region-id", getRegionArgs.regionID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				regionID, argsUsed := cmd.OptOption("region-id", cargs.regionID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	platformc := platform.NewPlatformServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Connect
+				conn := cmd.MustDialAPI()
+				platformc := platform.NewPlatformServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Fetch region
-	item := selection.MustSelectRegion(ctx, cmd.CLILog, regionID, getRegionArgs.providerID, platformc)
+				// Fetch region
+				item := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, platformc)
 
-	// Show result
-	fmt.Println(format.Region(item, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.Region(item, cmd.RootArgs.Format))
+			}
+		},
+	)
 }

@@ -43,7 +43,9 @@ func init() {
 
 func deleteRoleCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	roleID, argsUsed := cmd.OptOption("role-id", deleteRoleArgs.roleID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteRoleArgs
+	roleID, argsUsed := cmd.OptOption("role-id", cargs.roleID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -53,11 +55,11 @@ func deleteRoleCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch role
-	item := selection.MustSelectRole(ctx, cmd.CLILog, roleID, deleteRoleArgs.organizationID, iamc, rmc)
+	item := selection.MustSelectRole(ctx, log, roleID, cargs.organizationID, iamc, rmc)
 
 	// Delete role
 	if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete role")
+		log.Fatal().Err(err).Msg("Failed to delete role")
 	}
 
 	// Show result

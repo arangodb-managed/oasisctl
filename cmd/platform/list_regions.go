@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
@@ -21,43 +22,42 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
-var (
-	// listRegionsCmd fetches region of the given provider
-	listRegionsCmd = &cobra.Command{
-		Use:   "regions",
-		Short: "List all regions of the given provider",
-		Run:   listRegionsCmdRun,
-	}
-	listRegionsArgs struct {
-		providerID string
-	}
-)
-
 func init() {
-	cmd.ListCmd.AddCommand(listRegionsCmd)
-	f := listRegionsCmd.Flags()
-	f.StringVarP(&listRegionsArgs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
-}
+	cmd.InitCommand(
+		cmd.ListCmd,
+		&cobra.Command{
+			Use:   "regions",
+			Short: "List all regions of the given provider",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				providerID string
+			}{}
+			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
 
-func listRegionsCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	providerID, argsUsed := cmd.OptOption("provider-id", listRegionsArgs.providerID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				providerID, argsUsed := cmd.OptOption("provider-id", cargs.providerID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	platformc := platform.NewPlatformServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Connect
+				conn := cmd.MustDialAPI()
+				platformc := platform.NewPlatformServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Fetch provider
-	provider := selection.MustSelectProvider(ctx, cmd.CLILog, providerID, platformc)
+				// Fetch provider
+				provider := selection.MustSelectProvider(ctx, log, providerID, platformc)
 
-	// Fetch regions in provider
-	list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
-	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list regions")
-	}
+				// Fetch regions in provider
+				list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list regions")
+				}
 
-	// Show result
-	fmt.Println(format.RegionList(list.Items, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.RegionList(list.Items, cmd.RootArgs.Format))
+			}
+		},
+	)
 }

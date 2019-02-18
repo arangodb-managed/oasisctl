@@ -42,7 +42,9 @@ func init() {
 
 func deleteProjectCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	projectID, argsUsed := cmd.OptOption("project-id", deleteProjectArgs.projectID, args, 0)
+	log := cmd.CLILog
+	cargs := deleteProjectArgs
+	projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -51,11 +53,11 @@ func deleteProjectCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch project
-	item := selection.MustSelectProject(ctx, cmd.CLILog, projectID, deleteProjectArgs.organizationID, rmc)
+	item := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
 	// Delete project
 	if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to delete project")
+		log.Fatal().Err(err).Msg("Failed to delete project")
 	}
 
 	// Show result

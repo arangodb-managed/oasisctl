@@ -42,7 +42,9 @@ func init() {
 
 func listGroupsCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", listGroupsArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := listGroupsArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -52,12 +54,12 @@ func listGroupsCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	// Fetch groups in organization
 	list, err := iamc.ListGroups(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list groups")
+		log.Fatal().Err(err).Msg("Failed to list groups")
 	}
 
 	// Show result

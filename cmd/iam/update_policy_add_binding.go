@@ -46,11 +46,12 @@ func init() {
 func updatePolicyAddBindingCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
 	log := cmd.CLILog
-	url, argsUsed := cmd.OptOption("url", updatePolicyAddBindingArgs.url, args, 0)
-	roleID, _ := cmd.ReqOption("role-id", updatePolicyAddBindingArgs.roleID, nil, 0)
+	cargs := updatePolicyAddBindingArgs
+	url, argsUsed := cmd.OptOption("url", cargs.url, args, 0)
+	roleID, _ := cmd.ReqOption("role-id", cargs.roleID, nil, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
-	if len(updatePolicyAddBindingArgs.userIDs) == 0 &&
-		len(updatePolicyAddBindingArgs.groupIDs) == 0 {
+	if len(cargs.userIDs) == 0 &&
+		len(cargs.groupIDs) == 0 {
 		log.Fatal().Msg("Provide at least one --user-id or --group-id")
 	}
 
@@ -63,13 +64,13 @@ func updatePolicyAddBindingCmdRun(c *cobra.Command, args []string) {
 	req := &iam.RoleBindingsRequest{
 		ResourceUrl: url,
 	}
-	for _, uid := range updatePolicyAddBindingArgs.userIDs {
+	for _, uid := range cargs.userIDs {
 		req.Bindings = append(req.Bindings, &iam.RoleBinding{
 			MemberId: iam.CreateMemberIDFromUserID(uid),
 			RoleId:   roleID,
 		})
 	}
-	for _, gid := range updatePolicyAddBindingArgs.groupIDs {
+	for _, gid := range cargs.groupIDs {
 		req.Bindings = append(req.Bindings, &iam.RoleBinding{
 			MemberId: iam.CreateMemberIDFromGroupID(gid),
 			RoleId:   roleID,

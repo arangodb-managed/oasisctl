@@ -35,6 +35,7 @@ func init() {
 
 func getSelfCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
+	log := cmd.CLILog
 	cmd.MustCheckNumberOfArgs(args, 0)
 
 	// Connect
@@ -45,7 +46,7 @@ func getSelfCmdRun(c *cobra.Command, args []string) {
 	// Fetch user info
 	user, err := iamc.GetThisUser(ctx, &common.Empty{})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to get user info")
+		log.Fatal().Err(err).Msg("Failed to get user info")
 	}
 
 	// Show result

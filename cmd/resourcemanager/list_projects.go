@@ -41,7 +41,9 @@ func init() {
 
 func listProjectsCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
-	organizationID, argsUsed := cmd.OptOption("organization-id", listProjectsArgs.organizationID, args, 0)
+	log := cmd.CLILog
+	cargs := listProjectsArgs
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -50,12 +52,12 @@ func listProjectsCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Fetch organization
-	org := selection.MustSelectOrganization(ctx, cmd.CLILog, organizationID, rmc)
+	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
 	// Fetch projects in organization
 	list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list projects")
+		log.Fatal().Err(err).Msg("Failed to list projects")
 	}
 
 	// Show result

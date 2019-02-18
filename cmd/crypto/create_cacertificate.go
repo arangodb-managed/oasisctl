@@ -14,6 +14,7 @@ import (
 
 	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
@@ -23,64 +24,62 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
-var (
-	// createCACertificateCmd creates a new CA certificate
-	createCACertificateCmd = &cobra.Command{
-		Use:   "cacertificate",
-		Short: "Create a new CA certificate",
-		Run:   createCACertificateCmdRun,
-	}
-	createCACertificateArgs struct {
-		name           string
-		description    string
-		organizationID string
-		projectID      string
-		lifetime       time.Duration
-	}
-)
-
 func init() {
-	cmd.CreateCmd.AddCommand(createCACertificateCmd)
+	cmd.InitCommand(
+		cmd.CreateCmd,
+		&cobra.Command{
+			Use:   "cacertificate",
+			Short: "Create a new CA certificate",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				name           string
+				description    string
+				organizationID string
+				projectID      string
+				lifetime       time.Duration
+			}{}
+			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
+			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the CA certificate in")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the CA certificate in")
+			f.DurationVar(&cargs.lifetime, "lifetime", 0, "Lifetime of the CA certificate.")
 
-	f := createCACertificateCmd.Flags()
-	f.StringVarP(&createCACertificateArgs.name, "name", "n", "", "Name of the CA certificate")
-	f.StringVarP(&createCACertificateArgs.description, "description", "d", "", "Description of the CA certificate")
-	f.StringVarP(&createCACertificateArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the CA certificate in")
-	f.StringVarP(&createCACertificateArgs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the CA certificate in")
-	f.DurationVar(&createCACertificateArgs.lifetime, "lifetime", 0, "Lifetime of the CA certificate.")
-}
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
+				description := cargs.description
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-func createCACertificateCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	name, argsUsed := cmd.ReqOption("name", createCACertificateArgs.name, args, 0)
-	description := createCACertificateArgs.description
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+				// Connect
+				conn := cmd.MustDialAPI()
+				cryptoc := crypto.NewCryptoServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	cryptoc := crypto.NewCryptoServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Fetch project
+				project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
-	// Fetch project
-	project := selection.MustSelectProject(ctx, cmd.CLILog, createCACertificateArgs.projectID, createCACertificateArgs.organizationID, rmc)
+				// Create ca certificate
+				var lifetime *types.Duration
+				if cargs.lifetime > 0 {
+					lifetime = types.DurationProto(cargs.lifetime)
+				}
+				result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
+					ProjectId:   project.GetId(),
+					Name:        name,
+					Description: description,
+					Lifetime:    lifetime,
+				})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to create CA certificate")
+				}
 
-	// Create ca certificate
-	var lifetime *types.Duration
-	if createCACertificateArgs.lifetime > 0 {
-		lifetime = types.DurationProto(createCACertificateArgs.lifetime)
-	}
-	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId:   project.GetId(),
-		Name:        name,
-		Description: description,
-		Lifetime:    lifetime,
-	})
-	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to create CA certificate")
-	}
-
-	// Show result
-	fmt.Println("Success!")
-	fmt.Println(format.CACertificate(result, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println("Success!")
+				fmt.Println(format.CACertificate(result, cmd.RootArgs.Format))
+			}
+		},
+	)
 }

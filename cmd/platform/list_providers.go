@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
@@ -20,34 +21,33 @@ import (
 	"github.com/arangodb-managed/oasis/pkg/format"
 )
 
-var (
-	// listProvidersCmd fetches (cloud) providers
-	listProvidersCmd = &cobra.Command{
-		Use:   "providers",
-		Short: "List all providers the authenticated user has access to",
-		Run:   listProvidersCmdRun,
-	}
-)
-
 func init() {
-	cmd.ListCmd.AddCommand(listProvidersCmd)
-}
+	cmd.InitCommand(
+		cmd.ListCmd,
+		&cobra.Command{
+			Use:   "providers",
+			Short: "List all providers the authenticated user has access to",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				cmd.MustCheckNumberOfArgs(args, 0)
 
-func listProvidersCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	cmd.MustCheckNumberOfArgs(args, 0)
+				// Connect
+				conn := cmd.MustDialAPI()
+				platformc := platform.NewPlatformServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	platformc := platform.NewPlatformServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Fetch providers
+				list, err := platformc.ListProviders(ctx, &common.ListOptions{})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list providers")
+				}
 
-	// Fetch providers
-	list, err := platformc.ListProviders(ctx, &common.ListOptions{})
-	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list providers")
-	}
-
-	// Show result
-	fmt.Println(format.ProviderList(list.Items, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.ProviderList(list.Items, cmd.RootArgs.Format))
+			}
+		},
+	)
 }
