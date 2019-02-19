@@ -10,10 +10,12 @@ package rm
 
 import (
 	"fmt"
+
 	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
@@ -54,7 +56,7 @@ func rejectOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	invite := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Reject invite
-	if _, err := rmc.RejectOrganizationInvite(ctx, invite); err != nil {
+	if _, err := rmc.RejectOrganizationInvite(ctx, &common.IDOptions{Id: invite.GetId()}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to reject organization invite")
 	}
 

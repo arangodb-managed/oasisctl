@@ -56,7 +56,7 @@ func acceptOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	invite := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Accept invite
-	if _, err := rmc.AcceptOrganizationInvite(ctx, invite); err != nil {
+	if _, err := rmc.AcceptOrganizationInvite(ctx, &common.IDOptions{Id: invite.GetId()}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to accept organization invite")
 	}
 

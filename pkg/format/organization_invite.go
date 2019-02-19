@@ -18,10 +18,6 @@ import (
 
 // OrganizationInvite returns a single organization member formatted for humans.
 func OrganizationInvite(ctx context.Context, x *rm.OrganizationInvite, iamc iam.IAMServiceClient, opts Options) string {
-	createdByUserName := "?"
-	if user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetCreatedById()}); err == nil {
-		createdByUserName = user.GetName()
-	}
 	userName := "-"
 	if x.GetUserId() != "" {
 		if user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetUserId()}); err == nil {
@@ -31,7 +27,8 @@ func OrganizationInvite(ctx context.Context, x *rm.OrganizationInvite, iamc iam.
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"email", x.GetEmail()},
-		kv{"created-by", createdByUserName},
+		kv{"organization", x.GetOrganizationName()},
+		kv{"created-by", x.GetCreatedByName()},
 		kv{"accepted", formatTime(x.GetAcceptedAt(), "-")},
 		kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
 		kv{"user", userName},
@@ -44,10 +41,6 @@ func OrganizationInvite(ctx context.Context, x *rm.OrganizationInvite, iamc iam.
 func OrganizationInviteList(ctx context.Context, list []*rm.OrganizationInvite, iamc iam.IAMServiceClient, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		createdByUserName := "?"
-		if user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetCreatedById()}); err == nil {
-			createdByUserName = user.GetName()
-		}
 		userName := "-"
 		if x.GetUserId() != "" {
 			if user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetUserId()}); err == nil {
@@ -57,7 +50,8 @@ func OrganizationInviteList(ctx context.Context, list []*rm.OrganizationInvite, 
 		return []kv{
 			kv{"id", x.GetId()},
 			kv{"email", x.GetEmail()},
-			kv{"created-by", createdByUserName},
+			kv{"organization", x.GetOrganizationName()},
+			kv{"created-by", x.GetCreatedByName()},
 			kv{"accepted", formatTime(x.GetAcceptedAt(), "-")},
 			kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
 			kv{"user", userName},

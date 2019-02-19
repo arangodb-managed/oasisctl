@@ -10,10 +10,12 @@ package rm
 
 import (
 	"fmt"
+
 	"github.com/arangodb-managed/oasis/cmd"
 
 	"github.com/spf13/cobra"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasis/pkg/selection"
 )
@@ -54,7 +56,7 @@ func deleteOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	item := selection.MustSelectOrganizationInvite(ctx, log, inviteID, cargs.organizationID, rmc)
 
 	// Delete invite
-	if _, err := rmc.DeleteOrganizationInvite(ctx, item); err != nil {
+	if _, err := rmc.DeleteOrganizationInvite(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to delete organization invite")
 	}
 
