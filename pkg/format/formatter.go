@@ -101,11 +101,3 @@ func formatDuration(x *types.Duration, nilValue ...string) string {
 	d, _ := types.DurationFromProto(x)
 	return d.String()
 }
-
-// formatBool returns a human readable checkmark for the given boolean
-func formatBool(x bool) string {
-	if x {
-		return "\u2713"
-	}
-	return "-"
-}

@@ -33,7 +33,10 @@ var (
 		PersistentPreRun: rootCmdPersistentPreRun,
 	}
 
-	CLILog   = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
+	CLILog = zerolog.New(zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: !supportsColor(),
+	}).With().Timestamp().Logger()
 	RootArgs struct {
 		token    string
 		endpoint string
