@@ -56,7 +56,7 @@ func init() {
 				// Fetch deployments in project
 				list, err := datac.ListDeployments(ctx, &common.ListOptions{ContextId: project.GetId()})
 				if err != nil {
-					cmd.CLILog.Fatal().Err(err).Msg("Failed to list deployments")
+					log.Fatal().Err(err).Msg("Failed to list deployments")
 				}
 
 				// Show result
