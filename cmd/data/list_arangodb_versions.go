@@ -47,8 +47,14 @@ func init() {
 					log.Fatal().Err(err).Msg("Failed to list versions")
 				}
 
+				// Fetch default version
+				defaultVersion, err := datac.GetDefaultVersion(ctx, &common.Empty{})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to get default version")
+				}
+
 				// Show result
-				fmt.Println(format.VersionList(list.Items, cmd.RootArgs.Format))
+				fmt.Println(format.VersionList(list.Items, defaultVersion, cmd.RootArgs.Format))
 			}
 		},
 	)

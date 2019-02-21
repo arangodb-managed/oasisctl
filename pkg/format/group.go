@@ -35,5 +35,5 @@ func GroupList(list []*iam.Group, opts Options) string {
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
-	})
+	}, false)
 }

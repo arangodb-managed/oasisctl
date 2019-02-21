@@ -41,5 +41,5 @@ func RoleList(list []*iam.Role, opts Options) string {
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
-	})
+	}, false)
 }

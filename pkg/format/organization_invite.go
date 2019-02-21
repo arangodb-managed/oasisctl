@@ -58,5 +58,5 @@ func OrganizationInviteList(ctx context.Context, list []*rm.OrganizationInvite, 
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 			kv{"url", x.GetUrl()},
 		}
-	})
+	}, false)
 }

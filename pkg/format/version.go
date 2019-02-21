@@ -20,11 +20,12 @@ func Version(x *data.Version, opts Options) string {
 }
 
 // VersionList returns a list of versions formatted for humans.
-func VersionList(list []*data.Version, opts Options) string {
+func VersionList(list []*data.Version, defaultVersion *data.Version, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
 			kv{"version", x.GetVersion()},
+			kv{"default", formatBool(x.GetVersion() == defaultVersion.GetVersion())},
 		}
-	})
+	}, true)
 }

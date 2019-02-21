@@ -38,5 +38,5 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
-	})
+	}, false)
 }

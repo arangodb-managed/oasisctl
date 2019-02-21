@@ -47,5 +47,5 @@ func GroupMemberList(ctx context.Context, list []string, iamc iam.IAMServiceClie
 			kv{"name", userName},
 			kv{"email", userEmail},
 		}
-	})
+	}, false)
 }

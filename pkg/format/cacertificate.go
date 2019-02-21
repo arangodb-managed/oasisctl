@@ -37,5 +37,5 @@ func CACertificateList(list []*crypto.CACertificate, opts Options) string {
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
-	})
+	}, false)
 }
