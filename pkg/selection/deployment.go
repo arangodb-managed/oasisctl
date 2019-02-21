@@ -35,6 +35,18 @@ func MustSelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID
 	}
 	result, err := datac.GetDeployment(ctx, &common.IDOptions{Id: id})
 	if err != nil {
+		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+			// Try to lookup deployment by name or URL
+			project := MustSelectProject(ctx, log, projectID, orgID, rmc)
+			list, err := datac.ListDeployments(ctx, &common.ListOptions{ContextId: project.GetId()})
+			if err == nil {
+				for _, x := range list.Items {
+					if x.GetName() == id || x.GetUrl() == id {
+						return x
+					}
+				}
+			}
+		}
 		log.Fatal().Err(err).Str("deployment", id).Msg("Failed to get deployment")
 	}
 	return result

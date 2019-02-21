@@ -33,6 +33,17 @@ func MustSelectProvider(ctx context.Context, log zerolog.Logger, id string, plat
 	}
 	result, err := platformc.GetProvider(ctx, &common.IDOptions{Id: id})
 	if err != nil {
+		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+			// Try to lookup provider by name or URL
+			list, err := platformc.ListProviders(ctx, &common.ListOptions{})
+			if err == nil {
+				for _, x := range list.Items {
+					if x.GetName() == id {
+						return x
+					}
+				}
+			}
+		}
 		log.Fatal().Err(err).Str("provider", id).Msg("Failed to get provider")
 	}
 	return result

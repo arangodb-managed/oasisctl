@@ -35,6 +35,18 @@ func MustSelectGroup(ctx context.Context, log zerolog.Logger, id, orgID string, 
 	}
 	result, err := iamc.GetGroup(ctx, &common.IDOptions{Id: id})
 	if err != nil {
+		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+			// Try to lookup group by name or URL
+			org := MustSelectOrganization(ctx, log, orgID, rmc)
+			list, err := iamc.ListGroups(ctx, &common.ListOptions{ContextId: org.GetId()})
+			if err == nil {
+				for _, x := range list.Items {
+					if x.GetName() == id || x.GetUrl() == id {
+						return x
+					}
+				}
+			}
+		}
 		log.Fatal().Err(err).Str("group", id).Msg("Failed to get group")
 	}
 	return result
