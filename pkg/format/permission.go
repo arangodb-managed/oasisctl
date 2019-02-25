@@ -59,5 +59,5 @@ func PermissionList(list []string, opts Options) string {
 			kv{"kind", x.Kind},
 			kv{"verbs", strings.Join(x.Verbs, ", ")},
 		}
-	})
+	}, false)
 }

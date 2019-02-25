@@ -52,7 +52,7 @@ func formatObject(opts Options, data ...kv) string {
 
 // formatList returns a formatted representation of the given
 // list.
-func formatList(opts Options, list interface{}, getData func(int) []kv) string {
+func formatList(opts Options, list interface{}, getData func(int) []kv, noSort bool) string {
 	listv := reflect.ValueOf(list)
 	length := listv.Len()
 	if length == 0 {
@@ -74,7 +74,9 @@ func formatList(opts Options, list interface{}, getData func(int) []kv) string {
 		}
 		lines = append(lines, strings.Join(row, "|^|"))
 	}
-	sort.Strings(lines[1:])
+	if !noSort {
+		sort.Strings(lines[1:])
+	}
 	return columnize.Format(lines, listConfig)
 }
 

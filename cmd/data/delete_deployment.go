@@ -56,7 +56,7 @@ func init() {
 
 				// Delete deployment
 				if _, err := datac.DeleteDeployment(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-					cmd.CLILog.Fatal().Err(err).Msg("Failed to delete deployment")
+					log.Fatal().Err(err).Msg("Failed to delete deployment")
 				}
 
 				// Show result

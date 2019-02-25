@@ -32,5 +32,5 @@ func RegionList(list []*platform.Region, opts Options) string {
 			kv{"location", x.GetLocation()},
 			kv{"available", formatBool(x.GetAvailable())},
 		}
-	})
+	}, false)
 }

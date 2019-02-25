@@ -28,5 +28,5 @@ func ProviderList(list []*platform.Provider, opts Options) string {
 			kv{"id", x.GetId()},
 			kv{"name", x.GetName()},
 		}
-	})
+	}, false)
 }

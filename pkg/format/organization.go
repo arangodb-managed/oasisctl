@@ -35,5 +35,5 @@ func OrganizationList(list []*rm.Organization, opts Options) string {
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
-	})
+	}, false)
 }

@@ -30,5 +30,5 @@ func UserList(list []*iam.User, opts Options) string {
 			kv{"name", x.GetName()},
 			kv{"email", x.GetEmail()},
 		}
-	})
+	}, false)
 }

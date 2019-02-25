@@ -50,5 +50,5 @@ func OrganizationMemberList(ctx context.Context, list []*rm.Member, iamc iam.IAM
 			kv{"email", userEmail},
 			kv{"owner", formatBool(x.GetOwner())},
 		}
-	})
+	}, false)
 }

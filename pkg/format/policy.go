@@ -35,5 +35,5 @@ func Policy(ctx context.Context, x *iam.Policy, iamc iam.IAMServiceClient, opts 
 			kv{"role", roleName},
 			kv{"permissions", strings.Join(permissions, ", ")},
 		}
-	})
+	}, false)
 }
