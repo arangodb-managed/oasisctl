@@ -34,7 +34,7 @@ func MustSelectProject(ctx context.Context, log zerolog.Logger, id, orgID string
 	}
 	result, err := rmc.GetProject(ctx, &common.IDOptions{Id: id})
 	if err != nil {
-		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+		if common.IsNotFound(err) {
 			// Try to lookup project by name or URL
 			org := MustSelectOrganization(ctx, log, orgID, rmc)
 			list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})

@@ -34,7 +34,7 @@ func MustSelectRegion(ctx context.Context, log zerolog.Logger, id, providerID st
 	}
 	result, err := platformc.GetRegion(ctx, &common.IDOptions{Id: id})
 	if err != nil {
-		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+		if common.IsNotFound(err) {
 			// Try to lookup region by name or URL
 			provider := MustSelectProvider(ctx, log, providerID, platformc)
 			list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})

@@ -33,7 +33,7 @@ func MustSelectOrganization(ctx context.Context, log zerolog.Logger, id string, 
 	}
 	result, err := rmc.GetOrganization(ctx, &common.IDOptions{Id: id})
 	if err != nil {
-		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+		if common.IsNotFound(err) {
 			// Try to lookup organization by name or URL
 			list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
 			if err == nil {

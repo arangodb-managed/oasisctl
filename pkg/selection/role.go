@@ -35,7 +35,7 @@ func MustSelectRole(ctx context.Context, log zerolog.Logger, id, orgID string, i
 	}
 	result, err := iamc.GetRole(ctx, &common.IDOptions{Id: id})
 	if err != nil {
-		if common.IsNotFound(err) || common.IsPermissionDenied(err) {
+		if common.IsNotFound(err) {
 			// Try to lookup role by name or URL
 			org := MustSelectOrganization(ctx, log, orgID, rmc)
 			list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org.GetId()})
