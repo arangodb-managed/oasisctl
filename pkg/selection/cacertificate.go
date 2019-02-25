@@ -35,6 +35,18 @@ func MustSelectCACertificate(ctx context.Context, log zerolog.Logger, id, projec
 	}
 	result, err := cryptoc.GetCACertificate(ctx, &common.IDOptions{Id: id})
 	if err != nil {
+		if common.IsNotFound(err) {
+			// Try to lookup CA certificate by name or URL
+			project := MustSelectProject(ctx, log, projectID, orgID, rmc)
+			list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
+			if err == nil {
+				for _, x := range list.Items {
+					if x.GetName() == id || x.GetUrl() == id {
+						return x
+					}
+				}
+			}
+		}
 		log.Fatal().Err(err).Str("cacertificate", id).Msg("Failed to get CA certificate")
 	}
 	return result
