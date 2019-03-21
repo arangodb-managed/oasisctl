@@ -29,10 +29,12 @@ var (
 		Run:   updateRoleCmdRun,
 	}
 	updateRoleArgs struct {
-		roleID         string
-		organizationID string
-		name           string
-		description    string
+		roleID            string
+		organizationID    string
+		name              string
+		description       string
+		addPermissions    []string
+		removePermissions []string
 	}
 )
 
@@ -43,6 +45,8 @@ func init() {
 	f.StringVarP(&updateRoleArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	f.StringVar(&updateRoleArgs.name, "name", "", "Name of the role")
 	f.StringVar(&updateRoleArgs.description, "description", "", "Description of the role")
+	f.StringSliceVar(&updateRoleArgs.addPermissions, "add-permission", nil, "Permissions to add to the role")
+	f.StringSliceVar(&updateRoleArgs.removePermissions, "remove-permission", nil, "Permissions to remove from the role")
 }
 
 func updateRoleCmdRun(c *cobra.Command, args []string) {
@@ -72,6 +76,16 @@ func updateRoleCmdRun(c *cobra.Command, args []string) {
 		item.Description = cargs.description
 		hasChanges = true
 	}
+	if len(cargs.addPermissions) > 0 {
+		orgLen := len(item.GetPermissions())
+		item.Permissions = stringSliceUnion(item.GetPermissions(), cargs.addPermissions)
+		hasChanges = hasChanges || len(item.Permissions) != orgLen
+	}
+	if len(cargs.removePermissions) > 0 {
+		orgLen := len(item.GetPermissions())
+		item.Permissions = stringSliceExcept(item.GetPermissions(), cargs.removePermissions)
+		hasChanges = hasChanges || len(item.Permissions) != orgLen
+	}
 	if !hasChanges {
 		fmt.Println("No changes")
 	} else {
@@ -85,4 +99,35 @@ func updateRoleCmdRun(c *cobra.Command, args []string) {
 		fmt.Println("Updated role!")
 		fmt.Println(format.Role(updated, cmd.RootArgs.Format))
 	}
+}
+
+// stringSliceUnion returns a union of the elements in both slices.
+func stringSliceUnion(a, b []string) []string {
+	m := make(map[string]struct{})
+	for _, x := range a {
+		m[x] = struct{}{}
+	}
+	for _, x := range b {
+		m[x] = struct{}{}
+	}
+	result := make([]string, 0, len(m))
+	for x := range m {
+		result = append(result, x)
+	}
+	return result
+}
+
+// stringSliceExcept returns all elements of a that are not element of b.
+func stringSliceExcept(a, b []string) []string {
+	m := make(map[string]struct{})
+	for _, x := range b {
+		m[x] = struct{}{}
+	}
+	result := make([]string, 0, len(a))
+	for x := range m {
+		if _, found := m[x]; !found {
+			result = append(result, x)
+		}
+	}
+	return result
 }
