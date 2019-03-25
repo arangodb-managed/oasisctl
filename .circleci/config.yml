@@ -1,8 +1,8 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.11.5
+      - image: circleci/golang:1.12.1
     steps:
       - checkout
       - setup_remote_docker
@@ -26,8 +26,29 @@ jobs:
           paths:
             - "/go/pkg/mod"
 
+  test_update_modules:
+    docker:
+      - image: circleci/golang:1.12.1
+    steps:
+      - checkout
+      - run: |
+          make update-modules
+
 workflows:
   version: 2
-  build_test_push_deploy:
+  build_test_store_artifacts:
     jobs:
       - build
+  nightly:
+    triggers:
+      - schedule:
+          cron: "30 3 * * *" # format: <minute> <hour> <day-month> <month> <day-week> -- so every day at 03:30 
+          filters:
+            branches:
+              only: master
+    jobs:     
+      - test_update_modules
+      - build:
+          requires: 
+            - test_update_modules
+
