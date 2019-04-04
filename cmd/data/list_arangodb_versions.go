@@ -29,8 +29,10 @@ func init() {
 			Short: "List all supported ArangoDB versions",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
-			//cargs := &struct {}{}
-
+			cargs := &struct {
+				organizationID string
+			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
@@ -42,7 +44,7 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Fetch versions
-				list, err := datac.ListVersions(ctx, &common.ListOptions{})
+				list, err := datac.ListVersions(ctx, &data.ListVersionsRequest{OrganizationId: cargs.organizationID, Options: &common.ListOptions{}})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list versions")
 				}

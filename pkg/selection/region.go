@@ -20,10 +20,10 @@ import (
 // MustSelectRegion fetches the region with given ID.
 // If no ID is specified, all regions are fetched from the selected provider
 // and if the list is exactly 1 long, that region is returned.
-func MustSelectRegion(ctx context.Context, log zerolog.Logger, id, providerID string, platformc platform.PlatformServiceClient) *platform.Region {
+func MustSelectRegion(ctx context.Context, log zerolog.Logger, id, providerID string, organizationID string, platformc platform.PlatformServiceClient) *platform.Region {
 	if id == "" {
-		provider := MustSelectProvider(ctx, log, providerID, platformc)
-		list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
+		provider := MustSelectProvider(ctx, log, providerID, organizationID, platformc)
+		list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: organizationID, Options: &common.ListOptions{}})
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to list regions")
 		}
@@ -36,8 +36,8 @@ func MustSelectRegion(ctx context.Context, log zerolog.Logger, id, providerID st
 	if err != nil {
 		if common.IsNotFound(err) {
 			// Try to lookup region by name or URL
-			provider := MustSelectProvider(ctx, log, providerID, platformc)
-			list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
+			provider := MustSelectProvider(ctx, log, providerID, organizationID, platformc)
+			list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: organizationID, Options: &common.ListOptions{}})
 			if err == nil {
 				for _, x := range list.Items {
 					if x.GetLocation() == id {

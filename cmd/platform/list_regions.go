@@ -31,8 +31,10 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				providerID string
+				organizationID string
+				providerID     string
 			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -47,10 +49,10 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Fetch provider
-				provider := selection.MustSelectProvider(ctx, log, providerID, platformc)
+				provider := selection.MustSelectProvider(ctx, log, providerID, cargs.organizationID, platformc)
 
 				// Fetch regions in provider
-				list, err := platformc.ListRegions(ctx, &common.ListOptions{ContextId: provider.GetId()})
+				list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: cargs.organizationID, Options: &common.ListOptions{}})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list regions")
 				}

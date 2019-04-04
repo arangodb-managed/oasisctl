@@ -20,9 +20,9 @@ import (
 // MustSelectProvider fetches the provider with given ID.
 // If no ID is specified, all providers are fetched and if the user
 // is member of exactly 1, that provider is returned.
-func MustSelectProvider(ctx context.Context, log zerolog.Logger, id string, platformc platform.PlatformServiceClient) *platform.Provider {
+func MustSelectProvider(ctx context.Context, log zerolog.Logger, id string, organizationID string, platformc platform.PlatformServiceClient) *platform.Provider {
 	if id == "" {
-		list, err := platformc.ListProviders(ctx, &common.ListOptions{})
+		list, err := platformc.ListProviders(ctx, &platform.ListProvidersRequest{OrganizationId: organizationID, Options: &common.ListOptions{}})
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to list providers")
 		}
@@ -35,7 +35,7 @@ func MustSelectProvider(ctx context.Context, log zerolog.Logger, id string, plat
 	if err != nil {
 		if common.IsNotFound(err) {
 			// Try to lookup provider by name or URL
-			list, err := platformc.ListProviders(ctx, &common.ListOptions{})
+			list, err := platformc.ListProviders(ctx, &platform.ListProvidersRequest{OrganizationId: organizationID, Options: &common.ListOptions{}})
 			if err == nil {
 				for _, x := range list.Items {
 					if x.GetName() == id {
