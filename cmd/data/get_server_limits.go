@@ -60,7 +60,7 @@ func init() {
 				project := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
 				// Selection region
-				region := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, platformc)
+				region := selection.MustSelectRegion(ctx, log, regionID, project.OrganizationId, cargs.providerID, platformc)
 
 				// Fetch limits
 				item, err := datac.GetServersSpecLimits(ctx, &data.ServersSpecLimitsRequest{

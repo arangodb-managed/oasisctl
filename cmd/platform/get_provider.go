@@ -30,8 +30,10 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				organizationID string
 				providerID string
 			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -46,7 +48,7 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Fetch provider
-				item := selection.MustSelectProvider(ctx, log, providerID, platformc)
+				item := selection.MustSelectProvider(ctx, log, providerID, cargs.organizationID, platformc)
 
 				// Show result
 				fmt.Println(format.Provider(item, cmd.RootArgs.Format))

@@ -30,9 +30,11 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				organizationID string
 				regionID   string
 				providerID string
 			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
 			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")
 
@@ -48,7 +50,7 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Fetch region
-				item := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, platformc)
+				item := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, cargs.organizationID, platformc)
 
 				// Show result
 				fmt.Println(format.Region(item, cmd.RootArgs.Format))

@@ -29,6 +29,10 @@ func init() {
 			Short: "List all providers the authenticated user has access to",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				organizationID string
+			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
@@ -40,7 +44,7 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Fetch providers
-				list, err := platformc.ListProviders(ctx, &common.ListOptions{})
+				list, err := platformc.ListProviders(ctx, &platform.ListProvidersRequest{OrganizationId: cargs.organizationID, Options: &common.ListOptions{}})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list providers")
 				}
