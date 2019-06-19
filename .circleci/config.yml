@@ -1,8 +1,15 @@
 version: 2.1
+executors:
+  go-executor:
+    docker:
+      - image: circleci/golang:1.12.5
 jobs:
   build:
-    docker:
-      - image: circleci/golang:1.12.1
+    parameters:
+      update_modules:
+        type: boolean
+        default: false
+    executor: go-executor
     steps:
       - checkout
       - setup_remote_docker
@@ -13,6 +20,12 @@ jobs:
       - run: |
           go get
           make bootstrap
+      - when:
+          condition: <<parameters.update_modules>>
+          steps:
+            - run: |    
+                make update-modules
+      - run: |
           make all
       - run: |
           make test
@@ -25,14 +38,6 @@ jobs:
           key: go-mod-v1-{{ checksum "go.sum.orig" }}
           paths:
             - "/go/pkg/mod"
-
-  test_update_modules:
-    docker:
-      - image: circleci/golang:1.12.1
-    steps:
-      - checkout
-      - run: |
-          make update-modules
 
 workflows:
   version: 2
@@ -47,8 +52,6 @@ workflows:
             branches:
               only: master
     jobs:     
-      - test_update_modules
       - build:
-          requires: 
-            - test_update_modules
+          update_modules: true
 
