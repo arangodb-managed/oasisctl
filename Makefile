@@ -45,5 +45,5 @@ update-modules:
 	go mod edit \
 		-replace github.com/golang/lint=golang.org/x/lint@v0.0.0-20181026193005-c67002cb31c3
 	go get -u \
-		github.com/arangodb-managed/apis@v0.7.0
+		github.com/arangodb-managed/apis@v0.12.1
 	go mod tidy
