@@ -36,12 +36,14 @@ func init() {
 				projectID      string
 				name           string
 				description    string
+				ipwhitelistID  string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the deployment")
+			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -67,6 +69,10 @@ func init() {
 				}
 				if f.Changed("description") {
 					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("ipwhitelist-id") {
+					item.IpwhitelistId = cargs.ipwhitelistID
 					hasChanges = true
 				}
 				if !hasChanges {

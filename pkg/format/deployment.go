@@ -19,6 +19,7 @@ func Deployment(x *data.Deployment, opts Options) string {
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
 		kv{"region", x.GetRegionId()},
+		kv{"ipwhitelist", x.GetIpwhitelistId()},
 		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
 		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
@@ -35,6 +36,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			kv{"name", x.GetName()},
 			kv{"description", x.GetDescription()},
 			kv{"region", x.GetRegionId()},
+			kv{"ipwhitelist", x.GetIpwhitelistId()},
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}
