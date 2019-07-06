@@ -49,7 +49,7 @@ func init() {
 				// Validate arguments
 				log := CLILog
 				keyID, argsUsed := ReqOption("key-id", cargs.keyID, args, 0)
-				keySecret, argsUsed := ReqOption("key-secret", cargs.keyID, args, argsUsed)
+				keySecret, argsUsed := ReqOption("key-secret", cargs.keySecret, args, argsUsed)
 				MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
