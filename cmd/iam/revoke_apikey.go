@@ -44,7 +44,7 @@ func init() {
 				iamc := iam.NewIAMServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Delete API key
+				// Revoke API key
 				_, err := iamc.RevokeAPIKey(ctx, &common.IDOptions{
 					Id: apiKeyID,
 				})
