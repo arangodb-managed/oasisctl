@@ -9,34 +9,32 @@
 package format
 
 import (
-	data "github.com/arangodb-managed/apis/data/v1"
+	"strings"
+
+	security "github.com/arangodb-managed/apis/security/v1"
 )
 
-// Deployment returns a single deployment formatted for humans.
-func Deployment(x *data.Deployment, opts Options) string {
+// IPWhitelist returns a single IP whitelist formatted for humans.
+func IPWhitelist(x *security.IPWhitelist, opts Options) string {
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
-		kv{"region", x.GetRegionId()},
-		kv{"ipwhitelist", x.GetIpwhitelistId()},
+		kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
 		kv{"url", x.GetUrl()},
 		kv{"created-at", formatTime(x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
-		// TODO other relevant fields
 	)
 }
 
-// DeploymentList returns a list of deployments formatted for humans.
-func DeploymentList(list []*data.Deployment, opts Options) string {
+// IPWhitelistList returns a list of IP whitelists formatted for humans.
+func IPWhitelistList(list []*security.IPWhitelist, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
 			kv{"id", x.GetId()},
 			kv{"name", x.GetName()},
 			kv{"description", x.GetDescription()},
-			kv{"region", x.GetRegionId()},
-			kv{"ipwhitelist", x.GetIpwhitelistId()},
+			kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
 			kv{"url", x.GetUrl()},
 			kv{"created-at", formatTime(x.GetCreatedAt())},
 		}

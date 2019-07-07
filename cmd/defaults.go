@@ -26,6 +26,9 @@ func DefaultRole() string { return envOrDefault("ROLE", "") }
 // DefaultCACertificate returns the default value for a CA certificate identifier
 func DefaultCACertificate() string { return envOrDefault("CACERTIFICATE", "") }
 
+// DefaultIPWhitelist returns the default value for an IP whitelist identifier
+func DefaultIPWhitelist() string { return envOrDefault("IPWHITELIST", "") }
+
 // DefaultProvider returns the default value for a provider identifier
 func DefaultProvider() string { return envOrDefault("PROVIDER", "") }
 

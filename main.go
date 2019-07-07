@@ -19,6 +19,7 @@ import (
 	_ "github.com/arangodb-managed/oasis/cmd/iam"
 	_ "github.com/arangodb-managed/oasis/cmd/platform"
 	_ "github.com/arangodb-managed/oasis/cmd/resourcemanager"
+	_ "github.com/arangodb-managed/oasis/cmd/security"
 )
 
 func main() {

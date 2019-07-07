@@ -38,6 +38,7 @@ func init() {
 				projectID       string
 				regionID        string
 				cacertificateID string
+				ipwhitelistID   string
 				version         string
 				// TODO add other fields
 			}{}
@@ -47,6 +48,7 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the deployment in")
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region to create the deployment in")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
+			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -79,6 +81,7 @@ func init() {
 					Certificates: &data.Deployment_CertificateSpec{
 						CaCertificateId: cacert.GetId(),
 					},
+					IpwhitelistId: cargs.ipwhitelistID,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")
