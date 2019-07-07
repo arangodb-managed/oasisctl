@@ -26,8 +26,8 @@ func init() {
 	cmd.InitCommand(
 		cmd.UpdateCmd,
 		&cobra.Command{
-			Use:   "cacertificate",
-			Short: "Update a CA certificate the authenticated user has access to",
+			Use:   "deployment",
+			Short: "Update a deployment the authenticated user has access to",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
