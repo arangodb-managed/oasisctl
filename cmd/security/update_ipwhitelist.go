@@ -10,6 +10,7 @@ package security
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -98,6 +99,7 @@ func init() {
 				} else {
 					// Rebuild CidrRanges list
 					item.CidrRanges = make([]string, 0, len(cidrRanges))
+					sort.Strings(item.CidrRanges)
 					for x := range cidrRanges {
 						item.CidrRanges = append(item.CidrRanges, x)
 					}
