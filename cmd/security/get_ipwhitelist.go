@@ -35,7 +35,7 @@ func init() {
 				organizationID string
 				projectID      string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "c", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist")
+			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
