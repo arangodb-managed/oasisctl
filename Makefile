@@ -40,10 +40,12 @@ docker-push:
 
 .PHONY: update-modules
 update-modules:
-	rm -f go.mod go.sum 
-	go mod init
+	zutano update-check --quiet --fail
+	test -f go.mod || go mod init
 	go mod edit \
-		-replace github.com/golang/lint=golang.org/x/lint@v0.0.0-20181026193005-c67002cb31c3
-	go get -u \
-		github.com/arangodb-managed/apis@v0.12.1
+		$(shell zutano go mod replacements)
+	go get \
+		$(shell zutano go mod latest \
+			github.com/arangodb-managed/apis \
+		)
 	go mod tidy
