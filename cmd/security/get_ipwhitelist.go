@@ -51,7 +51,7 @@ func init() {
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch CA certificate
+				// Fetch IP whitelist
 				item := selection.MustSelectIPWhitelist(ctx, log, ipwhitelistID, cargs.projectID, cargs.organizationID, securityc, rmc)
 
 				// Show result
