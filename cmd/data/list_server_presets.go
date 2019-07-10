@@ -68,7 +68,7 @@ func init() {
 					RegionId:  region.GetId(),
 				})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list server presets")
+					log.Fatal().Err(err).Msg("Failed to list servers presets")
 				}
 
 				// Show result

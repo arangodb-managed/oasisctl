@@ -76,21 +76,7 @@ func init() {
 				// Select servers from preset, if specified
 				var servers *data.Deployment_ServersSpec
 				if cargs.serversPreset != "" {
-					list, err := datac.ListServersSpecPresets(ctx, &data.ServersSpecPresetsRequest{
-						ProjectId: project.GetId(),
-						RegionId:  regionID,
-					})
-					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to get servers preset")
-					}
-					for _, sp := range list.Items {
-						if sp.GetName() == cargs.serversPreset {
-							servers = sp.GetServers()
-						}
-					}
-					if servers == nil {
-						log.Fatal().Str("servers-preset", cargs.serversPreset).Msg("Failed to get servers preset: not found")
-					}
+					servers = selection.MustSelectServersSpec(ctx, log, cargs.serversPreset, project.GetId(), regionID, datac)
 				}
 
 				// Create deployment
