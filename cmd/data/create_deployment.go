@@ -40,6 +40,7 @@ func init() {
 				cacertificateID string
 				ipwhitelistID   string
 				version         string
+				serversPreset   string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -50,6 +51,7 @@ func init() {
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
+			f.StringVar(&cargs.serversPreset, "servers-preset", "", "Servers preset to use for the deployment")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -71,7 +73,13 @@ func init() {
 				// Select cacertificate (to use in deployment)
 				cacert := selection.MustSelectCACertificate(ctx, log, cargs.cacertificateID, project.GetId(), project.GetOrganizationId(), cryptoc, rmc)
 
-				// Create ca certificate
+				// Select servers from preset, if specified
+				var servers *data.Deployment_ServersSpec
+				if cargs.serversPreset != "" {
+					servers = selection.MustSelectServersSpec(ctx, log, cargs.serversPreset, project.GetId(), regionID, datac)
+				}
+
+				// Create deployment
 				result, err := datac.CreateDeployment(ctx, &data.Deployment{
 					ProjectId:   project.GetId(),
 					Name:        name,
@@ -82,6 +90,7 @@ func init() {
 						CaCertificateId: cacert.GetId(),
 					},
 					IpwhitelistId: cargs.ipwhitelistID,
+					Servers:       servers,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")
