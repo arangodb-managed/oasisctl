@@ -5,7 +5,7 @@ go 1.12
 replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
 
 require (
-	github.com/arangodb-managed/apis v0.12.3
+	github.com/arangodb-managed/apis v0.12.4
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.2.1
 	github.com/grpc-ecosystem/grpc-gateway v1.9.2 // indirect

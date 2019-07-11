@@ -86,7 +86,7 @@ func init() {
 
 					// Show result
 					fmt.Println("Updated deployment!")
-					fmt.Println(format.Deployment(updated, cmd.RootArgs.Format))
+					fmt.Println(format.Deployment(updated, cmd.RootArgs.Format, false))
 				}
 			}
 		},
