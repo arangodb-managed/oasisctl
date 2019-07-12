@@ -3,7 +3,7 @@
 //
 // Copyright 2019 ArangoDB Inc, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Robert Stam
 //
 
 package iam
