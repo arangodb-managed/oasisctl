@@ -53,7 +53,7 @@ func listEffectivePermissionsCmdRun(c *cobra.Command, args []string) {
 	// Fetch permissions
 	list, err := iamc.GetEffectivePermissions(ctx, &common.URLOptions{Url: url})
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list organizations")
+		log.Fatal().Err(err).Msg("Failed to list effective permissions")
 	}
 
 	// Show result
