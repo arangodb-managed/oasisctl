@@ -14,9 +14,11 @@ import (
 	"github.com/spf13/cobra"
 
 	iam "github.com/arangodb-managed/apis/iam/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 var (
@@ -58,22 +60,39 @@ func updatePolicyDeleteBindingCmdRun(c *cobra.Command, args []string) {
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
+	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
+
+	// Parse URL to get organization ID from URL
+	resURL, err := rm.ParseResourceURL(cargs.url)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Invalid resource URL")
+	}
+
+	// Get organization ID
+	orgID := resURL.OrganizationID()
+
+	// Fetch role
+	role := selection.MustSelectRole(ctx, log, roleID, orgID, iamc, rmc)
 
 	// Add role binding
 	req := &iam.RoleBindingsRequest{
 		ResourceUrl: url,
 	}
 	for _, uid := range cargs.userIDs {
+		// Append users
+		item := selection.MustSelectMember(ctx, log, uid, orgID, iamc, rmc)
 		req.Bindings = append(req.Bindings, &iam.RoleBinding{
-			MemberId: iam.CreateMemberIDFromUserID(uid),
-			RoleId:   roleID,
+			MemberId: iam.CreateMemberIDFromUserID(item.GetId()),
+			RoleId:   role.GetId(),
 		})
 	}
 	for _, gid := range cargs.groupIDs {
+		// Append groups
+		item := selection.MustSelectGroup(ctx, log, gid, orgID, iamc, rmc)
 		req.Bindings = append(req.Bindings, &iam.RoleBinding{
-			MemberId: iam.CreateMemberIDFromGroupID(gid),
-			RoleId:   roleID,
+			MemberId: iam.CreateMemberIDFromGroupID(item.GetId()),
+			RoleId:   role.GetId(),
 		})
 	}
 	updated, err := iamc.DeleteRoleBindings(ctx, req)

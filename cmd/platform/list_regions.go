@@ -16,6 +16,7 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
@@ -46,13 +47,21 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				platformc := platform.NewPlatformServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+
+				var orgID string
+				// Fetch organization
+				if cargs.organizationID != "" {
+					org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+					orgID = org.GetId()
+				}
 
 				// Fetch provider
 				provider := selection.MustSelectProvider(ctx, log, providerID, cargs.organizationID, platformc)
 
 				// Fetch regions in provider
-				list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: cargs.organizationID, Options: &common.ListOptions{}})
+				list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: orgID, Options: &common.ListOptions{}})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list regions")
 				}

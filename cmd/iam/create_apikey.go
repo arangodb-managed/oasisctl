@@ -15,9 +15,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	iam "github.com/arangodb-managed/apis/iam/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 func init() {
@@ -43,12 +45,20 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				iamc := iam.NewIAMServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+
+				var orgID string
+				// Fetch organization
+				if cargs.organizationID != "" {
+					org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+					orgID = org.GetId()
+				}
 
 				// Create API key
 				result, err := iamc.CreateAPIKey(ctx, &iam.CreateAPIKeyRequest{
 					Readonly:       cargs.readonly,
-					OrganizationId: cargs.organizationID,
+					OrganizationId: orgID,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create API key")

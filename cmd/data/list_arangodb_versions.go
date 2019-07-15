@@ -16,9 +16,11 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasis/pkg/selection"
 )
 
 func init() {
@@ -41,10 +43,18 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				var orgID string
+				// Fetch organization
+				if cargs.organizationID != "" {
+					org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+					orgID = org.GetId()
+				}
+
 				// Fetch versions
-				list, err := datac.ListVersions(ctx, &data.ListVersionsRequest{OrganizationId: cargs.organizationID, Options: &common.ListOptions{}})
+				list, err := datac.ListVersions(ctx, &data.ListVersionsRequest{OrganizationId: orgID, Options: &common.ListOptions{}})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list versions")
 				}
