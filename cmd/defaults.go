@@ -8,6 +8,13 @@
 
 package cmd
 
+import (
+	"github.com/arangodb-managed/oasis/pkg/format"
+)
+
+// DefaultFormat returns the default value for the output format
+func DefaultFormat() string { return envOrDefault("FORMAT", format.DefaultFormat) }
+
 // DefaultOrganization returns the default value for an organization identifier
 func DefaultOrganization() string { return envOrDefault("ORGANIZATION", "") }
 

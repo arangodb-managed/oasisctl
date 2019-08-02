@@ -28,11 +28,12 @@ func Deployment(x *data.Deployment, opts Options, showRootpassword bool) string 
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
 		kv{"region", x.GetRegionId()},
+		kv{"version", x.GetVersion()},
 		kv{"ipwhitelist", x.GetIpwhitelistId()},
 		kv{"url", x.GetUrl()},
-		kv{"created-at", formatTime(x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(x.GetDeletedAt(), "-")},
-		kv{"expires-at", formatTime(x.GetExpiration().GetExpiresAt(), "-")},
+		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
+		kv{"expires-at", formatTime(opts, x.GetExpiration().GetExpiresAt(), "-")},
 
 		kv{"coordinators", x.GetServers().GetCoordinators()},
 		kv{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
@@ -40,7 +41,7 @@ func Deployment(x *data.Deployment, opts Options, showRootpassword bool) string 
 		kv{"dbserver-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverMemorySize(), "GB")},
 		kv{"dbserver-disk-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverDiskSize(), "GB")},
 
-		kv{"bootstrapped-at", formatTime(x.GetStatus().GetBootstrappedAt(), "-")},
+		kv{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
 		kv{"endpoint-url", x.GetStatus().GetEndpoint()},
 		kv{"root-password", pwd(x.GetAuthentication().GetRootPassword())},
 		// TODO other relevant fields
@@ -56,9 +57,10 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			kv{"name", x.GetName()},
 			kv{"description", x.GetDescription()},
 			kv{"region", x.GetRegionId()},
+			kv{"version", x.GetVersion()},
 			kv{"ipwhitelist", x.GetIpwhitelistId()},
 			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(x.GetCreatedAt())},
+			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}
 	}, false)
 }

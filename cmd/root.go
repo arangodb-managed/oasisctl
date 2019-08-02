@@ -53,12 +53,13 @@ const (
 func init() {
 	f := RootCmd.PersistentFlags()
 	// Persistent flags
-	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.adbtest.xyz")
+	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.arangodb.com")
 	f.StringVar(&RootArgs.token, "token", "", "Token used to authenticate at ArangoDB Oasis")
 	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
+	f.StringVar(&RootArgs.Format.Format, "format", DefaultFormat(), "Output format (table|json)")
 }
 
-// Show usage of the given command
+// ShowUsage shows usage of the given command on stdout.
 func ShowUsage(cmd *cobra.Command, args []string) {
 	cmd.Usage()
 }

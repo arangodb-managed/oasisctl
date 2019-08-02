@@ -18,10 +18,10 @@ func APIKey(x *iam.APIKey, opts Options) string {
 		kv{"id", x.GetId()},
 		kv{"user-id", x.GetUserId()},
 		kv{"organization-id", x.GetOrganizationId()},
-		kv{"readonly", formatBool(x.GetIsReadonly())},
-		kv{"created-at", formatTime(x.GetCreatedAt())},
-		kv{"expires-at", formatTime(x.GetExpiresAt())},
-		kv{"revoked-at", formatTime(x.GetRevokedAt())},
+		kv{"readonly", formatBool(opts, x.GetIsReadonly())},
+		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+		kv{"expires-at", formatTime(opts, x.GetExpiresAt())},
+		kv{"revoked-at", formatTime(opts, x.GetRevokedAt())},
 	)
 }
 
@@ -33,10 +33,10 @@ func APIKeyList(list []*iam.APIKey, opts Options) string {
 			kv{"id", x.GetId()},
 			kv{"user-id", x.GetUserId()},
 			kv{"organization-id", x.GetOrganizationId()},
-			kv{"readonly", formatBool(x.GetIsReadonly())},
-			kv{"created-at", formatTime(x.GetCreatedAt())},
-			kv{"expires-at", formatTime(x.GetExpiresAt())},
-			kv{"revoked-at", formatTime(x.GetRevokedAt())},
+			kv{"readonly", formatBool(opts, x.GetIsReadonly())},
+			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+			kv{"expires-at", formatTime(opts, x.GetExpiresAt())},
+			kv{"revoked-at", formatTime(opts, x.GetRevokedAt())},
 		}
 	}, false)
 }
