@@ -56,7 +56,7 @@ func init() {
 	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.arangodb.com")
 	f.StringVar(&RootArgs.token, "token", "", "Token used to authenticate at ArangoDB Oasis")
 	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
-	f.StringVar(&RootArgs.Format.Format, "format", format.DefaultFormat, "Output format (table|json)")
+	f.StringVar(&RootArgs.Format.Format, "format", DefaultFormat(), "Output format (table|json)")
 }
 
 // ShowUsage shows usage of the given command on stdout.
