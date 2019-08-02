@@ -31,7 +31,7 @@ func init() {
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				organizationID string
-				providerID string
+				providerID     string
 			}{}
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Optional Identifier of the organization")
 			f.StringVarP(&cargs.providerID, "provider-id", "p", cmd.DefaultProvider(), "Identifier of the provider")

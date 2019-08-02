@@ -22,6 +22,10 @@ import (
 	_ "github.com/arangodb-managed/oasis/cmd/security"
 )
 
+func init() {
+	cmd.SetVersion(releaseVersion)
+}
+
 func main() {
 	if err := cmd.RootCmd.Execute(); err != nil {
 		log.Fatalf("%v\n", err)
