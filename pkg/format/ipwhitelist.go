@@ -22,7 +22,7 @@ func IPWhitelist(x *security.IPWhitelist, opts Options) string {
 		kv{"description", x.GetDescription()},
 		kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
 		kv{"url", x.GetUrl()},
-		kv{"created-at", formatTime(x.GetCreatedAt())},
+		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 	)
 }
 
@@ -36,7 +36,7 @@ func IPWhitelistList(list []*security.IPWhitelist, opts Options) string {
 			kv{"description", x.GetDescription()},
 			kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
 			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(x.GetCreatedAt())},
+			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}
 	}, false)
 }

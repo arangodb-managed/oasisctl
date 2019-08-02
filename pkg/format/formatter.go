@@ -9,10 +9,12 @@
 package format
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/dustin/go-humanize"
 	"github.com/gogo/protobuf/types"
@@ -42,6 +44,19 @@ var (
 // formatObject returns a formatted representation of the given
 // data which is a map from field-name to value.
 func formatObject(opts Options, data ...kv) string {
+	if opts.Format == formatJSON {
+		m := make(map[string]interface{}, len(data))
+		for _, kv := range data {
+			m[kv.Key] = kv.Value
+		}
+		encoded, err := json.MarshalIndent(m, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		return string(encoded)
+	}
+
+	// Table
 	lines := make([]string, 0, len(data))
 	for _, kv := range data {
 		title := strings.Title(kv.Key)
@@ -55,6 +70,25 @@ func formatObject(opts Options, data ...kv) string {
 func formatList(opts Options, list interface{}, getData func(int) []kv, noSort bool) string {
 	listv := reflect.ValueOf(list)
 	length := listv.Len()
+
+	if opts.Format == formatJSON {
+		l := make([]map[string]interface{}, length)
+		for i := 0; i < length; i++ {
+			data := getData(i)
+			m := make(map[string]interface{})
+			l[i] = m
+			for _, kv := range data {
+				m[kv.Key] = kv.Value
+			}
+		}
+		encoded, err := json.MarshalIndent(l, "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		return string(encoded)
+	}
+
+	// Table
 	if length == 0 {
 		return "None"
 	}
@@ -81,7 +115,7 @@ func formatList(opts Options, list interface{}, getData func(int) []kv, noSort b
 }
 
 // formatTime returns a human readable version of the given timestamp.
-func formatTime(x *types.Timestamp, nilValue ...string) string {
+func formatTime(opts Options, x *types.Timestamp, nilValue ...string) string {
 	if x == nil {
 		if len(nilValue) > 0 {
 			return nilValue[0]
@@ -89,11 +123,14 @@ func formatTime(x *types.Timestamp, nilValue ...string) string {
 		return ""
 	}
 	t, _ := types.TimestampFromProto(x)
+	if opts.Format == formatJSON {
+		return t.Format(time.RFC3339)
+	}
 	return humanize.Time(t)
 }
 
 // formatDuration returns a human readable version of the given duration.
-func formatDuration(x *types.Duration, nilValue ...string) string {
+func formatDuration(opts Options, x *types.Duration, nilValue ...string) string {
 	if x == nil {
 		if len(nilValue) > 0 {
 			return nilValue[0]

@@ -33,7 +33,7 @@ func Policy(ctx context.Context, x *iam.Policy, iamc iam.IAMServiceClient, opts 
 			kv{"id", x.GetId()},
 			kv{"member-id", x.GetMemberId()},
 			kv{"role", roleName},
-			kv{"delete-not-allowed", formatBool(x.GetDeleteNotAllowed())},
+			kv{"delete-not-allowed", formatBool(opts, x.GetDeleteNotAllowed())},
 			kv{"permissions", strings.Join(permissions, ", ")},
 		}
 	}, false)

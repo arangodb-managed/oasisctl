@@ -25,7 +25,7 @@ func VersionList(list []*data.Version, defaultVersion *data.Version, opts Option
 		x := list[i]
 		return []kv{
 			kv{"version", x.GetVersion()},
-			kv{"default", formatBool(x.GetVersion() == defaultVersion.GetVersion())},
+			kv{"default", formatBool(opts, x.GetVersion() == defaultVersion.GetVersion())},
 		}
 	}, true)
 }

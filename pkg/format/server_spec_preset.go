@@ -20,7 +20,7 @@ func ServersSpecPresetList(list []*data.ServersSpecPreset, opts Options) string 
 		x := list[i]
 		return []kv{
 			kv{"name", x.GetName()},
-			kv{"default", formatBool(x.GetIsDefault())},
+			kv{"default", formatBool(opts, x.GetIsDefault())},
 			kv{"coordinators", x.GetServers().GetCoordinators()},
 			kv{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
 			kv{"dbservers", x.GetServers().GetDbservers()},

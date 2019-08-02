@@ -29,10 +29,10 @@ func OrganizationInvite(ctx context.Context, x *rm.OrganizationInvite, iamc iam.
 		kv{"email", x.GetEmail()},
 		kv{"organization", x.GetOrganizationName()},
 		kv{"created-by", x.GetCreatedByName()},
-		kv{"accepted", formatTime(x.GetAcceptedAt(), "-")},
-		kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
+		kv{"accepted", formatTime(opts, x.GetAcceptedAt(), "-")},
+		kv{"rejected", formatTime(opts, x.GetRejectedAt(), "-")},
 		kv{"user", userName},
-		kv{"created-at", formatTime(x.GetCreatedAt())},
+		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		kv{"url", x.GetUrl()},
 	)
 }
@@ -52,10 +52,10 @@ func OrganizationInviteList(ctx context.Context, list []*rm.OrganizationInvite, 
 			kv{"email", x.GetEmail()},
 			kv{"organization", x.GetOrganizationName()},
 			kv{"created-by", x.GetCreatedByName()},
-			kv{"accepted", formatTime(x.GetAcceptedAt(), "-")},
-			kv{"rejected", formatTime(x.GetRejectedAt(), "-")},
+			kv{"accepted", formatTime(opts, x.GetAcceptedAt(), "-")},
+			kv{"rejected", formatTime(opts, x.GetRejectedAt(), "-")},
 			kv{"user", userName},
-			kv{"created-at", formatTime(x.GetCreatedAt())},
+			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 			kv{"url", x.GetUrl()},
 		}
 	}, false)

@@ -18,7 +18,7 @@ func Region(x *platform.Region, opts Options) string {
 		kv{"id", x.GetId()},
 		kv{"provider-id", x.GetProviderId()},
 		kv{"location", x.GetLocation()},
-		kv{"available", formatBool(x.GetAvailable())},
+		kv{"available", formatBool(opts, x.GetAvailable())},
 	)
 }
 
@@ -30,7 +30,7 @@ func RegionList(list []*platform.Region, opts Options) string {
 			kv{"id", x.GetId()},
 			kv{"provider-id", x.GetProviderId()},
 			kv{"location", x.GetLocation()},
-			kv{"available", formatBool(x.GetAvailable())},
+			kv{"available", formatBool(opts, x.GetAvailable())},
 		}
 	}, false)
 }

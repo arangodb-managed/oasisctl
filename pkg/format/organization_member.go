@@ -29,7 +29,7 @@ func OrganizationMember(ctx context.Context, x *rm.Member, iamc iam.IAMServiceCl
 		kv{"id", x.GetUserId()},
 		kv{"name", userName},
 		kv{"email", userEmail},
-		kv{"owner", formatBool(x.GetOwner())},
+		kv{"owner", formatBool(opts, x.GetOwner())},
 	)
 }
 
@@ -48,7 +48,7 @@ func OrganizationMemberList(ctx context.Context, list []*rm.Member, iamc iam.IAM
 			kv{"id", x.GetUserId()},
 			kv{"name", userName},
 			kv{"email", userEmail},
-			kv{"owner", formatBool(x.GetOwner())},
+			kv{"owner", formatBool(opts, x.GetOwner())},
 		}
 	}, false)
 }
