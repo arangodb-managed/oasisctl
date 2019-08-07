@@ -15,10 +15,10 @@ import (
 )
 
 // Deployment returns a single deployment formatted for humans.
-func Deployment(x *data.Deployment, opts Options, showRootpassword bool) string {
-	pwd := func(p string) string {
+func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Options, showRootpassword bool) string {
+	pwd := func(creds *data.DeploymentCredentials) string {
 		if showRootpassword {
-			return p
+			return creds.GetPassword()
 		}
 		return "*** use '--show-root-password' to expose ***"
 	}
@@ -43,7 +43,7 @@ func Deployment(x *data.Deployment, opts Options, showRootpassword bool) string 
 
 		kv{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
 		kv{"endpoint-url", x.GetStatus().GetEndpoint()},
-		kv{"root-password", pwd(x.GetAuthentication().GetRootPassword())},
+		kv{"root-password", pwd(creds)},
 		// TODO other relevant fields
 	)
 }

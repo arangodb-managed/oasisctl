@@ -56,8 +56,18 @@ func init() {
 				// Fetch deployment
 				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
+				// Fetch credentials if needed
+				var creds *data.DeploymentCredentials
+				if cargs.showRootPassword {
+					var err error
+					creds, err = datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: deploymentID})
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to fetch deployment credentials")
+					}
+				}
+
 				// Show result
-				fmt.Println(format.Deployment(item, cmd.RootArgs.Format, cargs.showRootPassword))
+				fmt.Println(format.Deployment(item, creds, cmd.RootArgs.Format, cargs.showRootPassword))
 			}
 		},
 	)
