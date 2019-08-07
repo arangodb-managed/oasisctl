@@ -98,7 +98,7 @@ func init() {
 
 				// Show result
 				fmt.Println("Success!")
-				fmt.Println(format.Deployment(result, cmd.RootArgs.Format, false))
+				fmt.Println(format.Deployment(result, nil, cmd.RootArgs.Format, false))
 			}
 		},
 	)

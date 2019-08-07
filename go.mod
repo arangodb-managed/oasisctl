@@ -5,8 +5,7 @@ go 1.12
 replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
 
 require (
-	github.com/arangodb-managed/apis v0.12.4
-	github.com/arangodb-managed/zutano v0.3.25 // indirect
+	github.com/arangodb-managed/apis v0.13.5
 	github.com/coreos/go-semver v0.2.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.2.1
@@ -22,7 +21,7 @@ require (
 	google.golang.org/grpc v1.21.1
 )
 
-replace github.com/coreos/prometheus-operator => github.com/coreos/prometheus-operator v0.29.0
+replace github.com/coreos/prometheus-operator => github.com/coreos/prometheus-operator v0.31.1
 
 replace github.com/hashicorp/vault/api => github.com/hashicorp/vault/api v1.0.2-0.20190424005855-e25a8a1c7480
 
