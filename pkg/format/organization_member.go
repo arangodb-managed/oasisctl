@@ -20,15 +20,24 @@ import (
 func OrganizationMember(ctx context.Context, x *rm.Member, iamc iam.IAMServiceClient, opts Options) string {
 	userName := "?"
 	userEmail := "?"
+	userCreatedAt := "?"
+	userLastLoginAt := "?"
+	userLastIP := "?"
 	user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetUserId()})
 	if err == nil {
 		userName = user.GetName()
 		userEmail = user.GetEmail()
+		userCreatedAt = formatTime(opts, user.GetCreatedAt(), "?")
+		userLastLoginAt = formatTime(opts, user.GetLastLoginAt(), "-")
+		userLastIP = user.GetLastIp()
 	}
 	return formatObject(opts,
 		kv{"id", x.GetUserId()},
 		kv{"name", userName},
 		kv{"email", userEmail},
+		kv{"created_at", userCreatedAt},
+		kv{"last_login_at", userLastLoginAt},
+		kv{"last_ip", userLastIP},
 		kv{"owner", formatBool(opts, x.GetOwner())},
 	)
 }
@@ -39,15 +48,24 @@ func OrganizationMemberList(ctx context.Context, list []*rm.Member, iamc iam.IAM
 		x := list[i]
 		userName := "?"
 		userEmail := "?"
+		userCreatedAt := "?"
+		userLastLoginAt := "?"
+		userLastIP := "?"
 		user, err := iamc.GetUser(ctx, &common.IDOptions{Id: x.GetUserId()})
 		if err == nil {
 			userName = user.GetName()
 			userEmail = user.GetEmail()
+			userCreatedAt = formatTime(opts, user.GetCreatedAt(), "?")
+			userLastLoginAt = formatTime(opts, user.GetLastLoginAt(), "-")
+			userLastIP = user.GetLastIp()
 		}
 		return []kv{
 			kv{"id", x.GetUserId()},
 			kv{"name", userName},
 			kv{"email", userEmail},
+			kv{"created_at", userCreatedAt},
+			kv{"last_login_at", userLastLoginAt},
+			kv{"last_ip", userLastIP},
 			kv{"owner", formatBool(opts, x.GetOwner())},
 		}
 	}, false)
