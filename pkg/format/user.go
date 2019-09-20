@@ -18,6 +18,9 @@ func User(x *iam.User, opts Options) string {
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
 		kv{"email", x.GetEmail()},
+		kv{"created_at", formatTime(opts, x.GetCreatedAt(), "-")},
+		kv{"last_login_at", formatTime(opts, x.GetLastLoginAt(), "-")},
+		kv{"last_ip", x.GetLastIp()},
 	)
 }
 
@@ -29,6 +32,9 @@ func UserList(list []*iam.User, opts Options) string {
 			kv{"id", x.GetId()},
 			kv{"name", x.GetName()},
 			kv{"email", x.GetEmail()},
+			kv{"created_at", formatTime(opts, x.GetCreatedAt(), "-")},
+			kv{"last_login_at", formatTime(opts, x.GetLastLoginAt(), "-")},
+			kv{"last_ip", x.GetLastIp()},
 		}
 	}, false)
 }
