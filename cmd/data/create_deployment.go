@@ -10,6 +10,7 @@ package data
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -41,6 +42,10 @@ func init() {
 				ipwhitelistID   string
 				version         string
 				serversPreset   string
+				model           string
+				nodeSizeID      string
+				nodeCount       int32
+				nodeDiskSize    int32
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -52,6 +57,10 @@ func init() {
 			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
 			f.StringVar(&cargs.serversPreset, "servers-preset", "", "Servers preset to use for the deployment")
+			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
+			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
+			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
+			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -79,6 +88,27 @@ func init() {
 					servers = selection.MustSelectServersSpec(ctx, log, cargs.serversPreset, project.GetId(), regionID, datac)
 				}
 
+				if len(cargs.nodeSizeID) < 1 && cargs.model != data.ModelFlexible {
+					// Fetch node sizes
+					list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
+						ProjectId: cargs.projectID,
+						RegionId:  cargs.regionID,
+					})
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to fetch node size list.")
+					}
+					if len(list.Items) < 1 {
+						log.Fatal().Msg("No available node sizes found.")
+					}
+					sort.SliceStable(list.Items, func(i, j int) bool {
+						return list.Items[i].MemorySize < list.Items[j].MemorySize
+					})
+					cargs.nodeSizeID = list.Items[0].Id
+					if cargs.nodeDiskSize == 0 {
+						cargs.nodeDiskSize = list.Items[0].MinDiskSize
+					}
+				}
+
 				// Create deployment
 				result, err := datac.CreateDeployment(ctx, &data.Deployment{
 					ProjectId:   project.GetId(),
@@ -91,6 +121,12 @@ func init() {
 					},
 					IpwhitelistId: cargs.ipwhitelistID,
 					Servers:       servers,
+					Model: &data.Deployment_ModelSpec{
+						Model:        cargs.model,
+						NodeSizeId:   cargs.nodeSizeID,
+						NodeCount:    cargs.nodeCount,
+						NodeDiskSize: cargs.nodeDiskSize,
+					},
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")

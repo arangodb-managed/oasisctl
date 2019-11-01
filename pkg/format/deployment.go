@@ -22,45 +22,60 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		}
 		return "*** use '--show-root-password' to expose ***"
 	}
+	d := []kv{
+		{"id", x.GetId()},
+		{"name", x.GetName()},
+		{"description", x.GetDescription()},
+		{"region", x.GetRegionId()},
+		{"version", x.GetVersion()},
+		{"ipwhitelist", x.GetIpwhitelistId()},
+		{"url", x.GetUrl()},
+		{"created-at", formatTime(opts, x.GetCreatedAt())},
+		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
+		{"expires-at", formatTime(opts, x.GetExpiration().GetExpiresAt(), "-")},
 
-	return formatObject(opts,
-		kv{"id", x.GetId()},
-		kv{"name", x.GetName()},
-		kv{"description", x.GetDescription()},
-		kv{"region", x.GetRegionId()},
-		kv{"version", x.GetVersion()},
-		kv{"ipwhitelist", x.GetIpwhitelistId()},
-		kv{"url", x.GetUrl()},
-		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-		kv{"expires-at", formatTime(opts, x.GetExpiration().GetExpiresAt(), "-")},
+		{"coordinators", x.GetServers().GetCoordinators()},
+		{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
+		{"dbservers", x.GetServers().GetDbservers()},
+		{"dbserver-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverMemorySize(), "GB")},
+		{"dbserver-disk-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverDiskSize(), "GB")},
 
-		kv{"coordinators", x.GetServers().GetCoordinators()},
-		kv{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
-		kv{"dbservers", x.GetServers().GetDbservers()},
-		kv{"dbserver-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverMemorySize(), "GB")},
-		kv{"dbserver-disk-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverDiskSize(), "GB")},
+		{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
+		{"endpoint-url", x.GetStatus().GetEndpoint()},
+		{"root-password", pwd(creds)},
 
-		kv{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
-		kv{"endpoint-url", x.GetStatus().GetEndpoint()},
-		kv{"root-password", pwd(creds)},
-		// TODO other relevant fields
-	)
+		{"model", x.Model.Model},
+	}
+	if x.Model.Model != data.ModelFlexible {
+		d = append(d,
+			kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
+			kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+			kv{"node-size-id", x.Model.NodeSizeId})
+	}
+	return formatObject(opts, d...)
 }
 
 // DeploymentList returns a list of deployments formatted for humans.
 func DeploymentList(list []*data.Deployment, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		return []kv{
-			kv{"id", x.GetId()},
-			kv{"name", x.GetName()},
-			kv{"description", x.GetDescription()},
-			kv{"region", x.GetRegionId()},
-			kv{"version", x.GetVersion()},
-			kv{"ipwhitelist", x.GetIpwhitelistId()},
-			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+		d := []kv{
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"description", x.GetDescription()},
+			{"region", x.GetRegionId()},
+			{"version", x.GetVersion()},
+			{"ipwhitelist", x.GetIpwhitelistId()},
+			{"url", x.GetUrl()},
+			{"created-at", formatTime(opts, x.GetCreatedAt())},
+			{"model", x.Model.Model},
 		}
+		if x.Model.Model != data.ModelFlexible {
+			d = append(d,
+				kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
+				kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+				kv{"node-size-id", x.Model.NodeSizeId})
+		}
+		return d
 	}, false)
 }
