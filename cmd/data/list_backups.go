@@ -55,24 +55,18 @@ func init() {
 				}
 
 				if len(cargs.from) > 0 {
-					from, err := time.Parse(time.RFC3339, cargs.from)
+					var err error
+					req.From, err = parseTime(cargs.from)
 					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to parse from date. Accepted format is time.RFC3339")
-					}
-					req.From, err = types.TimestampProto(from)
-					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to convert date to proto timestamp")
+						log.Fatal().Err(err)
 					}
 				}
 
 				if len(cargs.to) > 0 {
-					to, err := time.Parse(time.RFC3339, cargs.from)
+					var err error
+					req.From, err = parseTime(cargs.to)
 					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to parse to date. Accepted format is time.RFC3339")
-					}
-					req.To, err = types.TimestampProto(to)
-					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to convert date to proto timestamp")
+						log.Fatal().Err(err)
 					}
 				}
 
@@ -87,4 +81,16 @@ func init() {
 			}
 		},
 	)
+}
+
+func parseTime(date string) (*types.Timestamp, error) {
+	d, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		return nil, err
+	}
+	stamp, err := types.TimestampProto(d)
+	if err != nil {
+		return nil, err
+	}
+	return stamp, nil
 }
