@@ -25,9 +25,9 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListNodeSizesCmd,
+		cmd.ListCmd,
 		&cobra.Command{
-			Use:   "nodes",
+			Use:   "nodesizes",
 			Short: "List node sizes",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
