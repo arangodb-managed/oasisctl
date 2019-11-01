@@ -64,7 +64,7 @@ func init() {
 
 				if len(cargs.to) > 0 {
 					var err error
-					req.From, err = parseTime(cargs.to)
+					req.To, err = parseTime(cargs.to)
 					if err != nil {
 						log.Fatal().Err(err)
 					}
