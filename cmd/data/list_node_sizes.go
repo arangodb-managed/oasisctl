@@ -25,7 +25,7 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListServersCmd,
+		cmd.ListNodeSizesCmd,
 		&cobra.Command{
 			Use:   "nodes",
 			Short: "List node sizes",
@@ -62,13 +62,13 @@ func init() {
 				// Selection region
 				region := selection.MustSelectRegion(ctx, log, regionID, cargs.providerID, project.OrganizationId, platformc)
 
-				// Fetch presets
+				// Fetch node sizes
 				list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
 					ProjectId: project.GetId(),
 					RegionId:  region.GetId(),
 				})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list servers presets")
+					log.Fatal().Err(err).Msg("Failed to list node sizes")
 				}
 
 				// Show result
