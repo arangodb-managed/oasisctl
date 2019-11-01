@@ -60,7 +60,7 @@ func init() {
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
-			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", -1, "Set disk size for nodes (GB)")
+			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -104,7 +104,7 @@ func init() {
 						return list.Items[i].MemorySize < list.Items[j].MemorySize
 					})
 					cargs.nodeSizeID = list.Items[0].Id
-					if cargs.nodeDiskSize == -1 {
+					if cargs.nodeDiskSize == 0 {
 						cargs.nodeDiskSize = list.Items[0].MinDiskSize
 					}
 				}
