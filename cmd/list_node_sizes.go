@@ -15,7 +15,7 @@ import (
 var (
 	// ListNodeSizesCmd is based for other commands
 	ListNodeSizesCmd = &cobra.Command{
-		Use:   "node-sizes",
+		Use:   "nodesizes",
 		Short: "List node sizes information",
 		Run:   ShowUsage,
 	}
