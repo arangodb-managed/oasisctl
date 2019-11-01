@@ -41,6 +41,10 @@ func init() {
 				ipwhitelistID   string
 				version         string
 				serversPreset   string
+				model           string
+				nodeSizeId      string
+				nodeCount       int32
+				nodeDiskSize    int32
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -52,6 +56,10 @@ func init() {
 			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
 			f.StringVar(&cargs.serversPreset, "servers-preset", "", "Servers preset to use for the deployment")
+			f.StringVar(&cargs.model, "model", "oneshard", "Set model of the deployment")
+			f.StringVar(&cargs.nodeSizeId, "node-size-id", "a4", "Set the node size to use for this deployment")
+			f.Int32Var(&cargs.nodeCount, "node-count", 1, "Set the number of desired nodes")
+			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 20, "Set disk size for nodes (GB)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -91,6 +99,12 @@ func init() {
 					},
 					IpwhitelistId: cargs.ipwhitelistID,
 					Servers:       servers,
+					Model:         &data.Deployment_ModelSpec{
+						Model:                cargs.model,
+						NodeSizeId:           cargs.nodeSizeId,
+						NodeCount:            cargs.nodeCount,
+						NodeDiskSize:         cargs.nodeDiskSize,
+					},
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")

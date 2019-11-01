@@ -44,6 +44,11 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		kv{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
 		kv{"endpoint-url", x.GetStatus().GetEndpoint()},
 		kv{"root-password", pwd(creds)},
+
+		kv{"model", x.Model.Model},
+		kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
+		kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+		kv{"node-size-id", x.Model.NodeSizeId},
 		// TODO other relevant fields
 	)
 }
