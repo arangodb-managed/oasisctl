@@ -88,7 +88,7 @@ func init() {
 					servers = selection.MustSelectServersSpec(ctx, log, cargs.serversPreset, project.GetId(), regionID, datac)
 				}
 
-				if len(cargs.nodeSizeID) < 1 {
+				if len(cargs.nodeSizeID) < 1 && cargs.model != data.ModelFlexible {
 					// Fetch node sizes
 					list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
 						ProjectId: cargs.projectID,

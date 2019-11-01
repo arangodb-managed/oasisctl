@@ -59,15 +59,23 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 func DeploymentList(list []*data.Deployment, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		return []kv{
-			kv{"id", x.GetId()},
-			kv{"name", x.GetName()},
-			kv{"description", x.GetDescription()},
-			kv{"region", x.GetRegionId()},
-			kv{"version", x.GetVersion()},
-			kv{"ipwhitelist", x.GetIpwhitelistId()},
-			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+		d := []kv{
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"description", x.GetDescription()},
+			{"region", x.GetRegionId()},
+			{"version", x.GetVersion()},
+			{"ipwhitelist", x.GetIpwhitelistId()},
+			{"url", x.GetUrl()},
+			{"created-at", formatTime(opts, x.GetCreatedAt())},
+			{"model", x.Model.Model},
 		}
+		if x.Model.Model != data.ModelFlexible {
+			d = append(d,
+				kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
+				kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+				kv{"node-size-id", x.Model.NodeSizeId})
+		}
+		return d
 	}, false)
 }
