@@ -10,7 +10,9 @@ package data
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -30,16 +32,20 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
-				name     string
+				backupID      string
+				name          string
+				description   string
+				autoDeletedAt int
 			}{}
-			f.StringVarP(&cargs.backupID, "backup-id", "d", "", "Identifier of the deployment")
-			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
+			f.StringVarP(&cargs.backupID, "backup-id", "d", "", "Identifier of the backup")
+			f.StringVar(&cargs.name, "name", "", "Name of the backup")
+			f.StringVar(&cargs.description, "description", "", "Description of the backup")
+			f.IntVar(&cargs.autoDeletedAt, "autodeletedat", 6, "Time (h) until auto delete of the backup")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				backupID, argsUsed := cmd.OptOption("deployment-id", cargs.backupID, args, 0)
+				backupID, argsUsed := cmd.OptOption("backup-id", cargs.backupID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -47,7 +53,8 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				item := selection.MustSelectBackup(backupID)
+				// Select a backup to update
+				item := selection.MustSelectBackup(ctx, log, backupID, backupc)
 
 				// Set changes
 				f := c.Flags()
@@ -56,19 +63,33 @@ func init() {
 					item.Name = cargs.name
 					hasChanges = true
 				}
+				if f.Changed("description") {
+					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("autodeletedat") {
+					t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
+					tp, err := types.TimestampProto(t)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+					}
+					item.AutoDeletedAt = tp
+					hasChanges = true
+				}
+
 				if !hasChanges {
 					fmt.Println("No changes")
 					return
 				}
 
-				// Update deployment
+				// Update backup
 				updated, err := backupc.UpdateBackup(ctx, item)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to update deployment")
+					log.Fatal().Err(err).Msg("Failed to update backup")
 				}
 
 				// Show result
-				fmt.Println("Updated deployment!")
+				fmt.Println("Updated backup!")
 				fmt.Println(format.Backup(updated, cmd.RootArgs.Format))
 			}
 		},

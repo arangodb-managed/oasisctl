@@ -10,14 +10,15 @@ package data
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
-
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/gogo/protobuf/types"
 )
 
 func init() {
@@ -29,14 +30,16 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name        string
-				deploymenID string
-				policyID    string
-				// TODO add other fields
+				name          string
+				deploymenID   string
+				policyID      string
+				description   string
+				autoDeletedAt int
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.deploymenID, "deployment-id", "", "ID of the deployment")
-			f.StringVar(&cargs.policyID, "policy-id", "", "ID of the backup policy to use")
+			f.StringVar(&cargs.description, "description", "", "Description of the backup")
+			f.IntVar(&cargs.autoDeletedAt, "autodeletedat", 6, "Time (h) until auto delete of the backup")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -50,11 +53,17 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
+				tp, err := types.TimestampProto(t)
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+				}
+
 				result, err := backupc.CreateBackup(ctx, &backup.Backup{
-					Name:           name,
-					DeploymentId:   deploymenID,
-					BackupPolicyId: cargs.policyID,
-					// TODO: AutoDeleteAt
+					Name:          name,
+					DeploymentId:  deploymenID,
+					Description:   cargs.description,
+					AutoDeletedAt: tp,
 				})
 
 				if err != nil {

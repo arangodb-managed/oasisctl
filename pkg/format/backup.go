@@ -14,6 +14,7 @@ import (
 
 // Backup returns a single backup formatted for humans.
 func Backup(x *backup.Backup, opts Options) string {
+
 	data := []kv{
 		{"id", x.Id},
 		{"backup-policy-id", x.BackupPolicyId},
@@ -23,11 +24,16 @@ func Backup(x *backup.Backup, opts Options) string {
 		{"name", x.Name},
 		{"upload", x.Upload},
 		{"url", x.Url},
-		{"state", x.Status.State},
-		{"dbservers", x.DeploymentInfo.Servers.Dbservers},
 		{"autodeletedat", formatTime(opts, x.AutoDeletedAt)},
 		{"createdat", formatTime(opts, x.CreatedAt)},
 		{"deletedat", formatTime(opts, x.DeletedAt)},
+	}
+
+	if x.Status != nil {
+		data = append(data, kv{"state", x.Status.State})
+	}
+	if x.DeploymentInfo.Servers != nil {
+		data = append(data, kv{"dbservers", x.DeploymentInfo.Servers.Dbservers})
 	}
 	return formatObject(opts, data...)
 }
