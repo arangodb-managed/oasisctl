@@ -16,7 +16,9 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// MustSelectBackup TODO: Implement this.
+// MustSelectBackup fetches a backup with given ID.
+// If no ID is specified, all backups are fetched from the selected deployment
+// and if the list is exactly 1 long, that backup is returned.
 func MustSelectBackup(ctx context.Context, log zerolog.Logger, id string, backupc backup.BackupServiceClient) *backup.Backup {
 	if id == "" {
 		list, err := backupc.ListBackups(ctx, &backup.ListBackupsRequest{DeploymentId: id})

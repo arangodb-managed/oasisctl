@@ -3,7 +3,7 @@
 //
 // Copyright 2019 ArangoDB Inc, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Gergely Brautigam
 //
 
 package data
@@ -36,11 +36,13 @@ func init() {
 				name          string
 				description   string
 				autoDeletedAt int
+				upload        bool
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "d", "", "Identifier of the backup")
 			f.StringVar(&cargs.name, "name", "", "Name of the backup")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
-			f.IntVar(&cargs.autoDeletedAt, "autodeletedat", 6, "Time (h) until auto delete of the backup")
+			f.BoolVar(&cargs.upload, "upload", false, "The backups should be uploaded")
+			f.IntVar(&cargs.autoDeletedAt, "auto-deleted-at", 6, "Time (h) until auto delete of the backup")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -67,7 +69,11 @@ func init() {
 					item.Description = cargs.description
 					hasChanges = true
 				}
-				if f.Changed("autodeletedat") {
+				if f.Changed("uploaded") {
+					item.Upload = cargs.upload
+					hasChanges = true
+				}
+				if f.Changed("auto-deleted-at") {
 					t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
 					tp, err := types.TimestampProto(t)
 					if err != nil {

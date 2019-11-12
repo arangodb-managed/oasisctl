@@ -26,10 +26,10 @@ func BackupList(list []*backup.Backup, opts Options) string {
 			{"upload", x.Upload},
 			{"url", x.Url},
 			{"state", x.Status.State},
-			{"dbservers", x.DeploymentInfo.Servers.Dbservers},
-			{"autodeletedat", formatTime(opts, x.AutoDeletedAt)},
-			{"createdat", formatTime(opts, x.CreatedAt)},
-			{"deletedat", formatTime(opts, x.DeletedAt)},
+			{"db-servers", x.DeploymentInfo.Servers.Dbservers},
+			{"auto-deleted-at", formatTime(opts, x.AutoDeletedAt)},
+			{"created-at", formatTime(opts, x.CreatedAt)},
+			{"deleted-at", formatTime(opts, x.DeletedAt)},
 		}
 	}, false)
 }

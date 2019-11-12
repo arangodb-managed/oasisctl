@@ -3,7 +3,7 @@
 //
 // Copyright 2019 ArangoDB Inc, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Gergely Brautigam
 //
 
 package data
@@ -12,13 +12,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	"github.com/arangodb-managed/oasis/cmd"
 	"github.com/arangodb-managed/oasis/pkg/format"
-	"github.com/gogo/protobuf/types"
 )
 
 func init() {
@@ -31,21 +31,23 @@ func init() {
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				name          string
-				deploymenID   string
+				deploymentID  string
 				policyID      string
 				description   string
 				autoDeletedAt int
+				upload        bool
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
-			f.StringVar(&cargs.deploymenID, "deployment-id", "", "ID of the deployment")
+			f.StringVar(&cargs.deploymentID, "deployment-id", "", "ID of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
-			f.IntVar(&cargs.autoDeletedAt, "autodeletedat", 6, "Time (h) until auto delete of the backup")
+			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded")
+			f.IntVar(&cargs.autoDeletedAt, "auto-deleted-at", 0, "Time (h) until auto delete of the backup")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
 				name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
-				deploymenID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymenID, args, 0)
+				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -53,18 +55,35 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
-				tp, err := types.TimestampProto(t)
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+				b := &backup.Backup{
+					Name:         name,
+					DeploymentId: deploymentID,
+					Description:  cargs.description,
 				}
 
-				result, err := backupc.CreateBackup(ctx, &backup.Backup{
-					Name:          name,
-					DeploymentId:  deploymenID,
-					Description:   cargs.description,
-					AutoDeletedAt: tp,
-				})
+				if cargs.upload {
+					b.Upload = true
+					if cargs.autoDeletedAt != 0 {
+						t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
+						tp, err := types.TimestampProto(t)
+						if err != nil {
+							log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+						}
+						b.AutoDeletedAt = tp
+					}
+				} else {
+					if cargs.autoDeletedAt == 0 {
+						cargs.autoDeletedAt = 6
+					}
+					t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
+					tp, err := types.TimestampProto(t)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+					}
+					b.AutoDeletedAt = tp
+				}
+
+				result, err := backupc.CreateBackup(ctx, b)
 
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create backup")
