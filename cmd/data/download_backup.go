@@ -16,6 +16,7 @@ import (
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	v1 "github.com/arangodb-managed/apis/common/v1"
+
 	"github.com/arangodb-managed/oasis/cmd"
 )
 
@@ -50,7 +51,7 @@ func init() {
 				}
 
 				// Show result
-				fmt.Println("Backup successfully downloaded!")
+				fmt.Println("Backup download started successfully!")
 			}
 		},
 	)

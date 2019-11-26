@@ -24,6 +24,7 @@ func Backup(x *backup.Backup, opts Options) string {
 		{"name", x.Name},
 		{"upload", x.Upload},
 		{"url", x.Url},
+		{"upload-status", x.Status.UploadStatus},
 		{"auto-deleted-at", formatTime(opts, x.AutoDeletedAt)},
 		{"created-at", formatTime(opts, x.CreatedAt)},
 		{"deleted-at", formatTime(opts, x.DeletedAt)},

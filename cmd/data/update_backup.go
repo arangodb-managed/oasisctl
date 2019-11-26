@@ -42,7 +42,7 @@ func init() {
 			f.StringVar(&cargs.name, "name", "", "Name of the backup")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
 			f.BoolVar(&cargs.upload, "upload", false, "The backups should be uploaded")
-			f.IntVar(&cargs.autoDeletedAt, "auto-deleted-at", 6, "Time (h) until auto delete of the backup")
+			f.IntVar(&cargs.autoDeletedAt, "auto-deleted-at", 0, "Time (h) until auto delete of the backup")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -69,7 +69,7 @@ func init() {
 					item.Description = cargs.description
 					hasChanges = true
 				}
-				if f.Changed("uploaded") {
+				if f.Changed("upload") {
 					item.Upload = cargs.upload
 					hasChanges = true
 				}
@@ -80,6 +80,17 @@ func init() {
 						log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
 					}
 					item.AutoDeletedAt = tp
+					if !item.Upload {
+						if cargs.autoDeletedAt == 0 {
+							cargs.autoDeletedAt = 6
+							t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
+							tp, err := types.TimestampProto(t)
+							if err != nil {
+								log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
+							}
+							item.AutoDeletedAt = tp
+						}
+					}
 					hasChanges = true
 				}
 
