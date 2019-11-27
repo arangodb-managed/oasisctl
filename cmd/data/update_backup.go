@@ -73,6 +73,10 @@ func init() {
 					item.Upload = cargs.upload
 					hasChanges = true
 				}
+				if !item.Upload && cargs.autoDeletedAt == 0 {
+					cargs.autoDeletedAt = 6
+					f.AddFlag(&flag.Flag{Name: "auto-deleted-at", Changed: true})
+				}
 				if f.Changed("auto-deleted-at") {
 					t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
 					tp, err := types.TimestampProto(t)
@@ -80,17 +84,6 @@ func init() {
 						log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
 					}
 					item.AutoDeletedAt = tp
-					if !item.Upload {
-						if cargs.autoDeletedAt == 0 {
-							cargs.autoDeletedAt = 6
-							t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
-							tp, err := types.TimestampProto(t)
-							if err != nil {
-								log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
-							}
-							item.AutoDeletedAt = tp
-						}
-					}
 					hasChanges = true
 				}
 

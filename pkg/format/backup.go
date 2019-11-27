@@ -24,14 +24,13 @@ func Backup(x *backup.Backup, opts Options) string {
 		{"name", x.Name},
 		{"upload", x.Upload},
 		{"url", x.Url},
-		{"upload-status", x.Status.UploadStatus},
 		{"auto-deleted-at", formatTime(opts, x.AutoDeletedAt)},
 		{"created-at", formatTime(opts, x.CreatedAt)},
 		{"deleted-at", formatTime(opts, x.DeletedAt)},
 	}
 
 	if x.Status != nil {
-		data = append(data, kv{"state", x.Status.State})
+		data = append(data, kv{"state", x.Status.State}, kv{"uploaded", x.Status.GetUploadStatus().GetUploaded()})
 	}
 	if x.DeploymentInfo.Servers != nil {
 		data = append(data, kv{"dbservers", x.DeploymentInfo.Servers.Dbservers})
