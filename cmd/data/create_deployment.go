@@ -33,19 +33,23 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name            string
-				description     string
-				organizationID  string
-				projectID       string
-				regionID        string
-				cacertificateID string
-				ipwhitelistID   string
-				version         string
-				serversPreset   string
-				model           string
-				nodeSizeID      string
-				nodeCount       int32
-				nodeDiskSize    int32
+				name                  string
+				description           string
+				organizationID        string
+				projectID             string
+				regionID              string
+				cacertificateID       string
+				ipwhitelistID         string
+				version               string
+				model                 string
+				nodeSizeID            string
+				nodeCount             int32
+				nodeDiskSize          int32
+				coordinators          int32
+				coordinatorMemorySize int32
+				dbservers             int32
+				dbserverMemorySize    int32
+				dbserverDiskSize      int32
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -56,11 +60,15 @@ func init() {
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
-			f.StringVar(&cargs.serversPreset, "servers-preset", "", "Servers preset to use for the deployment")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
 			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
+			f.Int32Var(&cargs.coordinators, "coordinators", 3, "Set number of coordinators for flexible deployments")
+			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of coordinators for flexible deployments (GB)")
+			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
+			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
+			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -82,10 +90,16 @@ func init() {
 				// Select cacertificate (to use in deployment)
 				cacert := selection.MustSelectCACertificate(ctx, log, cargs.cacertificateID, project.GetId(), project.GetOrganizationId(), cryptoc, rmc)
 
-				// Select servers from preset, if specified
+				// Select servers for flexible deployments
 				var servers *data.Deployment_ServersSpec
-				if cargs.serversPreset != "" {
-					servers = selection.MustSelectServersSpec(ctx, log, cargs.serversPreset, project.GetId(), regionID, datac)
+				if cargs.model == data.ModelFlexible {
+					servers = &data.Deployment_ServersSpec{
+						Coordinators:          cargs.coordinators,
+						CoordinatorMemorySize: cargs.coordinatorMemorySize,
+						Dbservers:             cargs.dbservers,
+						DbserverMemorySize:    cargs.dbserverMemorySize,
+						DbserverDiskSize:      cargs.dbserverDiskSize,
+					}
 				}
 
 				if len(cargs.nodeSizeID) < 1 && cargs.model != data.ModelFlexible {
