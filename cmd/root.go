@@ -53,7 +53,7 @@ const (
 func init() {
 	f := RootCmd.PersistentFlags()
 	// Persistent flags
-	defaultEndpoint := envOrDefault("ENDPOINT", "cloud.arangodb.com")
+	defaultEndpoint := envOrDefault("ENDPOINT", "api.cloud.arangodb.com")
 	f.StringVar(&RootArgs.token, "token", "", "Token used to authenticate at ArangoDB Oasis")
 	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
 	f.StringVar(&RootArgs.Format.Format, "format", DefaultFormat(), "Output format (table|json)")
