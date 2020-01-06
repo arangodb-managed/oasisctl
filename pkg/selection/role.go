@@ -34,7 +34,10 @@ func MustSelectRole(ctx context.Context, log zerolog.Logger, id, orgID string, i
 // and if the list is exactly 1 long, that role is returned.
 func SelectRole(ctx context.Context, log zerolog.Logger, id, orgID string, iamc iam.IAMServiceClient, rmc rm.ResourceManagerServiceClient) (*iam.Role, error) {
 	if id == "" {
-		org := MustSelectOrganization(ctx, log, orgID, rmc)
+		org, err := SelectOrganization(ctx, log, orgID, rmc)
+		if err != nil {
+			return nil, err
+		}
 		list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org.GetId()})
 		if err != nil {
 			return nil, err
