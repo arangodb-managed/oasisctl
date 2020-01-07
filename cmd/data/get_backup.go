@@ -16,8 +16,8 @@ import (
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	v1 "github.com/arangodb-managed/apis/common/v1"
-	"github.com/arangodb-managed/oasis/cmd"
-	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 func init() {

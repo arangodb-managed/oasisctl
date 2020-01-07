@@ -17,7 +17,7 @@ import (
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	common "github.com/arangodb-managed/apis/common/v1"
 
-	"github.com/arangodb-managed/oasis/cmd"
+	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
 func init() {

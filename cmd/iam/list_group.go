@@ -11,7 +11,7 @@ package iam
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/arangodb-managed/oasis/cmd"
+	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
 var (

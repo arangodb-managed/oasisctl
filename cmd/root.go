@@ -20,13 +20,14 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/arangodb-managed/apis/common/auth"
-	"github.com/arangodb-managed/oasis/pkg/format"
+
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 var (
 	// RootCmd is the root (and only) command of this service
 	RootCmd = &cobra.Command{
-		Use:              "oasis",
+		Use:              "oasisctl",
 		Short:            "ArangoDB Oasis",
 		Long:             "ArangoDB Oasis. The Managed Cloud for ArangoDB",
 		Run:              ShowUsage,
