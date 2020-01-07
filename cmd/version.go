@@ -14,7 +14,7 @@ import (
 	"github.com/coreos/go-semver/semver"
 	"github.com/spf13/cobra"
 
-	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 var (

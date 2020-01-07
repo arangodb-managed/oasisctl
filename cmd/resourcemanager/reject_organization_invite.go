@@ -11,13 +11,13 @@ package rm
 import (
 	"fmt"
 
-	"github.com/arangodb-managed/oasis/cmd"
-
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-	"github.com/arangodb-managed/oasis/pkg/selection"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var (

@@ -16,8 +16,8 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 
-	"github.com/arangodb-managed/oasis/cmd"
-	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 var (

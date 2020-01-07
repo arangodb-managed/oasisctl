@@ -20,7 +20,8 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"github.com/arangodb-managed/apis/common/auth"
-	"github.com/arangodb-managed/oasis/pkg/format"
+
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 var (

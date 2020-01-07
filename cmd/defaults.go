@@ -9,7 +9,7 @@
 package cmd
 
 import (
-	"github.com/arangodb-managed/oasis/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 // DefaultFormat returns the default value for the output format
