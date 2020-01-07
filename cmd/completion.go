@@ -21,12 +21,12 @@ var (
 		Short: "Generates bash completion scripts",
 		Long: `To load completion run
 	
-. <(oasis completion)
+. <(oasisctl completion)
 	
 To configure your bash shell to load completions for each session add to your bashrc
 	
 # ~/.bashrc or ~/.profile
-. <(oasis completion)
+. <(oasisctl completion)
 `,
 		Run: func(cmd *cobra.Command, args []string) {
 			RootCmd.GenBashCompletion(os.Stdout)

@@ -1,5 +1,5 @@
 SHELL = bash
-PROJECT := oasis
+PROJECT := oasisctl
 
 COMMIT := $(shell git rev-parse --short HEAD)
 DOCKERIMAGE ?= $(shell zutano docker image --name=$(PROJECT))

@@ -6,7 +6,6 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/arangodb-managed/apis v0.24.6
-	github.com/arangodb-managed/oasis v0.6.0
 	github.com/coreos/go-semver v0.2.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0

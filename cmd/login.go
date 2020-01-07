@@ -34,7 +34,7 @@ func init() {
 			Short: "Login to ArangoDB Oasis using an API key",
 			Long: `To authenticate in a script environment, run:
 	
-	export OASIS_TOKEN=$(oasis login --key-id=<your-key-id> --key-secret=<your-key-secret>)
+	export OASIS_TOKEN=$(oasisctl login --key-id=<your-key-id> --key-secret=<your-key-secret>)
 `,
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
