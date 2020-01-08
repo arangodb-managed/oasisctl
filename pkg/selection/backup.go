@@ -36,9 +36,11 @@ func SelectBackup(ctx context.Context, log zerolog.Logger, id string, backupc ba
 	if id == "" {
 		list, err := backupc.ListBackups(ctx, &backup.ListBackupsRequest{DeploymentId: id})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list backups")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d backups. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d backups. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -56,6 +58,7 @@ func SelectBackup(ctx context.Context, log zerolog.Logger, id string, backupc ba
 				}
 			}
 		}
+		log.Debug().Err(err).Str("backup", id).Msg("Failed to get backup")
 		return nil, err
 	}
 	return result, nil

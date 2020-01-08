@@ -40,9 +40,11 @@ func SelectRole(ctx context.Context, log zerolog.Logger, id, orgID string, iamc 
 		}
 		list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org.GetId()})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list roles")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d roles. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d roles. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -64,6 +66,7 @@ func SelectRole(ctx context.Context, log zerolog.Logger, id, orgID string, iamc 
 				}
 			}
 		}
+		log.Debug().Err(err).Str("role", id).Msg("Failed to get role")
 		return nil, err
 	}
 	return result, nil

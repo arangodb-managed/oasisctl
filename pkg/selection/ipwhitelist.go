@@ -37,6 +37,7 @@ func SelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectID, o
 	if id == "" {
 		project, err := SelectProject(ctx, log, projectID, orgID, rmc)
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list IP whitelists")
 			return nil, err
 		}
 		list, err := securityc.ListIPWhitelists(ctx, &common.ListOptions{ContextId: project.GetId()})
@@ -44,6 +45,7 @@ func SelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectID, o
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d IP whitelists. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d IP whitelists. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -65,6 +67,7 @@ func SelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectID, o
 				}
 			}
 		}
+		log.Debug().Err(err).Str("ipwhitelist", id).Msg("Failed to get IP whitelist")
 		return nil, err
 	}
 	return result, nil

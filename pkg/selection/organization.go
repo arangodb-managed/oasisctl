@@ -36,9 +36,11 @@ func SelectOrganization(ctx context.Context, log zerolog.Logger, id string, rmc 
 	if id == "" {
 		list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list organizations")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You're member of %d organizations. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You're member of %d organizations. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -56,6 +58,7 @@ func SelectOrganization(ctx context.Context, log zerolog.Logger, id string, rmc 
 				}
 			}
 		}
+		log.Debug().Err(err).Str("organization", id).Msg("Failed to get organization")
 		return nil, err
 	}
 	return result, nil

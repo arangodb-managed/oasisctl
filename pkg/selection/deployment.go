@@ -41,10 +41,12 @@ func SelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID, or
 		}
 		list, err := datac.ListDeployments(ctx, &common.ListOptions{ContextId: project.GetId()})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list deployments")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
-			return nil, fmt.Errorf("You're member of %d deployments. Please specify one explicitly.", len(list.Items))
+			log.Debug().Err(err).Msgf("You have access to %d deployments. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You have access to %d deployments. Please specify one explicitly.", len(list.Items))
 
 		}
 		return list.Items[0], nil
@@ -66,6 +68,7 @@ func SelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID, or
 				}
 			}
 		}
+		log.Debug().Err(err).Str("deployment", id).Msg("Failed to get deployment")
 		return nil, err
 	}
 	return result, nil

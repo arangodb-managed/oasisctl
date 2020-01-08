@@ -36,9 +36,11 @@ func SelectProvider(ctx context.Context, log zerolog.Logger, id string, organiza
 	if id == "" {
 		list, err := platformc.ListProviders(ctx, &platform.ListProvidersRequest{OrganizationId: organizationID, Options: &common.ListOptions{}})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list providers")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You're member of %d providers. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You're member of %d providers. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -56,6 +58,7 @@ func SelectProvider(ctx context.Context, log zerolog.Logger, id string, organiza
 				}
 			}
 		}
+		log.Debug().Err(err).Str("provider", id).Msg("Failed to get provider")
 		return nil, err
 	}
 	return result, nil

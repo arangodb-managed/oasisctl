@@ -41,9 +41,11 @@ func SelectCACertificate(ctx context.Context, log zerolog.Logger, id, projectID,
 		}
 		list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list CA certificates")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d CA certificates. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d CA certificates. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -65,6 +67,7 @@ func SelectCACertificate(ctx context.Context, log zerolog.Logger, id, projectID,
 				}
 			}
 		}
+		log.Debug().Err(err).Str("cacertificate", id).Msg("Failed to get CA certificate")
 		return nil, err
 	}
 	return result, nil

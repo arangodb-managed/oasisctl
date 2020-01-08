@@ -40,9 +40,11 @@ func SelectProject(ctx context.Context, log zerolog.Logger, id, orgID string, rm
 		}
 		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list projects")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d projects. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d projects. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -64,6 +66,7 @@ func SelectProject(ctx context.Context, log zerolog.Logger, id, orgID string, rm
 				}
 			}
 		}
+		log.Debug().Err(err).Str("project", id).Msg("Failed to get project")
 		return nil, err
 	}
 	return result, nil

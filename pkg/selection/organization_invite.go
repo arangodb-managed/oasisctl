@@ -40,9 +40,11 @@ func SelectOrganizationInvite(ctx context.Context, log zerolog.Logger, id, orgID
 		}
 		list, err := rmc.ListOrganizationInvites(ctx, &common.ListOptions{ContextId: org.GetId()})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list organization invites")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("You have access to %d organization invites. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("You have access to %d organization invites. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
@@ -64,7 +66,8 @@ func SelectOrganizationInvite(ctx context.Context, log zerolog.Logger, id, orgID
 				}
 			}
 		}
-		log.Fatal().Err(err).Str("organization-invite", id).Msg("Failed to get organization invite")
+		log.Debug().Err(err).Str("organization-invite", id).Msg("Failed to get organization invite")
+		return nil, err
 	}
 	return result, nil
 }

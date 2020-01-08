@@ -40,10 +40,12 @@ func SelectRegion(ctx context.Context, log zerolog.Logger, id, providerID string
 		}
 		list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{ProviderId: provider.GetId(), OrganizationId: organizationID, Options: &common.ListOptions{}})
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list regions")
 			return nil, err
 		}
 		if len(list.Items) != 1 {
-			return nil, fmt.Errorf("You're member of %d regions. Please specify one explicitly.", len(list.Items))
+			log.Debug().Err(err).Msgf("You have access to %d regions. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You have access to %d regions. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
 	}
@@ -64,6 +66,7 @@ func SelectRegion(ctx context.Context, log zerolog.Logger, id, providerID string
 				}
 			}
 		}
+		log.Debug().Err(err).Str("region", id).Msg("Failed to get region")
 		return nil, err
 	}
 	return result, nil

@@ -37,6 +37,7 @@ func SelectMember(ctx context.Context, log zerolog.Logger, id, orgID string, iam
 	if id == "" {
 		org, err := SelectOrganization(ctx, log, orgID, rmc)
 		if err != nil {
+			log.Debug().Err(err).Msg("Failed to list organization members")
 			return nil, err
 		}
 		list, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: org.GetId()})
@@ -44,8 +45,8 @@ func SelectMember(ctx context.Context, log zerolog.Logger, id, orgID string, iam
 			return nil, err
 		}
 		if len(list.Items) != 1 {
+			log.Debug().Err(err).Msgf("Organization contains %d members. Please specify one explicitly.", len(list.Items))
 			return nil, fmt.Errorf("Organization contains %d members. Please specify one explicitly.", len(list.Items))
-
 		}
 		id = list.Items[0].UserId
 	}
@@ -69,6 +70,7 @@ func SelectMember(ctx context.Context, log zerolog.Logger, id, orgID string, iam
 				}
 			}
 		}
+		log.Debug().Err(err).Str("user", id).Msg("Failed to get user")
 		return nil, err
 	}
 	return result, nil
