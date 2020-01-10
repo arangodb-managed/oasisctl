@@ -10,6 +10,7 @@ package selection
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rs/zerolog"
 
@@ -18,36 +19,57 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 )
 
-// MustSelectDeployment fetches the deployment with given ID.
+// MustSelectDeployment fetches the deployment given ID, name, or URL and fails if no deployment is found.
 // If no ID is specified, all deployments are fetched from the selected project
 // and if the list is exactly 1 long, that deployment is returned.
 func MustSelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID, orgID string, datac data.DataServiceClient, rmc rm.ResourceManagerServiceClient) *data.Deployment {
+	deployment, err := SelectDeployment(ctx, log, id, projectID, orgID, datac, rmc)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to list deployments")
+	}
+	return deployment
+}
+
+// SelectDeployment fetches the deployment given ID, name, or URL or returns an error if not found.
+// If no ID is specified, all deployments are fetched from the selected project
+// and if the list is exactly 1 long, that deployment is returned.
+func SelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID, orgID string, datac data.DataServiceClient, rmc rm.ResourceManagerServiceClient) (*data.Deployment, error) {
 	if id == "" {
-		project := MustSelectProject(ctx, log, projectID, orgID, rmc)
+		project, err := SelectProject(ctx, log, projectID, orgID, rmc)
+		if err != nil {
+			return nil, err
+		}
 		list, err := datac.ListDeployments(ctx, &common.ListOptions{ContextId: project.GetId()})
 		if err != nil {
-			log.Fatal().Err(err).Msg("Failed to list deployments")
+			log.Debug().Err(err).Msg("Failed to list deployments")
+			return nil, err
 		}
 		if len(list.Items) != 1 {
-			log.Fatal().Err(err).Msgf("You have access to %d deployments. Please specify one explicitly.", len(list.Items))
+			log.Debug().Err(err).Msgf("You have access to %d deployments. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You have access to %d deployments. Please specify one explicitly.", len(list.Items))
+
 		}
-		return list.Items[0]
+		return list.Items[0], nil
 	}
 	result, err := datac.GetDeployment(ctx, &common.IDOptions{Id: id})
 	if err != nil {
 		if common.IsNotFound(err) {
 			// Try to lookup deployment by name or URL
-			project := MustSelectProject(ctx, log, projectID, orgID, rmc)
+			project, err := SelectProject(ctx, log, projectID, orgID, rmc)
+			if err != nil {
+				return nil, err
+			}
 			list, err := datac.ListDeployments(ctx, &common.ListOptions{ContextId: project.GetId()})
 			if err == nil {
 				for _, x := range list.Items {
 					if x.GetName() == id || x.GetUrl() == id {
-						return x
+						return x, nil
 					}
 				}
 			}
 		}
-		log.Fatal().Err(err).Str("deployment", id).Msg("Failed to get deployment")
+		log.Debug().Err(err).Str("deployment", id).Msg("Failed to get deployment")
+		return nil, err
 	}
-	return result
+	return result, nil
 }
