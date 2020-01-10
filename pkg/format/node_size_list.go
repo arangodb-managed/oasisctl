@@ -23,6 +23,7 @@ func NodeSizeList(list []*data.NodeSize, opts Options) string {
 			kv{"max-disk-size", fmt.Sprintf("%d%s", x.MaxDiskSize, "GB")},
 			kv{"min-disk-size", fmt.Sprintf("%d%s", x.MinDiskSize, "GB")},
 			kv{"memory-size", fmt.Sprintf("%d%s", x.MemorySize, "GB")},
+			kv{"cpu-size", x.CpuSize},
 		}
 	}, false)
 }

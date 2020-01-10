@@ -5,7 +5,7 @@ go 1.12
 replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
 
 require (
-	github.com/arangodb-managed/apis v0.24.6
+	github.com/arangodb-managed/apis v0.32.1
 	github.com/coreos/go-semver v0.2.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0
@@ -64,4 +64,10 @@ replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.2.0-
 
 replace sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.0
 
-replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20191009155050-714e408ae3d2
+replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20191016152103-3151c1d2d3b1
+
+replace github.com/Azure/go-autorest => github.com/Azure/go-autorest v13.3.0+incompatible
+
+replace github.com/coreos/go-systemd => github.com/coreos/go-systemd v0.0.0-20190620071333-e64a0ec8b42a
+
+replace golang.org/x/sys => golang.org/x/sys v0.0.0-20191204072324-ce4227a45e2e
