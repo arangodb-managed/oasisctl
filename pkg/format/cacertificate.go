@@ -20,6 +20,7 @@ func CACertificate(x *crypto.CACertificate, opts Options) string {
 		kv{"description", x.GetDescription()},
 		kv{"lifetime", formatDuration(opts, x.GetLifetime())},
 		kv{"url", x.GetUrl()},
+		kv{"use-well-known-certificate", formatBool(opts, x.GetUseWellKnownCertificate())},
 		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 	)
@@ -35,6 +36,7 @@ func CACertificateList(list []*crypto.CACertificate, opts Options) string {
 			kv{"description", x.GetDescription()},
 			kv{"lifetime", formatDuration(opts, x.GetLifetime())},
 			kv{"url", x.GetUrl()},
+			kv{"use-well-known-certificate", formatBool(opts, x.GetUseWellKnownCertificate())},
 			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}
 	}, false)

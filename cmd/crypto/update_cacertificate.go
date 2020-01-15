@@ -31,17 +31,19 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				cacertID       string
-				organizationID string
-				projectID      string
-				name           string
-				description    string
+				cacertID                string
+				organizationID          string
+				projectID               string
+				name                    string
+				description             string
+				useWellKnownCertificate bool
 			}{}
 			f.StringVarP(&cargs.cacertID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
 			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
+			f.BoolVar(&cargs.useWellKnownCertificate, "use-well-known-certificate", false, "Sets the usage of a well known certificate ie. Let's Encrypt")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -67,6 +69,10 @@ func init() {
 				}
 				if f.Changed("description") {
 					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("use-well-known-certificate") {
+					item.UseWellKnownCertificate = cargs.useWellKnownCertificate
 					hasChanges = true
 				}
 				if !hasChanges {
