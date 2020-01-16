@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	// addMembersCmd is root for various `add group ...` commands
-	addMembersCmd = &cobra.Command{
+	// addGroupCmd is root for various `add group ...` commands
+	addGroupCmd = &cobra.Command{
 		Use:   "group",
 		Short: "Add group resources",
 		Run:   cmd.ShowUsage,
@@ -24,5 +24,5 @@ var (
 )
 
 func init() {
-	cmd.AddCmd.AddCommand(addMembersCmd)
+	cmd.AddCmd.AddCommand(addGroupCmd)
 }

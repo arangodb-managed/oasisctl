@@ -35,7 +35,7 @@ var (
 )
 
 func init() {
-	addMembersCmd.AddCommand(addGroupMembersCmd)
+	addGroupCmd.AddCommand(addGroupMembersCmd)
 
 	f := addGroupMembersCmd.Flags()
 	f.StringVarP(&addGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
