@@ -10,7 +10,6 @@ package cmd
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"strings"
@@ -42,12 +41,14 @@ func init() {
 }
 
 func generateMarkdownRun(c *cobra.Command, args []string) {
+	// Validate arguments
+	log := CLILog
 	var prepend string
 
 	if generateArgs.filePrepend != "" {
 		content, err := ioutil.ReadFile(generateArgs.filePrepend)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Str("prepend", generateArgs.filePrepend).Msg("Unable to read file for prepending.")
 		}
 		prepend = string(content)
 	}
@@ -60,11 +61,11 @@ func generateMarkdownRun(c *cobra.Command, args []string) {
 	}
 
 	if _, err := os.Stat(generateArgs.outputDir); os.IsNotExist(err) {
-		log.Fatalf("Directory %s does not exist.", generateArgs.outputDir)
+		log.Fatal().Err(err).Str("output", generateArgs.outputDir).Msg("Output directory does not exist.")
 	}
 
 	err := doc.GenMarkdownTreeCustom(RootCmd, generateArgs.outputDir, filePrepender, linkHandler)
 	if err != nil {
-		log.Fatal("Failed to generate markdown.", err)
+		log.Fatal().Err(err).Msg("Unable to generate document")
 	}
 }
