@@ -33,7 +33,7 @@ var (
 )
 
 func init() {
-	deleteMembersCmd.AddCommand(deleteGroupMembersCmd)
+	deleteGroupCmd.AddCommand(deleteGroupMembersCmd)
 
 	f := deleteGroupMembersCmd.Flags()
 	f.StringVarP(&deleteGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to delete members from")
@@ -56,7 +56,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	var userIds []string
 	members, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: groupID})
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list organization members.")
+		log.Fatal().Err(err).Msg("Failed to list group members.")
 	}
 	emailIDMap := make(map[string]string)
 	for _, id := range members.Items {

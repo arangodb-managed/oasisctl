@@ -25,7 +25,7 @@ var (
 	deleteOrgMembersCmd = &cobra.Command{
 		Use:   "members",
 		Short: "Delete members from organization",
-		Run:   deleteGroupMembersCmdRun,
+		Run:   deleteOrgMembersCmdRun,
 	}
 	deleteOrgMembersArgs struct {
 		organizationID string
@@ -42,7 +42,7 @@ func init() {
 
 }
 
-func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
+func deleteOrgMembersCmdRun(c *cobra.Command, args []string) {
 	// Validate arguments
 	log := cmd.CLILog
 	cargs := deleteOrgMembersArgs
