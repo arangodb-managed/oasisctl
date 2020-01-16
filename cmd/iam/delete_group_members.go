@@ -69,13 +69,8 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 
 	for _, e := range *cargs.userEmails {
 		if id, ok := emailIDMap[e]; !ok {
-			log.Fatal().Str("email", e).Msg("User not found or not part of the ogranization")
+			log.Fatal().Str("email", e).Str("group-id", groupID).Msg("User not part of the group")
 		} else {
-			if resp, err := iamc.IsMemberOfGroup(ctx, &iam.IsMemberOfGroupRequest{UserId: id, GroupId: groupID}); err != nil {
-				log.Fatal().Err(err).Str("email", e).Str("group-id", groupID).Msgf("Failed to determine if user is member of the group.")
-			} else if !resp.Result {
-				log.Fatal().Err(err).Str("email", e).Str("group-id", groupID).Msgf("User is not a member of group.")
-			}
 			userIds = append(userIds, id)
 		}
 	}
