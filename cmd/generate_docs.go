@@ -11,6 +11,7 @@ package cmd
 import (
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"strings"
 
@@ -29,6 +30,7 @@ var (
 	}
 	generateArgs struct {
 		filePrepend string
+		outputDir   string
 	}
 )
 
@@ -36,6 +38,7 @@ func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	f := GenerateCmd.Flags()
 	f.StringVarP(&generateArgs.filePrepend, "prepend", "p", "", "Content to preppend to the generated content")
+	f.StringVarP(&generateArgs.outputDir, "output-dir", "o", "./docs", "Output directory")
 }
 
 func generateMarkdownRun(c *cobra.Command, args []string) {
@@ -56,7 +59,11 @@ func generateMarkdownRun(c *cobra.Command, args []string) {
 		return "/commands/" + strings.ToLower(base) + "/"
 	}
 
-	err := doc.GenMarkdownTreeCustom(RootCmd, "./docs", filePrepender, linkHandler)
+	if _, err := os.Stat(generateArgs.outputDir); os.IsNotExist(err) {
+		log.Fatalf("Directory %s does not exist.", generateArgs.outputDir)
+	}
+
+	err := doc.GenMarkdownTreeCustom(RootCmd, generateArgs.outputDir, filePrepender, linkHandler)
 	if err != nil {
 		log.Fatal("Failed to generate markdown.", err)
 	}
