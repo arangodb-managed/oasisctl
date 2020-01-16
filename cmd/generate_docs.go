@@ -56,7 +56,7 @@ func generateMarkdownRun(c *cobra.Command, args []string) {
 	}
 	linkHandler := func(name string) string {
 		base := strings.TrimSuffix(name, path.Ext(name))
-		return "/commands/" + strings.ToLower(base) + "/"
+		return base + ".html"
 	}
 
 	if _, err := os.Stat(generateArgs.outputDir); os.IsNotExist(err) {
