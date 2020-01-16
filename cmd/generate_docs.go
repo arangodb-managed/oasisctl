@@ -29,7 +29,9 @@ var (
 		DisableSuggestions: true,
 	}
 	generateArgs struct {
-		outputDir string
+		outputDir             string
+		linkFileExt           string
+		replaceUnderscoreWith string
 	}
 )
 
@@ -44,11 +46,14 @@ func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	f := GenerateCmd.Flags()
 	f.StringVarP(&generateArgs.outputDir, "output-dir", "o", "./docs", "Output directory")
+	f.StringVarP(&generateArgs.linkFileExt, "link-file-ext", "l", "", "What file extensions the links should point to")
+	f.StringVarP(&generateArgs.replaceUnderscoreWith, "replace-underscore-with", "r", "", "Replace the underscore in links with the given character")
 }
 
 func generateMarkdownRun(c *cobra.Command, args []string) {
 	// Validate arguments
 	log := CLILog
+	cargs := generateArgs
 
 	filePrepender := func(filename string) string {
 		name := filepath.Base(filename)
@@ -60,14 +65,22 @@ func generateMarkdownRun(c *cobra.Command, args []string) {
 	}
 	linkHandler := func(name string) string {
 		base := strings.TrimSuffix(name, path.Ext(name))
-		return strings.Replace(base, "_", "-", -1) + ".html"
+		extension := ".md"
+		if cargs.linkFileExt != "" {
+			extension = cargs.linkFileExt
+		}
+		baseName := base
+		if cargs.replaceUnderscoreWith != "" {
+			baseName = strings.ReplaceAll(base, "_", cargs.replaceUnderscoreWith)
+		}
+		return baseName + extension
 	}
 
-	if _, err := os.Stat(generateArgs.outputDir); os.IsNotExist(err) {
-		log.Fatal().Err(err).Str("output", generateArgs.outputDir).Msg("Output directory does not exist.")
+	if _, err := os.Stat(cargs.outputDir); os.IsNotExist(err) {
+		log.Fatal().Err(err).Str("output", cargs.outputDir).Msg("Output directory does not exist.")
 	}
 
-	err := doc.GenMarkdownTreeCustom(RootCmd, generateArgs.outputDir, filePrepender, linkHandler)
+	err := doc.GenMarkdownTreeCustom(RootCmd, cargs.outputDir, filePrepender, linkHandler)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unable to generate document")
 	}
