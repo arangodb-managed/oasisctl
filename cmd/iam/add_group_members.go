@@ -18,7 +18,6 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var (
@@ -58,14 +57,19 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
 
+	log.Info().Msgf("Adding members: %s", cargs.userEmails)
 	var userIds []string
 	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organizationID})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list organization members.")
 	}
-	emailIDMap, err := selection.GenerateUserEmailMap(ctx, members, iamc)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to find user.")
+	emailIDMap := make(map[string]string)
+	for _, u := range members.Items {
+		user, err := iamc.GetUser(ctx, &common.IDOptions{Id: u.UserId})
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to get user")
+		}
+		emailIDMap[user.Email] = user.Id
 	}
 
 	for _, e := range *cargs.userEmails {

@@ -15,10 +15,8 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var (
@@ -29,9 +27,8 @@ var (
 		Run:   deleteGroupMembersCmdRun,
 	}
 	deleteGroupMembersArgs struct {
-		organizationID string
-		groupID        string
-		userEmails     *[]string
+		groupID    string
+		userEmails *[]string
 	}
 )
 
@@ -39,7 +36,6 @@ func init() {
 	deleteMembersCmd.AddCommand(deleteGroupMembersCmd)
 
 	f := deleteGroupMembersCmd.Flags()
-	f.StringVarP(&deleteGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	f.StringVarP(&deleteGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to delete members from")
 	deleteGroupMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 }
@@ -49,23 +45,26 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	log := cmd.CLILog
 	cargs := deleteGroupMembersArgs
 	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
-	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
 	ctx := cmd.ContextWithToken()
-	rmc := rm.NewResourceManagerServiceClient(conn)
 
+	log.Info().Msgf("Deleting members: %s", cargs.userEmails)
 	var userIds []string
-	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organizationID})
+	members, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: groupID})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list organization members.")
 	}
-	emailIDMap, err := selection.GenerateUserEmailMap(ctx, members, iamc)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to find user.")
+	emailIDMap := make(map[string]string)
+	for _, id := range members.Items {
+		user, err := iamc.GetUser(ctx, &common.IDOptions{Id: id})
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to get user")
+		}
+		emailIDMap[user.Email] = user.Id
 	}
 
 	for _, e := range *cargs.userEmails {

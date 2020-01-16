@@ -18,7 +18,6 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var (
@@ -50,7 +49,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-	log.Info().Msgf("Deleting members: %v", cargs.userEmails)
+	log.Info().Msgf("Deleting members: %s", cargs.userEmails)
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
@@ -70,9 +69,13 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list organization members.")
 	}
-	emailIDMap, err := selection.GenerateUserEmailMap(ctx, members, iamc)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to find user.")
+	emailIDMap := make(map[string]string)
+	for _, u := range members.Items {
+		user, err := iamc.GetUser(ctx, &common.IDOptions{Id: u.UserId})
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to get user")
+		}
+		emailIDMap[user.Email] = user.Id
 	}
 
 	for _, e := range *cargs.userEmails {
