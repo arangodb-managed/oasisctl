@@ -9,9 +9,10 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -28,36 +29,38 @@ var (
 		DisableSuggestions: true,
 	}
 	generateArgs struct {
-		filePrepend string
-		outputDir   string
+		outputDir string
 	}
 )
+
+const fmTemplate = `---
+layout: default
+description: %s
+title: %s
+---
+`
 
 func init() {
 	RootCmd.AddCommand(GenerateCmd)
 	f := GenerateCmd.Flags()
-	f.StringVarP(&generateArgs.filePrepend, "prepend", "p", "", "Content to preppend to the generated content")
 	f.StringVarP(&generateArgs.outputDir, "output-dir", "o", "./docs", "Output directory")
 }
 
 func generateMarkdownRun(c *cobra.Command, args []string) {
 	// Validate arguments
 	log := CLILog
-	var prepend string
 
-	if generateArgs.filePrepend != "" {
-		content, err := ioutil.ReadFile(generateArgs.filePrepend)
-		if err != nil {
-			log.Fatal().Err(err).Str("prepend", generateArgs.filePrepend).Msg("Unable to read file for prepending.")
-		}
-		prepend = string(content)
-	}
 	filePrepender := func(filename string) string {
-		return prepend
+		name := filepath.Base(filename)
+		base := strings.TrimSuffix(name, path.Ext(name))
+		command := strings.Replace(base, "_", " ", -1)
+		title := strings.Title(command)
+		description := "Description of the " + command + " command"
+		return fmt.Sprintf(fmTemplate, description, title)
 	}
 	linkHandler := func(name string) string {
 		base := strings.TrimSuffix(name, path.Ext(name))
-		return base + ".html"
+		return strings.Replace(base, "_", "-", -1) + ".html"
 	}
 
 	if _, err := os.Stat(generateArgs.outputDir); os.IsNotExist(err) {
