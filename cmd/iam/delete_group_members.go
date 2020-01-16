@@ -53,6 +53,13 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 
 	// Delete members
+	for _, u := range deleteGroupMembersArgs.userIDs {
+		if resp, err := iamc.IsMemberOfGroup(ctx, &iam.IsMemberOfGroupRequest{UserId: u, GroupId: groupID}); err != nil {
+			log.Fatal().Err(err).Str("user-id", u).Str("group-id", groupID).Msgf("Failed to determine if user is member of the group.")
+		} else if !resp.Result {
+			log.Fatal().Err(err).Str("user-id", u).Str("group-id", groupID).Msgf("User is not member of group.")
+		}
+	}
 	_, err := iamc.DeleteGroupMembers(ctx, &iam.GroupMembersRequest{
 		GroupId: groupID,
 		UserIds: cargs.userIDs,
