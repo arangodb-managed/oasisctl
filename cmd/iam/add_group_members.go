@@ -13,9 +13,12 @@ import (
 
 	"github.com/spf13/cobra"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var (
@@ -26,8 +29,9 @@ var (
 		Run:   addGroupMembersCmdRun,
 	}
 	addGroupMembersArgs struct {
-		groupID string
-		userIDs []string
+		organizationID string
+		groupID        string
+		userEmails     []string
 	}
 )
 
@@ -35,9 +39,9 @@ func init() {
 	cmd.CreateCmd.AddCommand(addGroupMembersCmd)
 
 	f := addGroupMembersCmd.Flags()
+	f.StringVarP(&addGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	f.StringVarP(&addGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group")
-	addGroupMembersArgs.userIDs = *f.StringSliceP("user-ids", "u", []string{}, "A coma separated list of user ids")
-
+	addGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A coma separated list of user emails")
 }
 
 func addGroupMembersCmdRun(c *cobra.Command, args []string) {
@@ -46,17 +50,37 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 	log := cmd.CLILog
 	cargs := addGroupMembersArgs
 	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
+	organizationID, argsUsed := cmd.OptOption("organiztaion-id", cargs.groupID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
+	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
 
+	var userIds []string
+	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organizationID})
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to list organization members.")
+	}
+	emailIDMap, err := selection.GenerateUserEmailMap(ctx, members, iamc)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to find user.")
+	}
+
+	for _, e := range cargs.userEmails {
+		if id, ok := emailIDMap[e]; !ok {
+			log.Fatal().Str("email", e).Msg("User not found or not part of the ogranization")
+		} else {
+			userIds = append(userIds, id)
+		}
+	}
+
 	// Add members
-	_, err := iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{
+	_, err = iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{
 		GroupId: groupID,
-		UserIds: cargs.userIDs,
+		UserIds: userIds,
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to add users.")
