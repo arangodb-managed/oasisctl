@@ -1,9 +1,9 @@
 //
 // DISCLAIMER
 //
-// Copyright 2019 ArangoDB Inc, Cologne, Germany
+// Copyright 2020 ArangoDB Inc, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Gergely Brautigam
 //
 
 package cmd
