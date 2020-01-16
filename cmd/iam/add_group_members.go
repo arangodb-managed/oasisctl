@@ -31,7 +31,7 @@ var (
 	addGroupMembersArgs struct {
 		organizationID string
 		groupID        string
-		userEmails     []string
+		userEmails     *[]string
 	}
 )
 
@@ -41,7 +41,7 @@ func init() {
 	f := addGroupMembersCmd.Flags()
 	f.StringVarP(&addGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	f.StringVarP(&addGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to add members to")
-	addGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
+	addGroupMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 }
 
 func addGroupMembersCmdRun(c *cobra.Command, args []string) {
@@ -68,7 +68,7 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to find user.")
 	}
 
-	for _, e := range cargs.userEmails {
+	for _, e := range *cargs.userEmails {
 		if id, ok := emailIDMap[e]; !ok {
 			log.Fatal().Str("email", e).Msg("User not found or not part of the ogranization")
 		} else {

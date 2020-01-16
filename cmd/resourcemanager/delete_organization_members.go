@@ -30,7 +30,7 @@ var (
 	}
 	deleteOrgMembersArgs struct {
 		organizationID string
-		userEmails     []string
+		userEmails     *[]string
 	}
 )
 
@@ -39,7 +39,7 @@ func init() {
 
 	f := deleteOrgMembersCmd.Flags()
 	f.StringVarP(&deleteOrgMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	deleteOrgMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
+	deleteOrgMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 
 }
 
@@ -50,6 +50,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
+	log.Info().Msgf("Deleting members: %v", cargs.userEmails)
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
@@ -74,7 +75,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to find user.")
 	}
 
-	for _, e := range cargs.userEmails {
+	for _, e := range *cargs.userEmails {
 		if id, ok := emailIDMap[e]; !ok {
 			log.Fatal().Str("email", e).Str("organization-id", organizationID).Msg("User is not a member of the organization.")
 		} else {
