@@ -24,7 +24,7 @@ import (
 var (
 	// deleteGroupMembersCmd deletes a list of members from a group
 	deleteGroupMembersCmd = &cobra.Command{
-		Use:   "group",
+		Use:   "members",
 		Short: "Add members to group",
 		Run:   deleteGroupMembersCmdRun,
 	}
@@ -36,12 +36,12 @@ var (
 )
 
 func init() {
-	cmd.DeleteCmd.AddCommand(deleteGroupMembersCmd)
+	deleteMembersCmd.AddCommand(deleteGroupMembersCmd)
 
 	f := deleteGroupMembersCmd.Flags()
 	f.StringVarP(&deleteGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&deleteGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group")
-	deleteGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A coma separated list of user emails")
+	f.StringVarP(&deleteGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to delete members from")
+	deleteGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 }
 
 func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
@@ -81,11 +81,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 		}
 	}
 
-	_, err = iamc.DeleteGroupMembers(ctx, &iam.GroupMembersRequest{
-		GroupId: groupID,
-		UserIds: userIds,
-	})
-	if err != nil {
+	if _, err := iamc.DeleteGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: groupID, UserIds: userIds}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to delete users.")
 	}
 

@@ -24,7 +24,7 @@ import (
 var (
 	// addGroupMembersCmd adds a list of members to a group
 	addGroupMembersCmd = &cobra.Command{
-		Use:   "group",
+		Use:   "members",
 		Short: "Add members to group",
 		Run:   addGroupMembersCmdRun,
 	}
@@ -36,16 +36,15 @@ var (
 )
 
 func init() {
-	cmd.CreateCmd.AddCommand(addGroupMembersCmd)
+	addMembersCmd.AddCommand(addGroupMembersCmd)
 
 	f := addGroupMembersCmd.Flags()
 	f.StringVarP(&addGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.StringVarP(&addGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group")
-	addGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A coma separated list of user emails")
+	f.StringVarP(&addGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to add members to")
+	addGroupMembersArgs.userEmails = *f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 }
 
 func addGroupMembersCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
 	// Validate arguments
 	log := cmd.CLILog
 	cargs := addGroupMembersArgs
@@ -77,12 +76,7 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 		}
 	}
 
-	// Add members
-	_, err = iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{
-		GroupId: groupID,
-		UserIds: userIds,
-	})
-	if err != nil {
+	if _, err := iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: groupID, UserIds: userIds}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to add users.")
 	}
 
