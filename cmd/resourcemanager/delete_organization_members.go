@@ -11,6 +11,8 @@ package rm
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
@@ -56,16 +58,18 @@ func deleteOrgMembersCmdRun(c *cobra.Command, args []string) {
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
 
-	org, err := rmc.GetOrganization(ctx, &common.IDOptions{Id: organizationID})
+	organization := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
+
+	org, err := rmc.GetOrganization(ctx, &common.IDOptions{Id: organization.Id})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to get organization.")
 	}
 	if org.IsDeleted {
-		log.Fatal().Str("organization_id", organizationID).Msg("May not delete members from deleted organization.")
+		log.Fatal().Str("organization_id", organization.Id).Msg("May not delete members from deleted organization.")
 	}
 
 	membersToDelete := &rm.MemberList{Items: make([]*rm.Member, 0)}
-	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organizationID})
+	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organization.Id})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list organization members.")
 	}
@@ -80,14 +84,14 @@ func deleteOrgMembersCmdRun(c *cobra.Command, args []string) {
 
 	for _, e := range *cargs.userEmails {
 		if id, ok := emailIDMap[e]; !ok {
-			log.Fatal().Str("email", e).Str("organization-id", organizationID).Msg("User is not a member of the organization.")
+			log.Fatal().Str("email", e).Str("organization-id", organization.Id).Msg("User is not a member of the organization.")
 		} else {
 			membersToDelete.Items = append(membersToDelete.Items, &rm.Member{UserId: id})
 		}
 	}
 
 	if _, err = rmc.DeleteOrganizationMembers(ctx, &rm.OrganizationMembersRequest{
-		OrganizationId: organizationID,
+		OrganizationId: organization.Id,
 		Members:        membersToDelete,
 	}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to delete users.")

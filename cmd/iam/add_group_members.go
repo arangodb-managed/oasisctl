@@ -11,6 +11,8 @@ package iam
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
@@ -48,7 +50,7 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 	log := cmd.CLILog
 	cargs := addGroupMembersArgs
 	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
-	organizationID, argsUsed := cmd.OptOption("organiztaion-id", cargs.groupID, args, 0)
+	organizationID, argsUsed := cmd.OptOption("organiztaion-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
@@ -57,9 +59,12 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
 
+	organization := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
+	group := selection.MustSelectGroup(ctx, log, groupID, organization.Id, iamc, rmc)
+
 	log.Info().Msgf("Adding members: %s", cargs.userEmails)
 	var userIds []string
-	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organizationID})
+	members, err := rmc.ListOrganizationMembers(ctx, &common.ListOptions{ContextId: organization.Id})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list organization members.")
 	}
@@ -80,7 +85,7 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 		}
 	}
 
-	if _, err := iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: groupID, UserIds: userIds}); err != nil {
+	if _, err := iamc.AddGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: group.Id, UserIds: userIds}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to add users.")
 	}
 

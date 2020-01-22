@@ -11,6 +11,9 @@ package iam
 import (
 	"fmt"
 
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
@@ -23,12 +26,13 @@ var (
 	// deleteGroupMembersCmd deletes a list of members from a group
 	deleteGroupMembersCmd = &cobra.Command{
 		Use:   "members",
-		Short: "Add members to group",
+		Short: "Delete members from group",
 		Run:   deleteGroupMembersCmdRun,
 	}
 	deleteGroupMembersArgs struct {
-		groupID    string
-		userEmails *[]string
+		groupID        string
+		organizationID string
+		userEmails     *[]string
 	}
 )
 
@@ -37,6 +41,7 @@ func init() {
 
 	f := deleteGroupMembersCmd.Flags()
 	f.StringVarP(&deleteGroupMembersArgs.groupID, "group-id", "g", cmd.DefaultGroup(), "Identifier of the group to delete members from")
+	f.StringVarP(&deleteGroupMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	deleteGroupMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
 }
 
@@ -45,16 +50,21 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	log := cmd.CLILog
 	cargs := deleteGroupMembersArgs
 	groupID, argsUsed := cmd.OptOption("group-id", cargs.groupID, args, 0)
+	organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 	cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 	// Connect
 	conn := cmd.MustDialAPI()
 	iamc := iam.NewIAMServiceClient(conn)
 	ctx := cmd.ContextWithToken()
+	rmc := rm.NewResourceManagerServiceClient(conn)
+
+	organization := selection.MustSelectGroup(ctx, log, groupID, organizationID, iamc, rmc)
+	group := selection.MustSelectGroup(ctx, log, groupID, organization.Id, iamc, rmc)
 
 	log.Info().Msgf("Deleting members: %s", cargs.userEmails)
 	var userIds []string
-	members, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: groupID})
+	members, err := iamc.ListGroupMembers(ctx, &common.ListOptions{ContextId: group.Id})
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to list group members.")
 	}
@@ -69,13 +79,13 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 
 	for _, e := range *cargs.userEmails {
 		if id, ok := emailIDMap[e]; !ok {
-			log.Fatal().Str("email", e).Str("group-id", groupID).Msg("User not part of the group")
+			log.Fatal().Str("email", e).Str("group-id", group.Id).Msg("User not part of the group")
 		} else {
 			userIds = append(userIds, id)
 		}
 	}
 
-	if _, err := iamc.DeleteGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: groupID, UserIds: userIds}); err != nil {
+	if _, err := iamc.DeleteGroupMembers(ctx, &iam.GroupMembersRequest{GroupId: group.Id, UserIds: userIds}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to delete users.")
 	}
 
