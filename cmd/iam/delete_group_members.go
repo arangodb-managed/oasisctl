@@ -58,7 +58,7 @@ func deleteGroupMembersCmdRun(c *cobra.Command, args []string) {
 	ctx := cmd.ContextWithToken()
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
-	organization := selection.MustSelectGroup(ctx, log, groupID, organizationID, iamc, rmc)
+	organization := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 	group := selection.MustSelectGroup(ctx, log, groupID, organization.Id, iamc, rmc)
 
 	log.Info().Msgf("Deleting members: %s", cargs.userEmails)
