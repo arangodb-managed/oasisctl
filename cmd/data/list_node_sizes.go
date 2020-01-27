@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2019 ArangoDB Inc, Cologne, Germany
+// Copyright 2019 ArangoDB GmbH, Cologne, Germany
 //
 // Author Brautigam Gergely
 //
