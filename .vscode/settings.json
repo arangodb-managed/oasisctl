@@ -3,7 +3,7 @@
     "fileHeaderComment.parameter":{
         "*":{
             "commentprefix": "//",
-            "company": "ArangoDB Inc, Cologne, Germany",
+            "company": "ArangoDB GmbH, Cologne, Germany",
         }
     },
     "fileHeaderComment.template":{
@@ -11,7 +11,7 @@
             "${commentprefix} ",
             "${commentprefix} DISCLAIMER",
             "${commentprefix} ",
-            "${commentprefix} Copyright ${year} ArangoDB Inc, Cologne, Germany",
+            "${commentprefix} Copyright ${year} ArangoDB GmbH, Cologne, Germany",
             "${commentprefix} ",
             "${commentprefix} Author ${author}",
             "${commentprefix} ",
