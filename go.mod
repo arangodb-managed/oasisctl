@@ -5,8 +5,7 @@ go 1.12
 replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
 
 require (
-	github.com/arangodb-managed/apis v0.33.1
-	github.com/arangodb-managed/zutano v0.7.13
+	github.com/arangodb-managed/apis v0.36.0
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0
@@ -14,6 +13,8 @@ require (
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
+	github.com/stretchr/testify v1.4.0 // indirect
+	golang.org/x/net v0.0.0-20191204025024-5ee1b9f4859a // indirect
 	google.golang.org/grpc v1.21.1
 )
 
@@ -21,7 +22,7 @@ replace github.com/coreos/prometheus-operator => github.com/coreos/prometheus-op
 
 replace github.com/hashicorp/vault/api => github.com/hashicorp/vault/api v1.0.2-0.20190424005855-e25a8a1c7480
 
-replace github.com/hashicorp/vault/sdk => github.com/hashicorp/vault/sdk v0.1.10
+replace github.com/hashicorp/vault/sdk => github.com/hashicorp/vault/sdk v0.1.10-0.20190506194144-8fc8af3199a1
 
 replace github.com/hashicorp/vault => github.com/hashicorp/vault v1.1.2
 
@@ -65,7 +66,7 @@ replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.2.0-
 
 replace sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.0
 
-replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20191016152103-3151c1d2d3b1
+replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20200302145521-c2185fb8f8bd
 
 replace github.com/Azure/go-autorest => github.com/Azure/go-autorest v13.3.0+incompatible
 
