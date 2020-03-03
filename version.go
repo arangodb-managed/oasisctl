@@ -2,5 +2,5 @@
 package main
 
 const (
-	releaseVersion = "0.8.0"
+	releaseVersion = "0.9.0"
 )
