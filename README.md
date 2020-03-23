@@ -1,4 +1,4 @@
-# ArangoDB Oasis
+# Oasisctl
 
 ![ArangoDB Oasis](https://cloud.arangodb.com/assets/logos/arangodb-oasis-logo-whitebg-right.png)
 
