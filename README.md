@@ -1,9 +1,15 @@
 # ArangoDB Oasis
 
+![ArangoDB Oasis](https://cloud.arangodb.com/assets/logos/arangodb-oasis-logo-whitebg-right.png)
+
 Commandline utility for accessing ArangoDB Oasis.
 
 This utility is used to access ArangoDB Oasis resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
 It is often used in scripts.
+
+## Maintainers
+
+This utility is maintained by the team at [ArangoDB](https://www.arangodb.com/).
 
 ## Installation
 
