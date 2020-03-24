@@ -42,8 +42,16 @@ jobs:
   deploy-release:
     executor: go-executor
     steps:
-      - attach_workspace:
-          at: ./artifacts
+      - checkout
+      - setup_remote_docker
+      - run: cp go.sum go.sum.orig
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum.orig" }}
+      - run: |
+          go get
+          make bootstrap
+          make all
       - run:
           name: "Publish Release on GitHub"
           command: |
