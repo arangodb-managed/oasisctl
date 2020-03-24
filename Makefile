@@ -7,7 +7,7 @@ DOCKERIMAGE ?= $(shell zutano docker image --name=$(PROJECT))
 all: binaries
 
 clean:
-	rm -Rf bin
+	rm -Rf bin assets
 
 binaries:
 	CGO_ENABLED=0 gox \
@@ -16,6 +16,8 @@ binaries:
 		-output="bin/{{.OS}}/{{.Arch}}/$(PROJECT)" \
 		-tags="netgo" \
 		./...
+	mkdir -p assets
+	zip -r assets/oasisctl.zip bin/*
 
 .PHONY: test
 test:
