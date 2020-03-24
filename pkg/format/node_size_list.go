@@ -18,26 +18,50 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Gergely Brautigam
+// Author Ewout Prangsma
 //
 
 package format
 
 import (
 	"fmt"
+	"strings"
 
 	data "github.com/arangodb-managed/apis/data/v1"
 )
 
 // NodeSizeList returns a list of node sizes.
-func NodeSizeList(list []*data.NodeSize, opts Options) string {
+func NodeSizeList(list []*data.NodeSize, cpuList []*data.CPUSize, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
-			kv{"name", x.Name},
-			kv{"max-disk-size", fmt.Sprintf("%d%s", x.MaxDiskSize, "GB")},
-			kv{"min-disk-size", fmt.Sprintf("%d%s", x.MinDiskSize, "GB")},
-			kv{"memory-size", fmt.Sprintf("%d%s", x.MemorySize, "GB")},
-			kv{"cpu-size", x.CpuSize},
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"max-disk-size", fmt.Sprintf("%d%s", x.GetMaxDiskSize(), "GB")},
+			{"min-disk-size", fmt.Sprintf("%d%s", x.GetMinDiskSize(), "GB")},
+			{"allowed-disk-sizes", formatAllowedDiskSizes(x.GetDiskSizes())},
+			{"memory-size", fmt.Sprintf("%d%s", x.GetMemorySize(), "GB")},
+			{"cpu-size", formatCPUSize(x.GetCpuSize(), cpuList)},
 		}
-	}, false)
+	}, true)
+}
+
+func formatAllowedDiskSizes(list []int32) string {
+	if len(list) == 0 {
+		return "any"
+	}
+	result := make([]string, 0, len(list))
+	for _, x := range list {
+		result = append(result, fmt.Sprintf("%d%s", x, "GB"))
+	}
+	return strings.Join(result, ", ")
+}
+
+func formatCPUSize(id string, list []*data.CPUSize) string {
+	for _, x := range list {
+		if x.GetId() == id {
+			return x.GetName()
+		}
+	}
+	return id
 }
