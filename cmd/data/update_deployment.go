@@ -51,6 +51,17 @@ func init() {
 				name           string
 				description    string
 				ipwhitelistID  string
+
+				version               string
+				model                 string
+				nodeSizeID            string
+				nodeCount             int32
+				nodeDiskSize          int32
+				coordinators          int32
+				coordinatorMemorySize int32
+				dbservers             int32
+				dbserverMemorySize    int32
+				dbserverDiskSize      int32
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -58,6 +69,16 @@ func init() {
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the deployment")
 			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
+			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
+			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
+			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
+			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
+			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
+			f.Int32Var(&cargs.coordinators, "coordinators", 3, "Set number of coordinators for flexible deployments")
+			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of coordinators for flexible deployments (GB)")
+			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
+			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
+			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -73,7 +94,18 @@ func init() {
 
 				// Fetch deployment
 				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
-
+				ensureModel := func() *data.Deployment_ModelSpec {
+					if item.Model == nil {
+						item.Model = &data.Deployment_ModelSpec{}
+					}
+					return item.Model
+				}
+				ensureServers := func() *data.Deployment_ServersSpec {
+					if item.Servers == nil {
+						item.Servers = &data.Deployment_ServersSpec{}
+					}
+					return item.Servers
+				}
 				// Set changes
 				f := c.Flags()
 				hasChanges := false
@@ -87,6 +119,46 @@ func init() {
 				}
 				if f.Changed("ipwhitelist-id") {
 					item.IpwhitelistId = cargs.ipwhitelistID
+					hasChanges = true
+				}
+				if f.Changed("version") {
+					item.Version = cargs.version
+					hasChanges = true
+				}
+				if f.Changed("model") {
+					ensureModel().Model = cargs.model
+					hasChanges = true
+				}
+				if f.Changed("node-size-id") {
+					ensureModel().NodeSizeId = cargs.nodeSizeID
+					hasChanges = true
+				}
+				if f.Changed("node-count") {
+					ensureModel().NodeCount = cargs.nodeCount
+					hasChanges = true
+				}
+				if f.Changed("node-disk-size") {
+					ensureModel().NodeDiskSize = cargs.nodeDiskSize
+					hasChanges = true
+				}
+				if f.Changed("coordinators") {
+					ensureServers().Coordinators = cargs.coordinators
+					hasChanges = true
+				}
+				if f.Changed("coordinator-memory-size") {
+					ensureServers().CoordinatorMemorySize = cargs.coordinatorMemorySize
+					hasChanges = true
+				}
+				if f.Changed("dbservers") {
+					ensureServers().Dbservers = cargs.dbservers
+					hasChanges = true
+				}
+				if f.Changed("dbserver-memory-size") {
+					ensureServers().DbserverMemorySize = cargs.dbserverMemorySize
+					hasChanges = true
+				}
+				if f.Changed("dbserver-disk-size") {
+					ensureServers().DbserverDiskSize = cargs.dbserverDiskSize
 					hasChanges = true
 				}
 				if !hasChanges {
