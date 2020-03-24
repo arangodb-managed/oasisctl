@@ -39,11 +39,29 @@ jobs:
           paths:
             - "/go/pkg/mod"
 
+  deploy-release:
+    executor: go-executor
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            github-release upload --user ${CIRCLE_PROJECT_USERNAME} --repo ${CIRCLE_PROJECT_REPONAME} --tag ${CIRCLE_SHA1} --name=oasisctl.zip --file=./artifacts/assets/oasisctl.zip
+
 workflows:
   version: 2
   build_test_store_artifacts:
     jobs:
       - build
+      - deploy-release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
   nightly:
     triggers:
       - schedule:
