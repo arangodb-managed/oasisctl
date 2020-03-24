@@ -13,10 +13,14 @@ This utility is maintained by the team at [ArangoDB](https://www.arangodb.com/).
 
 ## Installation
 
-Run:
+Downloading the [latest released binaries](https://github.com/arangodb-managed/oasisctl/releases),
+extract the zip archive and install the binary for your platform in your preferred location.
+
+Or to build from source, run:
 
 ```bash
-go get github.com/arangodb-managed/oasisctl
+git clone https://github.com/arangodb-managed/oasisctl.git
+make
 ```
 
 ## Usage
