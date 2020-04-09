@@ -17,32 +17,28 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Brautigam Gergely
 //
 
-package main
+package format
 
 import (
-	"log"
-
-	_ "github.com/gogo/protobuf/types"
-
-	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	_ "github.com/arangodb-managed/oasisctl/cmd/data"
-	_ "github.com/arangodb-managed/oasisctl/cmd/example"
-	_ "github.com/arangodb-managed/oasisctl/cmd/iam"
-	_ "github.com/arangodb-managed/oasisctl/cmd/platform"
-	_ "github.com/arangodb-managed/oasisctl/cmd/resourcemanager"
-	_ "github.com/arangodb-managed/oasisctl/cmd/security"
+	example "github.com/arangodb-managed/apis/example/v1"
 )
 
-func init() {
-	cmd.SetVersion(releaseVersion)
-}
-
-func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		log.Fatalf("%v\n", err)
-	}
+// ExampleDatasetInstallationList returns a list of installations formatted for humans.
+func ExampleDatasetInstallationList(list []*example.ExampleDatasetInstallation, opts Options) string {
+	return formatList(opts, list, func(i int) []kv {
+		x := list[i]
+		return []kv{
+			{"id", x.Id},
+			{"deleted", x.IsDeleted},
+			{"example-dataset-id", x.ExampledatasetId},
+			{"deployment-id", x.DeploymentId},
+			{"url", x.Url},
+			{"state", x.GetStatus().GetState()},
+			{"created-at", formatTime(opts, x.CreatedAt)},
+			{"deleted-at", formatTime(opts, x.DeletedAt)},
+		}
+	}, false)
 }

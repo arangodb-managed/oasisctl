@@ -17,32 +17,26 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
+// Author Gergely Brautigam
 //
 
-package main
+package format
 
 import (
-	"log"
-
-	_ "github.com/gogo/protobuf/types"
-
-	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	_ "github.com/arangodb-managed/oasisctl/cmd/data"
-	_ "github.com/arangodb-managed/oasisctl/cmd/example"
-	_ "github.com/arangodb-managed/oasisctl/cmd/iam"
-	_ "github.com/arangodb-managed/oasisctl/cmd/platform"
-	_ "github.com/arangodb-managed/oasisctl/cmd/resourcemanager"
-	_ "github.com/arangodb-managed/oasisctl/cmd/security"
+	example "github.com/arangodb-managed/apis/example/v1"
 )
 
-func init() {
-	cmd.SetVersion(releaseVersion)
-}
-
-func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		log.Fatalf("%v\n", err)
-	}
+// ExampleList returns a list of example datasets.
+func ExampleList(list []*example.ExampleDataset, opts Options) string {
+	return formatList(opts, list, func(i int) []kv {
+		x := list[i]
+		return []kv{
+			{"id", x.Id},
+			{"description", x.Description},
+			{"name", x.Name},
+			{"url", x.Url},
+			{"guide", x.Guide},
+			{"created-at", formatTime(opts, x.CreatedAt)},
+		}
+	}, false)
 }
