@@ -40,7 +40,11 @@ func ExampleDatasetInstallation(x *example.ExampleDatasetInstallation, opts Opti
 	}
 
 	if x.Status != nil {
-		data = append(data, kv{"state", x.Status.State}, kv{"failed", x.Status.GetIsFailed()}, kv{"available", x.Status.GetIsAvailable()})
+		data = append(data,
+			kv{"database", x.Status.GetDatabaseName()},
+			kv{"state", x.Status.GetState()},
+			kv{"failed", x.Status.GetIsFailed()},
+			kv{"available", x.Status.GetIsAvailable()})
 	}
 	return formatObject(opts, data...)
 }

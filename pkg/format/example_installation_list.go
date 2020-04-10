@@ -30,15 +30,22 @@ import (
 func ExampleDatasetInstallationList(list []*example.ExampleDatasetInstallation, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		return []kv{
+		data := []kv{
 			{"id", x.Id},
 			{"deleted", x.IsDeleted},
 			{"example-dataset-id", x.ExampledatasetId},
 			{"deployment-id", x.DeploymentId},
 			{"url", x.Url},
-			{"state", x.GetStatus().GetState()},
 			{"created-at", formatTime(opts, x.CreatedAt)},
 			{"deleted-at", formatTime(opts, x.DeletedAt)},
 		}
+		if x.Status != nil {
+			data = append(data,
+				kv{"database", x.Status.GetDatabaseName()},
+				kv{"state", x.Status.GetState()},
+				kv{"failed", x.Status.GetIsFailed()},
+				kv{"available", x.Status.GetIsAvailable()})
+		}
+		return data
 	}, false)
 }
