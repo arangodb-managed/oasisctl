@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/arangodb-managed/apis v0.40.1 h1:0h0iInJRHbHY8nug8MfmnV8/526O5lsc6rdJ8E8dXwY=
-github.com/arangodb-managed/apis v0.40.1/go.mod h1:bhVYxJHsmuV8Xs1/h5Hdp0A5sOiRpjBOc+tOR8WrExo=
+github.com/arangodb-managed/apis v0.40.9 h1:tWLojB5PYPEjWAq1nzgPzs71Gg2ZfL6eq4BqAWpjPH8=
+github.com/arangodb-managed/apis v0.40.9/go.mod h1:bhVYxJHsmuV8Xs1/h5Hdp0A5sOiRpjBOc+tOR8WrExo=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/atotto/clipboard v0.1.1/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

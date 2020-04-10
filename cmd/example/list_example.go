@@ -20,29 +20,23 @@
 // Author Ewout Prangsma
 //
 
-package main
+package example
 
 import (
-	"log"
-
-	_ "github.com/gogo/protobuf/types"
+	"github.com/spf13/cobra"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	_ "github.com/arangodb-managed/oasisctl/cmd/data"
-	_ "github.com/arangodb-managed/oasisctl/cmd/example"
-	_ "github.com/arangodb-managed/oasisctl/cmd/iam"
-	_ "github.com/arangodb-managed/oasisctl/cmd/platform"
-	_ "github.com/arangodb-managed/oasisctl/cmd/resourcemanager"
-	_ "github.com/arangodb-managed/oasisctl/cmd/security"
+)
+
+var (
+	// ListExampleCmd is based for other commands
+	ListExampleCmd = &cobra.Command{
+		Use:   "example",
+		Short: "List example ...",
+		Run:   cmd.ShowUsage,
+	}
 )
 
 func init() {
-	cmd.SetVersion(releaseVersion)
-}
-
-func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		log.Fatalf("%v\n", err)
-	}
+	cmd.ListCmd.AddCommand(ListExampleCmd)
 }
