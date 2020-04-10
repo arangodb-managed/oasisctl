@@ -25,10 +25,10 @@ package example
 import (
 	"fmt"
 
-	common "github.com/arangodb-managed/apis/common/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 )
@@ -43,7 +43,7 @@ var getExampleCmd = cmd.InitCommand(
 		cargs := &struct {
 			exampleDatasetID string
 		}{}
-		f.StringVar(&cargs.exampleDatasetID, "example-dataset-id", "", "ID of the example dataset")
+		f.StringVarP(&cargs.exampleDatasetID, "example-dataset-id", "e", "", "ID of the example dataset")
 
 		c.Run = func(c *cobra.Command, args []string) {
 			// Validate arguments
@@ -56,10 +56,8 @@ var getExampleCmd = cmd.InitCommand(
 			examplec := example.NewExampleDatasetServiceClient(conn)
 			ctx := cmd.ContextWithToken()
 
-			example, err := examplec.GetExampleDataset(ctx, &common.IDOptions{Id: exampleDatasetID})
-			if err != nil {
-				log.Fatal().Err(err).Msg("Failed to get example dataset")
-			}
+			// Select example
+			example := selection.MustSelectExampleDataset(ctx, log, exampleDatasetID, examplec)
 
 			// Show result
 			fmt.Println(format.Example(example, cmd.RootArgs.Format))

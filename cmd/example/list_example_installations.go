@@ -29,10 +29,13 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	data "github.com/arangodb-managed/apis/data/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -44,9 +47,13 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				deploymentID string
+				deploymentID   string
+				organizationID string
+				projectID      string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -57,9 +64,15 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				examplec := example.NewExampleDatasetServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				list, err := examplec.ListExampleDatasetInstallations(ctx, &example.ListExampleDatasetInstallationsRequest{DeploymentId: deploymentID})
+				// Select deployment
+				deployment := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Fetch installations
+				list, err := examplec.ListExampleDatasetInstallations(ctx, &example.ListExampleDatasetInstallationsRequest{DeploymentId: deployment.GetId()})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list examples")
 				}

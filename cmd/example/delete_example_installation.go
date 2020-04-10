@@ -27,8 +27,11 @@ import (
 	"fmt"
 
 	common "github.com/arangodb-managed/apis/common/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 )
@@ -42,23 +45,35 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				deploymentID   string
+				projectID      string
+				organizationID string
 				installationID string
 			}{}
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.installationID, "installation-id", "", "The ID of the installation to delete.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				installationID, argsUsed := cmd.ReqOption("installation-id", cargs.installationID, args, 0)
+				installationID, argsUsed := cmd.OptOption("installation-id", cargs.installationID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				examplec := example.NewExampleDatasetServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				if _, err := examplec.DeleteExampleDatasetInstallation(ctx, &common.IDOptions{Id: installationID}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete examples")
+				// Select installation
+				item := selection.MustSelectExampleDatasetInstallation(ctx, log, installationID, cargs.deploymentID, cargs.projectID, cargs.organizationID, datac, examplec, rmc)
+
+				// Delete installation
+				if _, err := examplec.DeleteExampleDatasetInstallation(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
+					log.Fatal().Err(err).Msg("Failed to delete example dataset installation")
 				}
 
 				// Show result

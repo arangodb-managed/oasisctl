@@ -28,9 +28,12 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	data "github.com/arangodb-managed/apis/data/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -43,31 +46,41 @@ func init() {
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				deploymentID     string
+				organizationID   string
+				projectID        string
 				exampleDatasetID string
-				description      string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
-			f.StringVar(&cargs.exampleDatasetID, "example-dataset-id", "", "ID of the example dataset")
-			f.StringVar(&cargs.description, "description", "", "Description of the installation")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
+			f.StringVarP(&cargs.exampleDatasetID, "example-dataset-id", "e", "", "ID of the example dataset")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
 				exampleDatasetID, argsUsed := cmd.ReqOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				examplec := example.NewExampleDatasetServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				// Select deployment
+				deployment := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Select example
+				exampleDS := selection.MustSelectExampleDataset(ctx, log, exampleDatasetID, examplec)
+
+				// Create installation
 				req := &example.ExampleDatasetInstallation{
-					DeploymentId:     deploymentID,
-					ExampledatasetId: exampleDatasetID,
+					DeploymentId:     deployment.GetId(),
+					ExampledatasetId: exampleDS.GetId(),
 				}
 				result, err := examplec.CreateExampleDatasetInstallation(ctx, req)
-
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create installation")
 				}
