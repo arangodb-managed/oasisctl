@@ -28,24 +28,20 @@ import (
 
 // ExampleDatasetInstallation returns a single installation formatted for humans.
 func ExampleDatasetInstallation(x *example.ExampleDatasetInstallation, opts Options) string {
-
 	data := []kv{
 		{"id", x.Id},
 		{"deleted", x.IsDeleted},
 		{"example-dataset-id", x.ExampledatasetId},
 		{"deployment-id", x.DeploymentId},
+		{"database", x.GetStatus().GetDatabaseName()},
+		{"state", x.GetStatus().GetState()},
+		{"failed", x.GetStatus().GetIsFailed()},
+		{"available", x.GetStatus().GetIsAvailable()},
 		{"url", x.Url},
 		{"created-at", formatTime(opts, x.CreatedAt)},
 		{"deleted-at", formatTime(opts, x.DeletedAt)},
 	}
 
-	if x.Status != nil {
-		data = append(data,
-			kv{"database", x.Status.GetDatabaseName()},
-			kv{"state", x.Status.GetState()},
-			kv{"failed", x.Status.GetIsFailed()},
-			kv{"available", x.Status.GetIsAvailable()})
-	}
 	return formatObject(opts, data...)
 }
 
@@ -58,16 +54,13 @@ func ExampleDatasetInstallationList(list []*example.ExampleDatasetInstallation, 
 			{"deleted", x.IsDeleted},
 			{"example-dataset-id", x.ExampledatasetId},
 			{"deployment-id", x.DeploymentId},
+			{"database", x.GetStatus().GetDatabaseName()},
+			{"state", x.GetStatus().GetState()},
+			{"failed", x.GetStatus().GetIsFailed()},
+			{"available", x.GetStatus().GetIsAvailable()},
 			{"url", x.Url},
 			{"created-at", formatTime(opts, x.CreatedAt)},
 			{"deleted-at", formatTime(opts, x.DeletedAt)},
-		}
-		if x.Status != nil {
-			data = append(data,
-				kv{"database", x.Status.GetDatabaseName()},
-				kv{"state", x.Status.GetState()},
-				kv{"failed", x.Status.GetIsFailed()},
-				kv{"available", x.Status.GetIsAvailable()})
 		}
 		return data
 	}, false)

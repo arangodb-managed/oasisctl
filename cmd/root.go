@@ -156,9 +156,10 @@ func MustCheckNumberOfArgs(args []string, expectedNumberOfArgs int) {
 
 // InitCommand adds the given command to the given parent and called the flag initialization
 // function.
-func InitCommand(parent, cmd *cobra.Command, flagInit func(c *cobra.Command, f *flag.FlagSet)) {
+func InitCommand(parent, cmd *cobra.Command, flagInit func(c *cobra.Command, f *flag.FlagSet)) *cobra.Command {
 	if parent != nil {
 		parent.AddCommand(cmd)
 	}
 	flagInit(cmd, cmd.Flags())
+	return cmd
 }

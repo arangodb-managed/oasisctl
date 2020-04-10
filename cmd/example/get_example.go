@@ -33,38 +33,36 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-func init() {
-	cmd.InitCommand(
-		cmd.GetCmd,
-		&cobra.Command{
-			Use:   "example",
-			Short: "Get a single example dataset",
-		},
-		func(c *cobra.Command, f *flag.FlagSet) {
-			cargs := &struct {
-				exampleDatasetID string
-			}{}
-			f.StringVar(&cargs.exampleDatasetID, "example-dataset-id", "", "ID of the example dataset")
+var getExampleCmd = cmd.InitCommand(
+	cmd.GetCmd,
+	&cobra.Command{
+		Use:   "example",
+		Short: "Get a single example dataset",
+	},
+	func(c *cobra.Command, f *flag.FlagSet) {
+		cargs := &struct {
+			exampleDatasetID string
+		}{}
+		f.StringVar(&cargs.exampleDatasetID, "example-dataset-id", "", "ID of the example dataset")
 
-			c.Run = func(c *cobra.Command, args []string) {
-				// Validate arguments
-				log := cmd.CLILog
-				exampleDatasetID, argsUsed := cmd.ReqOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
-				cmd.MustCheckNumberOfArgs(args, argsUsed)
+		c.Run = func(c *cobra.Command, args []string) {
+			// Validate arguments
+			log := cmd.CLILog
+			exampleDatasetID, argsUsed := cmd.ReqOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
+			cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-				// Connect
-				conn := cmd.MustDialAPI()
-				examplec := example.NewExampleDatasetServiceClient(conn)
-				ctx := cmd.ContextWithToken()
+			// Connect
+			conn := cmd.MustDialAPI()
+			examplec := example.NewExampleDatasetServiceClient(conn)
+			ctx := cmd.ContextWithToken()
 
-				example, err := examplec.GetExampleDataset(ctx, &common.IDOptions{Id: exampleDatasetID})
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to get example dataset")
-				}
-
-				// Show result
-				fmt.Println(format.Example(example, cmd.RootArgs.Format))
+			example, err := examplec.GetExampleDataset(ctx, &common.IDOptions{Id: exampleDatasetID})
+			if err != nil {
+				log.Fatal().Err(err).Msg("Failed to get example dataset")
 			}
-		},
-	)
-}
+
+			// Show result
+			fmt.Println(format.Example(example, cmd.RootArgs.Format))
+		}
+	},
+)
