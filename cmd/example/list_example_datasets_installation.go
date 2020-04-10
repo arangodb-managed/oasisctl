@@ -37,16 +37,16 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		CreateExampleCmd,
+		ListExampleCmd,
 		&cobra.Command{
-			Use:   "installation",
-			Short: "Create a new example dataset installation",
+			Use:   "installations",
+			Short: "List all example dataset installations for a deployment",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				deploymentID string
 			}{}
-			f.StringVar(&cargs.deploymentID, "deployment-id", "", "The ID of the deployment to list installations for")
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

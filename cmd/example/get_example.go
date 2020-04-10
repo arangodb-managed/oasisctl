@@ -17,7 +17,7 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Gergely Brautigam
+// Author Ewout Prangsma
 //
 
 package example
@@ -25,35 +25,30 @@ package example
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
-
+	common "github.com/arangodb-managed/apis/common/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 )
 
 func init() {
 	cmd.InitCommand(
-		CreateExampleCmd,
+		cmd.GetCmd,
 		&cobra.Command{
-			Use:   "installation",
-			Short: "Create a new example dataset installation",
+			Use:   "example",
+			Short: "Get a single example dataset",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				deploymentID     string
 				exampleDatasetID string
-				description      string
 			}{}
-			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
 			f.StringVar(&cargs.exampleDatasetID, "example-dataset-id", "", "ID of the example dataset")
-			f.StringVar(&cargs.description, "description", "", "Description of the installation")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
 				exampleDatasetID, argsUsed := cmd.ReqOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
@@ -62,19 +57,13 @@ func init() {
 				examplec := example.NewExampleDatasetServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				req := &example.ExampleDatasetInstallation{
-					DeploymentId:     deploymentID,
-					ExampledatasetId: exampleDatasetID,
-				}
-				result, err := examplec.CreateExampleDatasetInstallation(ctx, req)
-
+				example, err := examplec.GetExampleDataset(ctx, &common.IDOptions{Id: exampleDatasetID})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to create installation")
+					log.Fatal().Err(err).Msg("Failed to get example dataset")
 				}
 
 				// Show result
-				fmt.Println("Success!")
-				fmt.Println(format.ExampleDatasetInstallation(result, cmd.RootArgs.Format))
+				fmt.Println(format.Example(example, cmd.RootArgs.Format))
 			}
 		},
 	)
