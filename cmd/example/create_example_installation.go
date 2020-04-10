@@ -58,8 +58,8 @@ func init() {
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				exampleDatasetID, argsUsed := cmd.ReqOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
 				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
+				exampleDatasetID, argsUsed := cmd.OptOption("example-dataset-id", cargs.exampleDatasetID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
