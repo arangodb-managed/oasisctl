@@ -18,6 +18,7 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Gergely Brautigam
+// Author Ewout Prangsma
 //
 
 package example
@@ -29,41 +30,40 @@ import (
 	example "github.com/arangodb-managed/apis/example/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/spf13/cobra"
-)
-
-var (
-	// deleteExampleDatasetCmd deletes example dataset installations
-	deleteExampleDatasetInstallationCmd = &cobra.Command{
-		Use:   "installation",
-		Short: "Delete an example datasets installation",
-		Run:   deleteExampleDatasetInstallationCmdRun,
-	}
-	deleteExampleDatasetInstallationArgs struct {
-		installationID string
-	}
+	flag "github.com/spf13/pflag"
 )
 
 func init() {
-	cmd.DeleteCmd.AddCommand(deleteExampleDatasetInstallationCmd)
-	f := deleteExampleDatasetInstallationCmd.Flags()
-	f.StringVar(&deleteExampleDatasetInstallationArgs.installationID, "installation-id", "", "The ID of the installation to delete.")
-}
+	cmd.InitCommand(
+		DeleteExampleCmd,
+		&cobra.Command{
+			Use:   "installation",
+			Short: "Delete an example datasets installation",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				installationID string
+			}{}
+			f.StringVar(&cargs.installationID, "installation-id", "", "The ID of the installation to delete.")
 
-func deleteExampleDatasetInstallationCmdRun(c *cobra.Command, args []string) {
-	log := cmd.CLILog
-	cargs := deleteExampleDatasetInstallationArgs
-	installationID, argsUsed := cmd.ReqOption("installation-id", cargs.installationID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				installationID, argsUsed := cmd.ReqOption("installation-id", cargs.installationID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	examplec := example.NewExampleDatasetServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Connect
+				conn := cmd.MustDialAPI()
+				examplec := example.NewExampleDatasetServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	if _, err := examplec.DeleteExampleDatasetInstallation(ctx, &common.IDOptions{Id: installationID}); err != nil {
-		log.Fatal().Err(err).Msg("Failed to delete examples")
-	}
+				if _, err := examplec.DeleteExampleDatasetInstallation(ctx, &common.IDOptions{Id: installationID}); err != nil {
+					log.Fatal().Err(err).Msg("Failed to delete examples")
+				}
 
-	// Show result
-	fmt.Println("Success")
+				// Show result
+				fmt.Println("Success")
+			}
+		},
+	)
 }

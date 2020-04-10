@@ -17,7 +17,7 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Brautigam Gergely
+// Author Gergely Brautigam
 //
 
 package format
@@ -26,26 +26,28 @@ import (
 	example "github.com/arangodb-managed/apis/example/v1"
 )
 
-// ExampleDatasetInstallationList returns a list of installations formatted for humans.
-func ExampleDatasetInstallationList(list []*example.ExampleDatasetInstallation, opts Options) string {
+// Example returns a single example dataset formatted for humans.
+func Example(x *example.ExampleDataset, opts Options) string {
+	return formatObject(opts,
+		kv{"id", x.Id},
+		kv{"name", x.Name},
+		kv{"description", x.Description},
+		kv{"url", x.Url},
+		kv{"guide", x.Guide},
+		kv{"created-at", formatTime(opts, x.CreatedAt)},
+	)
+}
+
+// ExampleList returns a list of example datasets.
+func ExampleList(list []*example.ExampleDataset, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		data := []kv{
+		return []kv{
 			{"id", x.Id},
-			{"deleted", x.IsDeleted},
-			{"example-dataset-id", x.ExampledatasetId},
-			{"deployment-id", x.DeploymentId},
+			{"name", x.Name},
+			{"description", x.Description},
 			{"url", x.Url},
 			{"created-at", formatTime(opts, x.CreatedAt)},
-			{"deleted-at", formatTime(opts, x.DeletedAt)},
 		}
-		if x.Status != nil {
-			data = append(data,
-				kv{"database", x.Status.GetDatabaseName()},
-				kv{"state", x.Status.GetState()},
-				kv{"failed", x.Status.GetIsFailed()},
-				kv{"available", x.Status.GetIsAvailable()})
-		}
-		return data
 	}, false)
 }

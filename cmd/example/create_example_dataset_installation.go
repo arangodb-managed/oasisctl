@@ -35,9 +35,9 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.CreateCmd,
+		CreateExampleCmd,
 		&cobra.Command{
-			Use:   "example",
+			Use:   "installation",
 			Short: "Create a new example dataset installation",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {

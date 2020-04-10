@@ -17,26 +17,26 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Gergely Brautigam
+// Author Ewout Prangsma
 //
 
-package format
+package example
 
 import (
-	example "github.com/arangodb-managed/apis/example/v1"
+	"github.com/spf13/cobra"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
-// ExampleList returns a list of example datasets.
-func ExampleList(list []*example.ExampleDataset, opts Options) string {
-	return formatList(opts, list, func(i int) []kv {
-		x := list[i]
-		return []kv{
-			{"id", x.Id},
-			{"description", x.Description},
-			{"name", x.Name},
-			{"url", x.Url},
-			{"guide", x.Guide},
-			{"created-at", formatTime(opts, x.CreatedAt)},
-		}
-	}, false)
+var (
+	// ListExampleCmd is based for other commands
+	ListExampleCmd = &cobra.Command{
+		Use:   "example",
+		Short: "List example ...",
+		Run:   cmd.ShowUsage,
+	}
+)
+
+func init() {
+	cmd.ListCmd.AddCommand(ListExampleCmd)
 }

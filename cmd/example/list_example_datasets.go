@@ -18,6 +18,7 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Brautigam Gergely
+// Author Ewout Prangsma
 //
 
 package example
@@ -26,6 +27,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	example "github.com/arangodb-managed/apis/example/v1"
 
@@ -33,32 +35,31 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
-var (
-	// listExampleDatasetCmd fetches example datasets
-	listExampleDatasetCmd = &cobra.Command{
-		Use:   "examples",
-		Short: "List all example datasets",
-		Run:   listExampleDatasetCmdRun,
-	}
-)
-
 func init() {
-	cmd.ListCmd.AddCommand(listExampleDatasetCmd)
-}
+	cmd.InitCommand(
+		cmd.ListCmd,
+		&cobra.Command{
+			Use:   "examples",
+			Short: "List all example datasets",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
 
-func listExampleDatasetCmdRun(c *cobra.Command, args []string) {
-	log := cmd.CLILog
+				// Connect
+				conn := cmd.MustDialAPI()
+				examplec := example.NewExampleDatasetServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	examplec := example.NewExampleDatasetServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				list, err := examplec.ListExampleDatasets(ctx, &example.ListExampleDatasetsRequest{})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list examples")
+				}
 
-	list, err := examplec.ListExampleDatasets(ctx, &example.ListExampleDatasetsRequest{})
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list examples")
-	}
-
-	// Show result
-	fmt.Println(format.ExampleList(list.Items, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.ExampleList(list.Items, cmd.RootArgs.Format))
+			}
+		},
+	)
 }

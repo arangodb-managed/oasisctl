@@ -18,6 +18,7 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Brautigam Gergely
+// Author Ewout Prangsma
 //
 
 package example
@@ -26,6 +27,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	example "github.com/arangodb-managed/apis/example/v1"
 
@@ -33,40 +35,38 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
-var (
-	// listExampleDatasetCmd fetches example datasets
-	listExampleDatasetInstallationCmd = &cobra.Command{
-		Use:   "installations",
-		Short: "List all example datasets installations",
-		Run:   listExampleDatasetInstallationCmdRun,
-	}
-	listExampleDatasetInstallationArgs struct {
-		deploymentID string
-	}
-)
-
 func init() {
-	cmd.ListCmd.AddCommand(listExampleDatasetInstallationCmd)
-	f := listExampleDatasetInstallationCmd.Flags()
-	f.StringVar(&listExampleDatasetInstallationArgs.deploymentID, "deployment-id", "", "The ID of the deployment to list installations for")
-}
+	cmd.InitCommand(
+		CreateExampleCmd,
+		&cobra.Command{
+			Use:   "installation",
+			Short: "Create a new example dataset installation",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				deploymentID string
+			}{}
+			f.StringVar(&cargs.deploymentID, "deployment-id", "", "The ID of the deployment to list installations for")
 
-func listExampleDatasetInstallationCmdRun(c *cobra.Command, args []string) {
-	log := cmd.CLILog
-	cargs := listExampleDatasetInstallationArgs
-	deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	examplec := example.NewExampleDatasetServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Connect
+				conn := cmd.MustDialAPI()
+				examplec := example.NewExampleDatasetServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	list, err := examplec.ListExampleDatasetInstallations(ctx, &example.ListExampleDatasetInstallationsRequest{DeploymentId: deploymentID})
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list examples")
-	}
+				list, err := examplec.ListExampleDatasetInstallations(ctx, &example.ListExampleDatasetInstallationsRequest{DeploymentId: deploymentID})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list examples")
+				}
 
-	// Show result
-	fmt.Println(format.ExampleDatasetInstallationList(list.Items, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.ExampleDatasetInstallationList(list.Items, cmd.RootArgs.Format))
+			}
+		},
+	)
 }
