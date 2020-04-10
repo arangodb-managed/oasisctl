@@ -72,7 +72,7 @@ func SelectExampleDatasetInstallation(ctx context.Context, log zerolog.Logger, i
 	result, err := examplec.GetExampleDatasetInstallation(ctx, &common.IDOptions{Id: id})
 	if err != nil {
 		if common.IsNotFound(err) {
-			// Try to lookup example dataset installation by name or URL
+			// Try to lookup example dataset installation by URL
 			depl, err := SelectDeployment(ctx, log, deploymentID, projectID, organizationID, datac, rmc)
 			if err != nil {
 				return nil, err
