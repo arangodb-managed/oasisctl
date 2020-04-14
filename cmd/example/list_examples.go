@@ -30,9 +30,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	example "github.com/arangodb-managed/apis/example/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -43,6 +45,10 @@ func init() {
 			Short: "List all example datasets",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				organizationID string
+			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
@@ -50,9 +56,19 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				examplec := example.NewExampleDatasetServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				list, err := examplec.ListExampleDatasets(ctx, &example.ListExampleDatasetsRequest{})
+				var orgID string
+				// Fetch organization
+				if cargs.organizationID != "" {
+					org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+					orgID = org.GetId()
+				}
+
+				list, err := examplec.ListExampleDatasets(ctx, &example.ListExampleDatasetsRequest{
+					OrganizationId: orgID,
+				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list examples")
 				}
