@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"io"
 
+	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -35,6 +36,7 @@ import (
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
+	"github.com/arangodb-managed/oasisctl/pkg/util"
 )
 
 func init() {
@@ -50,11 +52,17 @@ func init() {
 				organizationID string
 				projectID      string
 				role           string
+				limit          int
+				start          string
+				end            string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.role, "role", "r", "", "Limit logs to servers with given role only (agents|coordinators|dbservers)")
+			f.IntVarP(&cargs.limit, "limit", "l", 0, "Limit the number of log lines")
+			f.StringVar(&cargs.start, "start", "", "Start fetching logs from this timestamp (pass timestamp or duration before now)")
+			f.StringVar(&cargs.end, "end", "", "End fetching logs at this timestamp (pass timestamp or duration before now)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -73,10 +81,32 @@ func init() {
 				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
 				// Fetch logs
-				client, err := monc.GetDeploymentLogs(ctx, &mon.GetDeploymentLogsRequest{
+				req := &mon.GetDeploymentLogsRequest{
 					DeploymentId: item.GetId(),
 					Role:         cargs.role,
-				})
+					Limit:        int32(cargs.limit),
+				}
+				if ts := cargs.start; ts != "" {
+					t, err := util.ParseTimeFromNow(ts)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to parse start time")
+					}
+					req.StartAt, err = types.TimestampProto(t)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to encode start time")
+					}
+				}
+				if ts := cargs.end; ts != "" {
+					t, err := util.ParseTimeFromNow(ts)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to parse end time")
+					}
+					req.EndAt, err = types.TimestampProto(t)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to encode end time")
+					}
+				}
+				client, err := monc.GetDeploymentLogs(ctx, req)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to fetch deployment logs")
 				}
