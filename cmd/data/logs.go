@@ -110,7 +110,6 @@ func init() {
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to fetch deployment logs")
 				}
-				log.Debug().Msg("GetDeploymentLogs succeeded")
 
 				// Show logs
 				for {
