@@ -28,6 +28,9 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	backup "github.com/arangodb-managed/apis/backup/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
+	platform "github.com/arangodb-managed/apis/platform/v1"
 	replication "github.com/arangodb-managed/apis/replication/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
@@ -44,8 +47,10 @@ func init() {
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				backupID string
+				regionID string
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "b", "", "Clone a deployment from a backup using the backup's ID.")
+			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optionally defined region in which the new deployment should be created in.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -57,11 +62,26 @@ func init() {
 				conn := cmd.MustDialAPI()
 				ctx := cmd.ContextWithToken()
 				repl := replication.NewReplicationServiceClient(conn)
+				platformc := platform.NewPlatformServiceClient(conn)
+				backupc := backup.NewBackupServiceClient(conn)
+
+				// Check if backup exists
+				if _, err := backupc.GetBackup(ctx, &common.IDOptions{Id: backupID}); err != nil {
+					log.Fatal().Err(err).Str("backup-id", backupID).Msg("Failed to fetch backup")
+				}
+
+				req := &replication.CloneDeploymentFromBackupRequest{
+					BackupId: backupID,
+				}
+				if cargs.regionID != "" {
+					if _, err := platformc.GetRegion(ctx, &common.IDOptions{Id: cargs.regionID}); err != nil {
+						log.Fatal().Err(err).Str("region-id", cargs.regionID).Msg("Failed to get region.")
+					}
+					req.RegionId = cargs.regionID
+				}
 
 				// Clone deployment
-				created, err := repl.CloneDeploymentFromBackup(ctx, &replication.CloneDeploymentFromBackupRequest{
-					BackupId: backupID,
-				})
+				created, err := repl.CloneDeploymentFromBackup(ctx, req)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to clone deployment")
 				}
