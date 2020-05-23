@@ -68,7 +68,7 @@ func init() {
 				// Fetch deployment
 				item := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
-				// Delete deployment
+				// Resume deployment
 				if _, err := datac.ResumeDeployment(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 					log.Fatal().Err(err).Msg("Failed to resume deployment")
 				}
