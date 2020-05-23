@@ -44,6 +44,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"version", x.GetVersion()},
 		{"ipwhitelist", x.GetIpwhitelistId()},
 		{"url", x.GetUrl()},
+		{"paused", formatBool(opts, x.GetIsPaused())},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},
 		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 		{"expires-at", formatTime(opts, x.GetExpiration().GetExpiresAt(), "-")},
@@ -81,6 +82,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"version", x.GetVersion()},
 			{"ipwhitelist", x.GetIpwhitelistId()},
 			{"url", x.GetUrl()},
+			{"paused", formatBool(opts, x.GetIsPaused())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"model", x.Model.Model},
 		}
