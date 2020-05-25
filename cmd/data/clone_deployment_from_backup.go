@@ -28,9 +28,6 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	backup "github.com/arangodb-managed/apis/backup/v1"
-	common "github.com/arangodb-managed/apis/common/v1"
-	platform "github.com/arangodb-managed/apis/platform/v1"
 	replication "github.com/arangodb-managed/apis/replication/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
@@ -62,24 +59,10 @@ func init() {
 				conn := cmd.MustDialAPI()
 				ctx := cmd.ContextWithToken()
 				repl := replication.NewReplicationServiceClient(conn)
-				platformc := platform.NewPlatformServiceClient(conn)
-				backupc := backup.NewBackupServiceClient(conn)
-
-				// Check if backup exists
-				if _, err := backupc.GetBackup(ctx, &common.IDOptions{Id: backupID}); err != nil {
-					log.Fatal().Err(err).Str("backup-id", backupID).Msg("Failed to fetch backup")
-				}
 
 				req := &replication.CloneDeploymentFromBackupRequest{
 					BackupId: backupID,
 				}
-				if cargs.regionID != "" {
-					if _, err := platformc.GetRegion(ctx, &common.IDOptions{Id: cargs.regionID}); err != nil {
-						log.Fatal().Err(err).Str("region-id", cargs.regionID).Msg("Failed to get region.")
-					}
-					req.RegionId = cargs.regionID
-				}
-
 				// Clone deployment
 				created, err := repl.CloneDeploymentFromBackup(ctx, req)
 				if err != nil {
