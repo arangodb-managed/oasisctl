@@ -60,6 +60,8 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"root-password", pwd(creds)},
 
 		{"model", x.Model.Model},
+		{"is-clone", x.GetIsClone()},
+		{"clone-backup-id", x.GetCloneBackupId()},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
