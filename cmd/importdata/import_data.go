@@ -40,29 +40,29 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				source                 Connection
-				destination            Connection
-				deploymentID           string
-				includedDatabases      []string
-				excludedDatabases      []string
-				includedCollections    []string
-				excludedCollections    []string
-				includedViews          []string
-				excludedViews          []string
-				includedGraphs         []string
-				excludedGraphs         []string
-				force                  bool
-				maxParallelCollections int
-				batchSize              int
-				maxRetries             int
+				source                  Connection
+				destination             Connection
+				destinationDeploymentID string
+				includedDatabases       []string
+				excludedDatabases       []string
+				includedCollections     []string
+				excludedCollections     []string
+				includedViews           []string
+				excludedViews           []string
+				includedGraphs          []string
+				excludedGraphs          []string
+				force                   bool
+				maxParallelCollections  int
+				batchSize               int
+				maxRetries              int
 			}{}
-			f.StringVarP(&cargs.source.Address, "source-address", "s", "", "Source database address to copy data from.")
+			f.StringVar(&cargs.source.Address, "source-address", "", "Source database address to copy data from.")
 			f.StringVar(&cargs.source.Username, "source-username", "", "Source database username if required.")
 			f.StringVar(&cargs.source.Password, "source-password", "", "Source database password if required.")
 			f.StringVar(&cargs.destination.Address, "destination-address", "", "Destination database address to copy data to.")
 			f.StringVar(&cargs.destination.Username, "destination-username", "", "Destination database username if required.")
 			f.StringVar(&cargs.destination.Password, "destination-password", "", "Destination database password if required.")
-			f.StringVarP(&cargs.deploymentID, "destination-deployment-id", "d", "", "Destination deployment id to import data into. It can be provided instead of address, username and password.")
+			f.StringVarP(&cargs.destinationDeploymentID, "destination-deployment-id", "d", "", "Destination deployment id to import data into. It can be provided instead of address, username and password.")
 			f.IntVarP(&cargs.maxParallelCollections, "maximum-parallel-collections", "m", 10, "Maximum number of collections being copied in parallel.")
 			f.StringSliceVar(&cargs.includedDatabases, "included-database", []string{}, "A list of database names which should be included. If provided, only these databases will be copied.")
 			f.StringSliceVar(&cargs.excludedDatabases, "exluded-database", []string{}, "A list of database names which should be excluded. Exclusion takes priority over inclusion.")
@@ -84,29 +84,29 @@ func init() {
 
 				destination := cargs.destination
 
-				if cargs.deploymentID != "" {
+				if cargs.destinationDeploymentID != "" {
 					conn := cmd.MustDialAPI()
 					datac := data.NewDataServiceClient(conn)
 					ctx := cmd.ContextWithToken()
-					depl, err := datac.GetDeployment(ctx, &common.IDOptions{Id: cargs.deploymentID})
+					depl, err := datac.GetDeployment(ctx, &common.IDOptions{Id: cargs.destinationDeploymentID})
 					if err != nil {
-						log.Fatal().Err(err).Str("deployment-id", cargs.deploymentID).Msg("Failed to get Deployment with id.")
+						log.Fatal().Err(err).Str("deployment-id", cargs.destinationDeploymentID).Msg("Failed to get Deployment with id.")
+					}
+					creds, err := datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: cargs.destinationDeploymentID})
+					if err != nil {
+						log.Fatal().Err(err).Str("deployment-id", cargs.destinationDeploymentID).Msg("Failed to get Deployment credentials.")
 					}
 					destination.Address = depl.GetStatus().GetEndpoint()
-					creds, err := datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: cargs.deploymentID})
-					if err != nil {
-						log.Fatal().Err(err).Str("deployment-id", cargs.deploymentID).Msg("Failed to get Deployment credentials.")
-					}
-					destination.Password = creds.Password
 					destination.Username = creds.Username
+					destination.Password = creds.Password
 				}
 				// Create copier
 				copier, err := NewCopier(Config{
+					Destination:                destination,
 					Force:                      cargs.force,
 					Source:                     cargs.source,
 					BatchSize:                  cargs.batchSize,
 					MaxRetries:                 cargs.maxRetries,
-					Destination:                destination,
 					IncludedViews:              cargs.includedViews,
 					ExcludedViews:              cargs.excludedViews,
 					IncludedGraphs:             cargs.includedGraphs,
