@@ -26,6 +26,8 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	common "github.com/arangodb-managed/apis/common/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
@@ -40,7 +42,7 @@ func init() {
 			cargs := &struct {
 				source                 Connection
 				destination            Connection
-				deploymentId           string
+				deploymentID           string
 				includedDatabases      []string
 				excludedDatabases      []string
 				includedCollections    []string
@@ -57,10 +59,10 @@ func init() {
 			f.StringVarP(&cargs.source.Address, "source-address", "s", "", "Source database address to copy data from.")
 			f.StringVar(&cargs.source.Username, "source-username", "", "Source database username if required.")
 			f.StringVar(&cargs.source.Password, "source-password", "", "Source database password if required.")
-			f.StringVarP(&cargs.destination.Address, "destination-address", "d", "", "Destination database address to copy data to.")
+			f.StringVar(&cargs.destination.Address, "destination-address", "", "Destination database address to copy data to.")
 			f.StringVar(&cargs.destination.Username, "destination-username", "", "Destination database username if required.")
 			f.StringVar(&cargs.destination.Password, "destination-password", "", "Destination database password if required.")
-			f.StringVar(&cargs.deploymentId, "deployment-id", "", "Destination deployment id to import data into.")
+			f.StringVarP(&cargs.deploymentID, "destination-deployment-id", "d", "", "Destination deployment id to import data into. It can be provided instead of address, username and password.")
 			f.IntVarP(&cargs.maxParallelCollections, "maximum-parallel-collections", "m", 10, "Maximum number of collections being copied in parallel.")
 			f.StringSliceVar(&cargs.includedDatabases, "included-database", []string{}, "A list of database names which should be included. If provided, only these databases will be copied.")
 			f.StringSliceVar(&cargs.excludedDatabases, "exluded-database", []string{}, "A list of database names which should be excluded. Exclusion takes priority over inclusion.")
@@ -78,16 +80,33 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				_, argsUsed := cmd.ReqOption("source-address", cargs.source.Address, args, 0)
-				_, argsUsed = cmd.ReqOption("destination-address", cargs.destination.Address, args, 1)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
+				destination := cargs.destination
+
+				if cargs.deploymentID != "" {
+					conn := cmd.MustDialAPI()
+					datac := data.NewDataServiceClient(conn)
+					ctx := cmd.ContextWithToken()
+					depl, err := datac.GetDeployment(ctx, &common.IDOptions{Id: cargs.deploymentID})
+					if err != nil {
+						log.Fatal().Err(err).Str("deployment-id", cargs.deploymentID).Msg("Failed to get Deployment with id.")
+					}
+					destination.Address = depl.GetStatus().GetEndpoint()
+					creds, err := datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: cargs.deploymentID})
+					if err != nil {
+						log.Fatal().Err(err).Str("deployment-id", cargs.deploymentID).Msg("Failed to get Deployment credentials.")
+					}
+					destination.Password = creds.Password
+					destination.Username = creds.Username
+				}
 				// Create copier
 				copier, err := NewCopier(Config{
 					Force:                      cargs.force,
 					Source:                     cargs.source,
 					BatchSize:                  cargs.batchSize,
 					MaxRetries:                 cargs.maxRetries,
-					Destination:                cargs.destination,
+					Destination:                destination,
 					IncludedViews:              cargs.includedViews,
 					ExcludedViews:              cargs.excludedViews,
 					IncludedGraphs:             cargs.includedGraphs,
