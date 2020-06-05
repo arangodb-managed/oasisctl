@@ -28,6 +28,7 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
+	arangocopy "github.com/arangodb-managed/arangocopy/pkg"
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
@@ -40,8 +41,8 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				source                  Connection
-				destination             Connection
+				source                  arangocopy.Connection
+				destination             arangocopy.Connection
 				destinationDeploymentID string
 				includedDatabases       []string
 				excludedDatabases       []string
@@ -101,10 +102,10 @@ func init() {
 					destination.Password = creds.Password
 				}
 				// Create copier
-				copier, err := NewCopier(Config{
+				copier, err := arangocopy.NewCopier(arangocopy.Config{
 					Destination:                destination,
-					Force:                      cargs.force,
 					Source:                     cargs.source,
+					Force:                      cargs.force,
 					BatchSize:                  cargs.batchSize,
 					MaxRetries:                 cargs.maxRetries,
 					IncludedViews:              cargs.includedViews,
@@ -116,7 +117,7 @@ func init() {
 					IncludedCollections:        cargs.includedCollections,
 					ExcludedCollections:        cargs.excludedCollections,
 					MaximumParallelCollections: cargs.maxParallelCollections,
-				}, Dependencies{
+				}, arangocopy.Dependencies{
 					Logger: log,
 				})
 				if err != nil {
