@@ -8,9 +8,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
 	github.com/arangodb-managed/apis v0.43.5
 	github.com/arangodb-managed/arangocopy v0.0.0-20200529143354-b58343d5997a
-	github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4
-	github.com/briandowns/spinner v1.11.1
-	github.com/cenkalti/backoff v2.2.1+incompatible
+	github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 // indirect
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0
@@ -18,9 +16,7 @@ require (
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873 // indirect
