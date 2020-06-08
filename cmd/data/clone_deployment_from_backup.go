@@ -70,7 +70,7 @@ func init() {
 				}
 
 				// Show result
-				fmt.Println("Success!")
+				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.Deployment(created, nil, cmd.RootArgs.Format, false))
 			}
 		},

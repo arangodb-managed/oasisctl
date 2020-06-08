@@ -90,6 +90,6 @@ func createRoleCmdRun(c *cobra.Command, args []string) {
 	}
 
 	// Show result
-	fmt.Println("Success!")
+	format.DisplaySuccess(cmd.RootArgs.Format)
 	fmt.Println(format.Role(result, cmd.RootArgs.Format))
 }

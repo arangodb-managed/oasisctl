@@ -86,6 +86,6 @@ func createGroupCmdRun(c *cobra.Command, args []string) {
 	}
 
 	// Show result
-	fmt.Println("Success!")
+	format.DisplaySuccess(cmd.RootArgs.Format)
 	fmt.Println(format.Group(result, cmd.RootArgs.Format))
 }
