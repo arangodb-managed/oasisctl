@@ -87,7 +87,7 @@ func init() {
 				}
 
 				// Show result
-				fmt.Println("Success!")
+				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.IPWhitelist(result, cmd.RootArgs.Format))
 			}
 		},

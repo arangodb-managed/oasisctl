@@ -48,6 +48,10 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"created-at", formatTime(opts, x.GetCreatedAt())},
 		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 		{"expires-at", formatTime(opts, x.GetExpiration().GetExpiresAt(), "-")},
+		{"ready", formatBool(opts, x.GetStatus().GetReady())},
+		{"bootstrapped", formatBool(opts, x.GetStatus().GetBootstrapped())},
+		{"created", formatBool(opts, x.GetStatus().GetCreated())},
+		{"upgrading", formatBool(opts, x.GetStatus().GetUpgrading())},
 
 		{"coordinators", x.GetServers().GetCoordinators()},
 		{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},

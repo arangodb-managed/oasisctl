@@ -31,6 +31,7 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
@@ -83,6 +84,6 @@ func acceptOrganizationInviteCmdRun(c *cobra.Command, args []string) {
 	}
 
 	// Show result
-	fmt.Println("Success!")
+	format.DisplaySuccess(cmd.RootArgs.Format)
 	fmt.Printf("You are now a member of the '%s' organization.\n", orgName)
 }
