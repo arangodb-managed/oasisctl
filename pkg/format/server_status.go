@@ -34,15 +34,15 @@ func ServerStatusList(list []*data.Deployment_ServerStatus, opts Options) string
 			{"id", x.GetId()},
 			{"description", x.GetDescription()},
 			{"version", x.GetVersion()},
-			{"creating", x.GetType()},
+			{"type", x.GetType()},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"last-started-at", formatTime(opts, x.GetLastStartedAt())},
-			{"creating", x.GetCreating()},
-			{"ready", x.GetReady()},
-			{"failed", x.GetFailed()},
-			{"upgrading", x.GetUpgrading()},
-			{"ok", x.GetOk()},
-			{"member-of-cluster", x.GetMemberOfCluster()},
+			{"creating", formatBool(opts, x.GetCreating())},
+			{"ready", formatBool(opts, x.GetReady())},
+			{"failed", formatBool(opts, x.GetFailed())},
+			{"upgrading", formatBool(opts, x.GetUpgrading())},
+			{"ok", formatBool(opts, x.GetOk())},
+			{"member-of-cluster", formatBool(opts, x.GetMemberOfCluster())},
 		}
 		return d
 	}, false)
