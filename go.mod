@@ -72,7 +72,7 @@ replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.2.0-
 
 replace sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.0
 
-replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20200416095356-14a80a7d88c0
+replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20200525105428-e506978cb648
 
 replace github.com/Azure/go-autorest => github.com/Azure/go-autorest v14.0.1+incompatible
 

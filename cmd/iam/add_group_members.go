@@ -23,8 +23,6 @@
 package iam
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	common "github.com/arangodb-managed/apis/common/v1"
@@ -32,6 +30,7 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
@@ -102,5 +101,5 @@ func addGroupMembersCmdRun(c *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to add users.")
 	}
 
-	fmt.Println("Success!")
+	format.DisplaySuccess(cmd.RootArgs.Format)
 }

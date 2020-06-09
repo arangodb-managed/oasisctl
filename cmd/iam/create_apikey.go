@@ -79,7 +79,7 @@ func init() {
 				}
 
 				// Show result
-				fmt.Println("Success!")
+				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.APIKeySecret(result, cmd.RootArgs.Format))
 			}
 		},
