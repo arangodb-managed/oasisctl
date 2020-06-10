@@ -7,6 +7,8 @@ github.com/arangodb-managed/apis v0.43.5 h1:p7GiwZjXvnNlVMuzq/bkFZaXDMfSbBzy7iw4
 github.com/arangodb-managed/apis v0.43.5/go.mod h1:bhVYxJHsmuV8Xs1/h5Hdp0A5sOiRpjBOc+tOR8WrExo=
 github.com/arangodb-managed/arangocopy v0.0.0-20200529143354-b58343d5997a h1:jrlFbBJrYV/wj+j4aGBLGu5TlqCt6IBGh53xzhYlgA0=
 github.com/arangodb-managed/arangocopy v0.0.0-20200529143354-b58343d5997a/go.mod h1:Z2iga4bqmEcz5JEDKJycrbc84ec2qydpvREpqWoGmsQ=
+github.com/arangodb-managed/arangocopy v0.0.0-20200609154424-0b15f1ff98fe h1:yd7xpLUek2FcD7dg0dZjclt4WUEsZsCBOV/WaSyNIYc=
+github.com/arangodb-managed/arangocopy v0.0.0-20200609154424-0b15f1ff98fe/go.mod h1:Z2iga4bqmEcz5JEDKJycrbc84ec2qydpvREpqWoGmsQ=
 github.com/arangodb/go-driver v0.0.0-20200528083541-2441a69bf0ed/go.mod h1:JG79qtPYRxUB6CdGWSH1XwpolSBjthuZX+Iaz/H38rA=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4/go.mod h1:JG79qtPYRxUB6CdGWSH1XwpolSBjthuZX+Iaz/H38rA=

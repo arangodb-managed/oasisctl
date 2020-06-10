@@ -37,12 +37,11 @@ func init() {
 		cmd.RootCmd,
 		&cobra.Command{
 			Use:   "import",
-			Short: "Import data from a local database or from another remote database into a deployment by ID or by endpoint credentials.",
+			Short: "Import data from a local database or from another remote database into an Oasis deployment.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				source                  arangocopy.Connection
-				destination             arangocopy.Connection
 				destinationDeploymentID string
 				includedDatabases       []string
 				excludedDatabases       []string
@@ -60,9 +59,6 @@ func init() {
 			f.StringVar(&cargs.source.Address, "source-address", "", "Source database address to copy data from.")
 			f.StringVar(&cargs.source.Username, "source-username", "", "Source database username if required.")
 			f.StringVar(&cargs.source.Password, "source-password", "", "Source database password if required.")
-			f.StringVar(&cargs.destination.Address, "destination-address", "", "Destination database address to copy data to.")
-			f.StringVar(&cargs.destination.Username, "destination-username", "", "Destination database username if required.")
-			f.StringVar(&cargs.destination.Password, "destination-password", "", "Destination database password if required.")
 			f.StringVarP(&cargs.destinationDeploymentID, "destination-deployment-id", "d", "", "Destination deployment id to import data into. It can be provided instead of address, username and password.")
 			f.IntVarP(&cargs.maxParallelCollections, "maximum-parallel-collections", "m", 10, "Maximum number of collections being copied in parallel.")
 			f.StringSliceVar(&cargs.includedDatabases, "included-database", []string{}, "A list of database names which should be included. If provided, only these databases will be copied.")
@@ -81,26 +77,25 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				_, argsUsed := cmd.ReqOption("source-address", cargs.source.Address, args, 0)
+				destinationDeploymentID, argsUsed := cmd.ReqOption("destination-deployment-id", cargs.source.Address, args, 1)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-				destination := cargs.destination
-
-				if cargs.destinationDeploymentID != "" {
-					conn := cmd.MustDialAPI()
-					datac := data.NewDataServiceClient(conn)
-					ctx := cmd.ContextWithToken()
-					depl, err := datac.GetDeployment(ctx, &common.IDOptions{Id: cargs.destinationDeploymentID})
-					if err != nil {
-						log.Fatal().Err(err).Str("deployment-id", cargs.destinationDeploymentID).Msg("Failed to get Deployment with id.")
-					}
-					creds, err := datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: cargs.destinationDeploymentID})
-					if err != nil {
-						log.Fatal().Err(err).Str("deployment-id", cargs.destinationDeploymentID).Msg("Failed to get Deployment credentials.")
-					}
-					destination.Address = depl.GetStatus().GetEndpoint()
-					destination.Username = creds.Username
-					destination.Password = creds.Password
+				destination := arangocopy.Connection{}
+				conn := cmd.MustDialAPI()
+				datac := data.NewDataServiceClient(conn)
+				ctx := cmd.ContextWithToken()
+				depl, err := datac.GetDeployment(ctx, &common.IDOptions{Id: destinationDeploymentID})
+				if err != nil {
+					log.Fatal().Err(err).Str("deployment-id", destinationDeploymentID).Msg("Failed to get Deployment with id.")
 				}
+				creds, err := datac.GetDeploymentCredentials(ctx, &data.DeploymentCredentialsRequest{DeploymentId: destinationDeploymentID})
+				if err != nil {
+					log.Fatal().Err(err).Str("deployment-id", destinationDeploymentID).Msg("Failed to get Deployment credentials.")
+				}
+				destination.Address = depl.GetStatus().GetEndpoint()
+				destination.Username = creds.Username
+				destination.Password = creds.Password
+
 				// Create copier
 				copier, err := arangocopy.NewCopier(arangocopy.Config{
 					Destination:                destination,
