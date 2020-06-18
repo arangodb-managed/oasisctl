@@ -55,6 +55,7 @@ func init() {
 				limit          int
 				start          string
 				end            string
+				format         string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -63,6 +64,7 @@ func init() {
 			f.IntVarP(&cargs.limit, "limit", "l", 0, "Limit the number of log lines")
 			f.StringVar(&cargs.start, "start", "", "Start fetching logs from this timestamp (pass timestamp or duration before now)")
 			f.StringVar(&cargs.end, "end", "", "End fetching logs at this timestamp (pass timestamp or duration before now)")
+			f.StringVar(&cargs.format, "format", "text", "Formatting of the log output. It can be one of two: text, json. Text is the default value.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -85,6 +87,7 @@ func init() {
 					DeploymentId: item.GetId(),
 					Role:         cargs.role,
 					Limit:        int32(cargs.limit),
+					Format:       cargs.format,
 				}
 				if ts := cargs.start; ts != "" {
 					t, err := util.ParseTimeFromNow(ts)
