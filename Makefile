@@ -48,6 +48,6 @@ update-modules:
 		$(shell zutano go mod replacements)
 	go get \
 		$(shell zutano go mod latest \
-			github.com/arangodb-managed/apis \
+			github.com/arangodb-managed/apis@oas_1164 \
 		)
 	go mod tidy
