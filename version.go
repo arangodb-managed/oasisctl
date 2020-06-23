@@ -2,5 +2,5 @@
 package main
 
 const (
-	releaseVersion = "0.16.0"
+	releaseVersion = "0.16.0+git"
 )
