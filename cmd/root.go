@@ -53,7 +53,7 @@ var (
 		NoColor: !supportsColor(),
 	}).With().Timestamp().Logger()
 	RootArgs struct {
-		token    string
+		Token    string
 		endpoint string
 		Format   format.Options
 	}
@@ -69,7 +69,7 @@ func init() {
 	f := RootCmd.PersistentFlags()
 	// Persistent flags
 	defaultEndpoint := envOrDefault("ENDPOINT", "api.cloud.arangodb.com")
-	f.StringVar(&RootArgs.token, "token", "", "Token used to authenticate at ArangoDB Oasis")
+	f.StringVar(&RootArgs.Token, "token", "", "Token used to authenticate at ArangoDB Oasis")
 	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
 	f.StringVar(&RootArgs.Format.Format, "format", DefaultFormat(), "Output format (table|json)")
 }
@@ -83,8 +83,8 @@ func ShowUsage(cmd *cobra.Command, args []string) {
 // This function is used to hide a default token (from environment variable)
 // from the usage output.
 func rootCmdPersistentPreRun(cmd *cobra.Command, args []string) {
-	if RootArgs.token == "" {
-		RootArgs.token = envOrDefault("TOKEN", "")
+	if RootArgs.Token == "" {
+		RootArgs.Token = envOrDefault("TOKEN", "")
 	}
 }
 
@@ -110,10 +110,10 @@ func MustDialAPI() *grpc.ClientConn {
 
 // ContextWithToken returns a context with access token in it.
 func ContextWithToken() context.Context {
-	if RootArgs.token == "" {
+	if RootArgs.Token == "" {
 		CLILog.Fatal().Msg("--token missing")
 	}
-	return auth.WithAccessToken(context.Background(), RootArgs.token)
+	return auth.WithAccessToken(context.Background(), RootArgs.Token)
 }
 
 // ReqOption returns given value if not empty.

@@ -3,8 +3,8 @@ cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 h1:TEBmxO80TM04L8IuMWk77SGL1HomBmKTdzdJLLWznxI=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1/go.mod h1:SLqhdZcd+dF3TEVL2RMoob5bBP5R1P1qkox+HtCBgGI=
-github.com/arangodb-managed/apis v0.43.5 h1:p7GiwZjXvnNlVMuzq/bkFZaXDMfSbBzy7iw4fyzr7CE=
-github.com/arangodb-managed/apis v0.43.5/go.mod h1:bhVYxJHsmuV8Xs1/h5Hdp0A5sOiRpjBOc+tOR8WrExo=
+github.com/arangodb-managed/apis v0.43.6 h1:W2qw7fNyQjVDxbX5up8Pd6h/P/JfQMcc0g+WVcGA790=
+github.com/arangodb-managed/apis v0.43.6/go.mod h1:bhVYxJHsmuV8Xs1/h5Hdp0A5sOiRpjBOc+tOR8WrExo=
 github.com/arangodb-managed/arangocopy v0.0.0-20200529143354-b58343d5997a h1:jrlFbBJrYV/wj+j4aGBLGu5TlqCt6IBGh53xzhYlgA0=
 github.com/arangodb-managed/arangocopy v0.0.0-20200529143354-b58343d5997a/go.mod h1:Z2iga4bqmEcz5JEDKJycrbc84ec2qydpvREpqWoGmsQ=
 github.com/arangodb-managed/arangocopy v0.0.0-20200609154424-0b15f1ff98fe h1:yd7xpLUek2FcD7dg0dZjclt4WUEsZsCBOV/WaSyNIYc=
