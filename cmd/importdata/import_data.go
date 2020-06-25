@@ -77,7 +77,7 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				_, argsUsed := cmd.ReqOption("source-address", cargs.source.Address, args, 0)
-				destinationDeploymentID, argsUsed := cmd.ReqOption("destination-deployment-id", cargs.source.Address, args, 1)
+				destinationDeploymentID, argsUsed := cmd.ReqOption("destination-deployment-id", cargs.destinationDeploymentID, args, 1)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				destination := arangocopy.Connection{}
@@ -113,13 +113,14 @@ func init() {
 					ExcludedCollections:        cargs.excludedCollections,
 					MaximumParallelCollections: cargs.maxParallelCollections,
 				}, arangocopy.Dependencies{
-					Logger: log,
+					Logger:   log,
+					Verifier: arangocopy.NewNoopVerifier(),
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to start copy operation.")
 				}
 
-				// Start copy operatio
+				// Start copy operation
 				if err := copier.Copy(); err != nil {
 					log.Fatal().Err(err).Msg("Failed to copy. Please try again after the issue is resolved.")
 				}
