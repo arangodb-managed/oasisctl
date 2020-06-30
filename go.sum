@@ -19,6 +19,10 @@ github.com/arangodb-managed/arangocopy v0.0.0-20200630101123-cbe401826228 h1:cco
 github.com/arangodb-managed/arangocopy v0.0.0-20200630101123-cbe401826228/go.mod h1:zUGDlT4kA+Zj3hlMOfBQNxsqQiwOBXY1Dkxk3VAquo4=
 github.com/arangodb-managed/arangocopy v0.0.0-20200630101444-97ee2582c09e h1:XZGtWwK2CVgFvWxqcga56RI/TdE569vINfbcq/JU+9E=
 github.com/arangodb-managed/arangocopy v0.0.0-20200630101444-97ee2582c09e/go.mod h1:zUGDlT4kA+Zj3hlMOfBQNxsqQiwOBXY1Dkxk3VAquo4=
+github.com/arangodb-managed/arangocopy v0.0.0-20200630115324-0a0fa2013f1b h1:oEIeWz0WVroy7n8wweL7yTrqfe3CpAk9bmCa3ju5yoE=
+github.com/arangodb-managed/arangocopy v0.0.0-20200630115324-0a0fa2013f1b/go.mod h1:zUGDlT4kA+Zj3hlMOfBQNxsqQiwOBXY1Dkxk3VAquo4=
+github.com/arangodb-managed/arangocopy v0.0.0-20200630121643-d57251e00ee9 h1:YkkRpROnpweX6Ytdy0r8VvnpfRF6dy/JOcV78584p6E=
+github.com/arangodb-managed/arangocopy v0.0.0-20200630121643-d57251e00ee9/go.mod h1:zUGDlT4kA+Zj3hlMOfBQNxsqQiwOBXY1Dkxk3VAquo4=
 github.com/arangodb-managed/protoc-gen-ts v0.1.0/go.mod h1:gouF3MvsJtryuDqLPOSBEwAuSBpCb9X6DkpiExlY02M=
 github.com/arangodb/go-driver v0.0.0-20200528083541-2441a69bf0ed/go.mod h1:JG79qtPYRxUB6CdGWSH1XwpolSBjthuZX+Iaz/H38rA=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
