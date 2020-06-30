@@ -64,6 +64,7 @@ func init() {
 				dbservers             int32
 				dbserverMemorySize    int32
 				dbserverDiskSize      int32
+				acceptTAndC           bool
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -83,6 +84,7 @@ func init() {
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
 			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
+			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -137,8 +139,7 @@ func init() {
 					}
 				}
 
-				// Create deployment
-				result, err := datac.CreateDeployment(ctx, &data.Deployment{
+				req := &data.Deployment{
 					ProjectId:   project.GetId(),
 					Name:        name,
 					Description: cargs.description,
@@ -155,7 +156,15 @@ func init() {
 						NodeCount:    cargs.nodeCount,
 						NodeDiskSize: cargs.nodeDiskSize,
 					},
-				})
+				}
+
+				if cargs.acceptTAndC {
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
+					req.AcceptedTermsAndConditionsId = tandc.GetId()
+				}
+
+				// Create deployment
+				result, err := datac.CreateDeployment(ctx, req)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")
 				}
