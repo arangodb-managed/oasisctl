@@ -32,6 +32,9 @@ func DefaultFormat() string { return envOrDefault("FORMAT", format.DefaultFormat
 // DefaultOrganization returns the default value for an organization identifier
 func DefaultOrganization() string { return envOrDefault("ORGANIZATION", "") }
 
+// DefaultTermsAndConditions returns the default value for a terms and conditions identifier
+func DefaultTermsAndConditions() string { return envOrDefault("TERMS_AND_CONDITIONS", "") }
+
 // DefaultOrganizationInvite returns the default value for an organization-invite identifier
 func DefaultOrganizationInvite() string { return envOrDefault("ORGANIZATION_INVITE", "") }
 
