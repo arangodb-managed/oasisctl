@@ -7,18 +7,21 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
 	github.com/arangodb-managed/apis v0.43.8
-	github.com/arangodb-managed/arangocopy v0.0.0-20200610074622-2500f1b76fbf
-	github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 // indirect
+	github.com/arangodb-managed/arangocopy v0.0.0-20200630101123-cbe401826228
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
+	github.com/fatih/color v1.9.0 // indirect
 	github.com/gogo/protobuf v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway v1.11.1 // indirect
-	github.com/rs/zerolog v1.14.3
+	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/rs/zerolog v1.19.0
 	github.com/ryanuber/columnize v2.1.0+incompatible
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
-	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
+	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873 // indirect
 	google.golang.org/grpc v1.21.1
