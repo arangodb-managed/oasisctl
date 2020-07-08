@@ -26,6 +26,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
@@ -34,41 +35,37 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
-var (
-	// getTermsAndConditionsCmd fetches a tandc that the user has access to
-	getTermsAndConditionsCmd = &cobra.Command{
-		Use:   "tandc",
-		Short: "Get current terms and conditions or get one by ID",
-		Run:   getTermsAndConditionsCmdRun,
-	}
-	getTermsAndConditionsArgs struct {
-		organizationID string
-		tandcID        string
-	}
-)
-
 func init() {
-	cmd.GetCmd.AddCommand(getTermsAndConditionsCmd)
-	f := getTermsAndConditionsCmd.Flags()
-	f.StringVarP(&getTermsAndConditionsArgs.tandcID, "terms-and-conditions-id", "t", cmd.DefaultTermsAndConditions(), "Identifier of the terms and conditions to accept.")
-	f.StringVarP(&getTermsAndConditionsArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-}
+	cmd.InitCommand(
+		cmd.GetCmd,
+		&cobra.Command{
+			Use:   "tandc",
+			Short: "Get current terms and conditions or get one by ID",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				organizationID string
+				tandcID        string
+			}{}
+			f.StringVarP(&cargs.tandcID, "terms-and-conditions-id", "t", cmd.DefaultTermsAndConditions(), "Identifier of the terms and conditions to accept.")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				tandcID, argsUsed := cmd.OptOption("terms-and-conditions-id", cargs.tandcID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-func getTermsAndConditionsCmdRun(c *cobra.Command, args []string) {
-	// Validate arguments
-	log := cmd.CLILog
-	cargs := getTermsAndConditionsArgs
-	tandcID, argsUsed := cmd.OptOption("terms-and-conditions-id", cargs.tandcID, args, 0)
-	cmd.MustCheckNumberOfArgs(args, argsUsed)
+				// Connect
+				conn := cmd.MustDialAPI()
+				rmc := rm.NewResourceManagerServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-	// Connect
-	conn := cmd.MustDialAPI()
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	ctx := cmd.ContextWithToken()
+				// Fetch tandc
+				item := selection.MustSelectTermsAndConditions(ctx, log, tandcID, cargs.organizationID, rmc)
 
-	// Fetch tandc
-	item := selection.MustSelectTermsAndConditions(ctx, log, tandcID, cargs.organizationID, rmc)
-
-	// Show result
-	fmt.Println(format.TermsAndConditions(item, cmd.RootArgs.Format))
+				// Show result
+				fmt.Println(format.TermsAndConditions(item, cmd.RootArgs.Format))
+			}
+		},
+	)
 }
