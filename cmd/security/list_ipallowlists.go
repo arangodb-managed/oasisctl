@@ -33,32 +33,29 @@ import (
 	security "github.com/arangodb-managed/apis/security/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
+		cmd.ListCmd,
 		&cobra.Command{
-			Use:        "ipwhitelist",
-			Short:      "Delete an IP whitelist the authenticated user has access to",
-			Deprecated: "Use ipallowlist instead",
-			Hidden:     true,
+			Use:   "ipallowlists",
+			Short: "List all IP allowlists of the given project",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				organizationID string
 				projectID      string
-				ipwhitelistID  string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP whitelist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				ipwhitelistID, argsUsed := cmd.OptOption("ipwhitelist-id", cargs.ipwhitelistID, args, 0)
+				projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -67,16 +64,17 @@ func init() {
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch IP whitelist
-				item := selection.MustSelectIPWhitelist(ctx, log, ipwhitelistID, cargs.projectID, cargs.organizationID, securityc, rmc)
+				// Fetch project
+				project := selection.MustSelectProject(ctx, log, projectID, cargs.organizationID, rmc)
 
-				// Delete IP whitelist
-				if _, err := securityc.DeleteIPWhitelist(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete IP whitelist")
+				// Fetch IP allowlists in project
+				list, err := securityc.ListIPAllowlists(ctx, &common.ListOptions{ContextId: project.GetId()})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list IP allowlists")
 				}
 
 				// Show result
-				fmt.Println("Deleted IP whitelist!")
+				fmt.Println(format.IPAllowlistList(list.Items, cmd.RootArgs.Format))
 			}
 		},
 	)

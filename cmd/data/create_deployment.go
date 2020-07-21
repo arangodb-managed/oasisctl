@@ -53,7 +53,7 @@ func init() {
 				projectID             string
 				regionID              string
 				cacertificateID       string
-				ipwhitelistID         string
+				ipallowlistID         string
 				version               string
 				model                 string
 				nodeSizeID            string
@@ -73,7 +73,9 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the deployment in")
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region to create the deployment in")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
+			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
+			f.StringVar(&cargs.ipallowlistID, "ipwhitelist-id", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
+			f.MarkDeprecated("ipwhitelist-id", "Use ipallowlist-id instead")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
@@ -148,7 +150,7 @@ func init() {
 					Certificates: &data.Deployment_CertificateSpec{
 						CaCertificateId: cacert.GetId(),
 					},
-					IpwhitelistId: cargs.ipwhitelistID,
+					IpallowlistId: cargs.ipallowlistID,
 					Servers:       servers,
 					Model: &data.Deployment_ModelSpec{
 						Model:        cargs.model,
