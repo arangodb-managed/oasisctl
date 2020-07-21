@@ -28,9 +28,8 @@ import (
 	security "github.com/arangodb-managed/apis/security/v1"
 )
 
-// IPWhitelist returns a single IP whitelist formatted for humans.
-// Deprecated: This function will be removed in a future version.
-func IPWhitelist(x *security.IPWhitelist, opts Options) string {
+// IPAllowlist returns a single IP allowlist formatted for humans.
+func IPAllowlist(x *security.IPAllowlist, opts Options) string {
 	return formatObject(opts,
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
@@ -41,9 +40,8 @@ func IPWhitelist(x *security.IPWhitelist, opts Options) string {
 	)
 }
 
-// IPWhitelistList returns a list of IP whitelists formatted for humans.
-// Deprecated: This function will be removed in a future version.
-func IPWhitelistList(list []*security.IPWhitelist, opts Options) string {
+// IPAllowlistList returns a list of IP allowlists formatted for humans.
+func IPAllowlistList(list []*security.IPAllowlist, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{

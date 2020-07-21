@@ -40,8 +40,10 @@ func init() {
 	cmd.InitCommand(
 		cmd.GetCmd,
 		&cobra.Command{
-			Use:   "ipwhitelist",
-			Short: "Get an IP whitelist the authenticated user has access to",
+			Use:        "ipwhitelist",
+			Short:      "Get an IP whitelist the authenticated user has access to",
+			Deprecated: "Use ipallowlist instead",
+			Hidden:     true,
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -49,7 +51,7 @@ func init() {
 				organizationID string
 				projectID      string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist")
+			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP whitelist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 

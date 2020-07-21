@@ -6,10 +6,11 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.43.6
+	github.com/arangodb-managed/apis v0.45.0
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/rs/zerolog v1.14.3
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/spf13/cobra v0.0.5
@@ -18,8 +19,8 @@ require (
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
 	golang.org/x/text v0.3.2 // indirect
-	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873 // indirect
-	google.golang.org/grpc v1.21.1
+	google.golang.org/grpc v1.29.1
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
@@ -43,7 +44,7 @@ replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20181204163529-d75b2
 
 replace google.golang.org/api => google.golang.org/api v0.7.0
 
-replace google.golang.org/grpc => google.golang.org/grpc v1.21.1
+replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
 
 replace k8s.io/api => k8s.io/api v0.15.11
 
@@ -102,3 +103,5 @@ replace k8s.io/kubelet => k8s.io/kubelet v0.15.11
 replace k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.15.11
 
 replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.15.11
+
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20191206224255-0243a4be9c8f
