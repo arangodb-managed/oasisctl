@@ -36,6 +36,7 @@ import (
 // MustSelectIPWhitelist fetches the IP whitelist with given ID, name, or URL and fails if no organization is found.
 // If no ID is specified, all IP whitelists are fetched from the selected project
 // and if the list is exactly 1 long, that IP whitelist is returned.
+// Deprecated: This function will be removed in a future version.
 func MustSelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectID, orgID string, securityc security.SecurityServiceClient, rmc rm.ResourceManagerServiceClient) *security.IPWhitelist {
 	ipwhitelist, err := SelectIPWhitelist(ctx, log, id, projectID, orgID, securityc, rmc)
 	if err != nil {
@@ -47,6 +48,7 @@ func MustSelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectI
 // SelectIPWhitelist fetches the IP whitelist with given ID, name, or URL and fails if no whitelist is found.
 // If no ID is specified, all IP whitelists are fetched from the selected project
 // and if the list is exactly 1 long, that IP whitelist is returned.
+// Deprecated: This function will be removed in a future version.
 func SelectIPWhitelist(ctx context.Context, log zerolog.Logger, id, projectID, orgID string, securityc security.SecurityServiceClient, rmc rm.ResourceManagerServiceClient) (*security.IPWhitelist, error) {
 	if id == "" {
 		project, err := SelectProject(ctx, log, projectID, orgID, rmc)

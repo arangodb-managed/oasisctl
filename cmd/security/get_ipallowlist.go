@@ -28,37 +28,35 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 	security "github.com/arangodb-managed/apis/security/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
+		cmd.GetCmd,
 		&cobra.Command{
-			Use:        "ipwhitelist",
-			Short:      "Delete an IP whitelist the authenticated user has access to",
-			Deprecated: "Use ipallowlist instead",
-			Hidden:     true,
+			Use:   "ipallowlist",
+			Short: "Get an IP allowlist the authenticated user has access to",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				ipallowlistID  string
 				organizationID string
 				projectID      string
-				ipwhitelistID  string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP whitelist")
+			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				ipwhitelistID, argsUsed := cmd.OptOption("ipwhitelist-id", cargs.ipwhitelistID, args, 0)
+				ipallowlistID, argsUsed := cmd.OptOption("ipallowlist-id", cargs.ipallowlistID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -67,16 +65,11 @@ func init() {
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch IP whitelist
-				item := selection.MustSelectIPWhitelist(ctx, log, ipwhitelistID, cargs.projectID, cargs.organizationID, securityc, rmc)
-
-				// Delete IP whitelist
-				if _, err := securityc.DeleteIPWhitelist(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete IP whitelist")
-				}
+				// Fetch IP allowlist
+				item := selection.MustSelectIPAllowlist(ctx, log, ipallowlistID, cargs.projectID, cargs.organizationID, securityc, rmc)
 
 				// Show result
-				fmt.Println("Deleted IP whitelist!")
+				fmt.Println(format.IPAllowlist(item, cmd.RootArgs.Format))
 			}
 		},
 	)

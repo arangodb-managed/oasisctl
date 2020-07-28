@@ -32,6 +32,9 @@ func DefaultFormat() string { return envOrDefault("FORMAT", format.DefaultFormat
 // DefaultOrganization returns the default value for an organization identifier
 func DefaultOrganization() string { return envOrDefault("ORGANIZATION", "") }
 
+// DefaultTermsAndConditions returns the default value for a terms and conditions identifier
+func DefaultTermsAndConditions() string { return envOrDefault("TERMS_AND_CONDITIONS", "") }
+
 // DefaultOrganizationInvite returns the default value for an organization-invite identifier
 func DefaultOrganizationInvite() string { return envOrDefault("ORGANIZATION_INVITE", "") }
 
@@ -47,8 +50,8 @@ func DefaultRole() string { return envOrDefault("ROLE", "") }
 // DefaultCACertificate returns the default value for a CA certificate identifier
 func DefaultCACertificate() string { return envOrDefault("CACERTIFICATE", "") }
 
-// DefaultIPWhitelist returns the default value for an IP whitelist identifier
-func DefaultIPWhitelist() string { return envOrDefault("IPWHITELIST", "") }
+// DefaultIPAllowlist returns the default value for an IP allowlist identifier
+func DefaultIPAllowlist() string { return envOrDefault("IPALLOWLIST", envOrDefault("IPWHITELIST", "")) }
 
 // DefaultProvider returns the default value for a provider identifier
 func DefaultProvider() string { return envOrDefault("PROVIDER", "") }

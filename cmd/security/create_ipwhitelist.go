@@ -41,8 +41,10 @@ func init() {
 	cmd.InitCommand(
 		cmd.CreateCmd,
 		&cobra.Command{
-			Use:   "ipwhitelist",
-			Short: "Create a new IP whitelist",
+			Use:        "ipwhitelist",
+			Short:      "Create a new IP whitelist",
+			Deprecated: "Use ipallowlist instead",
+			Hidden:     true,
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {

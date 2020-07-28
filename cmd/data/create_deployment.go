@@ -53,7 +53,7 @@ func init() {
 				projectID             string
 				regionID              string
 				cacertificateID       string
-				ipwhitelistID         string
+				ipallowlistID         string
 				version               string
 				model                 string
 				nodeSizeID            string
@@ -64,6 +64,7 @@ func init() {
 				dbservers             int32
 				dbserverMemorySize    int32
 				dbserverDiskSize      int32
+				acceptTAndC           bool
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -72,7 +73,9 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the deployment in")
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region to create the deployment in")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPWhitelist(), "Identifier of the IP whitelist to use for the deployment")
+			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
+			f.StringVar(&cargs.ipallowlistID, "ipwhitelist-id", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
+			f.MarkDeprecated("ipwhitelist-id", "Use ipallowlist-id instead")
 			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
@@ -83,6 +86,7 @@ func init() {
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
 			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
+			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -137,8 +141,7 @@ func init() {
 					}
 				}
 
-				// Create deployment
-				result, err := datac.CreateDeployment(ctx, &data.Deployment{
+				req := &data.Deployment{
 					ProjectId:   project.GetId(),
 					Name:        name,
 					Description: cargs.description,
@@ -147,7 +150,7 @@ func init() {
 					Certificates: &data.Deployment_CertificateSpec{
 						CaCertificateId: cacert.GetId(),
 					},
-					IpwhitelistId: cargs.ipwhitelistID,
+					IpallowlistId: cargs.ipallowlistID,
 					Servers:       servers,
 					Model: &data.Deployment_ModelSpec{
 						Model:        cargs.model,
@@ -155,7 +158,15 @@ func init() {
 						NodeCount:    cargs.nodeCount,
 						NodeDiskSize: cargs.nodeDiskSize,
 					},
-				})
+				}
+
+				if cargs.acceptTAndC {
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
+					req.AcceptedTermsAndConditionsId = tandc.GetId()
+				}
+
+				// Create deployment
+				result, err := datac.CreateDeployment(ctx, req)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create deployment")
 				}
