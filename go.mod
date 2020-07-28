@@ -6,21 +6,21 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.45.0
+	github.com/arangodb-managed/apis v0.45.2
+	github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gogo/protobuf v1.3.0
-	github.com/kr/pretty v0.1.0 // indirect
-	github.com/rs/zerolog v1.14.3
+	github.com/rs/zerolog v1.19.0
 	github.com/ryanuber/columnize v2.1.0+incompatible
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.4.0 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
-	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
+	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/grpc v1.29.1
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
@@ -46,29 +46,29 @@ replace google.golang.org/api => google.golang.org/api v0.7.0
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.29.1
 
-replace k8s.io/api => k8s.io/api v0.15.11
+replace k8s.io/api => k8s.io/api v0.16.9
 
-replace k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.15.11
+replace k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.16.9
 
-replace k8s.io/apimachinery => k8s.io/apimachinery v0.15.11
+replace k8s.io/apimachinery => k8s.io/apimachinery v0.16.9
 
-replace k8s.io/apiserver => k8s.io/apiserver v0.15.11
+replace k8s.io/apiserver => k8s.io/apiserver v0.16.9
 
-replace k8s.io/client-go => k8s.io/client-go v0.15.11
+replace k8s.io/client-go => k8s.io/client-go v0.16.9
 
-replace k8s.io/cloud-provider => k8s.io/cloud-provider v0.15.11
+replace k8s.io/cloud-provider => k8s.io/cloud-provider v0.16.9
 
-replace k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.15.11
+replace k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.16.9
 
-replace k8s.io/code-generator => k8s.io/code-generator v0.15.11
+replace k8s.io/code-generator => k8s.io/code-generator v0.16.9
 
-replace k8s.io/component-base => k8s.io/component-base v0.15.11
+replace k8s.io/component-base => k8s.io/component-base v0.16.9
 
-replace k8s.io/kubernetes => k8s.io/kubernetes v1.15.11
+replace k8s.io/kubernetes => k8s.io/kubernetes v1.16.9
 
-replace k8s.io/metrics => k8s.io/metrics v0.15.11
+replace k8s.io/metrics => k8s.io/metrics v0.16.9
 
-replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.2.0-beta.2
+replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.4.0
 
 replace sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.0
 
@@ -84,24 +84,26 @@ replace github.com/cilium/cilium => github.com/cilium/cilium v1.7.2
 
 replace github.com/optiopay/kafka => github.com/optiopay/kafka v2.0.4+incompatible
 
-replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.15.11
+replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.16.9
 
-replace k8s.io/cri-api => k8s.io/cri-api v0.15.11
+replace k8s.io/cri-api => k8s.io/cri-api v0.16.9
 
-replace k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.15.11
+replace k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.16.9
 
-replace k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.15.11
+replace k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.16.9
 
-replace k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.15.11
+replace k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.16.9
 
-replace k8s.io/kube-proxy => k8s.io/kube-proxy v0.15.11
+replace k8s.io/kube-proxy => k8s.io/kube-proxy v0.16.9
 
-replace k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.15.11
+replace k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.16.9
 
-replace k8s.io/kubelet => k8s.io/kubelet v0.15.11
+replace k8s.io/kubelet => k8s.io/kubelet v0.16.9
 
-replace k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.15.11
+replace k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.16.9
 
-replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.15.11
+replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.16.9
 
 replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20191206224255-0243a4be9c8f
+
+replace k8s.io/kubectl => k8s.io/kubectl v0.16.9
