@@ -33,6 +33,12 @@ github.com/arangodb-managed/arangocopy v0.0.0-20200709081018-0ec13a3b13d0 h1:T8e
 github.com/arangodb-managed/arangocopy v0.0.0-20200709081018-0ec13a3b13d0/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
 github.com/arangodb-managed/arangocopy v0.0.0-20200709081354-bfbd75ba0f3a h1:RyqLTTmW161HKXLB1KKkAeMSoU2x8a9jsS7hzakoHG8=
 github.com/arangodb-managed/arangocopy v0.0.0-20200709081354-bfbd75ba0f3a/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
+github.com/arangodb-managed/arangocopy v0.0.0-20200714113122-9a11cafdb4ab h1:z0b3JcFuVCFsGo+vj1yrH7tPguXDqwitO0EPSnr7PRU=
+github.com/arangodb-managed/arangocopy v0.0.0-20200714113122-9a11cafdb4ab/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716081518-0337141dfa58 h1:MZ39JxYaAm2HhVmJxek1Jd27cAa83ZO7Dpz0YAZc8Kg=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716081518-0337141dfa58/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716082401-3b7b82df9985 h1:fX0XlKZwjttxjOprkw+FXTAZVRDXDaI3Roy0K1FhKF4=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716082401-3b7b82df9985/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
 github.com/arangodb-managed/protoc-gen-ts v0.1.0/go.mod h1:gouF3MvsJtryuDqLPOSBEwAuSBpCb9X6DkpiExlY02M=
 github.com/arangodb/go-driver v0.0.0-20200528083541-2441a69bf0ed/go.mod h1:JG79qtPYRxUB6CdGWSH1XwpolSBjthuZX+Iaz/H38rA=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
