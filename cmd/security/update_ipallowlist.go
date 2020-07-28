@@ -41,14 +41,12 @@ func init() {
 	cmd.InitCommand(
 		cmd.UpdateCmd,
 		&cobra.Command{
-			Use:        "ipwhitelist",
-			Short:      "Update an IP whitelist the authenticated user has access to",
-			Deprecated: "Use ipallowlist instead",
-			Hidden:     true,
+			Use:   "ipallowlist",
+			Short: "Update an IP allowlist the authenticated user has access to",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				ipwhitelistID    string
+				ipallowlistID    string
 				organizationID   string
 				projectID        string
 				name             string
@@ -56,18 +54,18 @@ func init() {
 				addCidrRanges    []string
 				removeCidrRanges []string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP whitelist")
+			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
 			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
-			f.StringSliceVar(&cargs.addCidrRanges, "add-cidr-range", nil, "List of CIDR ranges to add to the IP whitelist")
-			f.StringSliceVar(&cargs.removeCidrRanges, "remove-cidr-range", nil, "List of CIDR ranges to remove from the IP whitelist")
+			f.StringSliceVar(&cargs.addCidrRanges, "add-cidr-range", nil, "List of CIDR ranges to add to the IP allowlist")
+			f.StringSliceVar(&cargs.removeCidrRanges, "remove-cidr-range", nil, "List of CIDR ranges to remove from the IP allowlist")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				ipwhitelistID, argsUsed := cmd.OptOption("ipwhitelist-id", cargs.ipwhitelistID, args, 0)
+				ipallowlistID, argsUsed := cmd.OptOption("ipallowlist-id", cargs.ipallowlistID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -76,8 +74,8 @@ func init() {
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch IP whitelist
-				item := selection.MustSelectIPWhitelist(ctx, log, ipwhitelistID, cargs.projectID, cargs.organizationID, securityc, rmc)
+				// Fetch IP allowlist
+				item := selection.MustSelectIPAllowlist(ctx, log, ipallowlistID, cargs.projectID, cargs.organizationID, securityc, rmc)
 
 				// Set changes
 				f := c.Flags()
@@ -119,15 +117,15 @@ func init() {
 					for x := range cidrRanges {
 						item.CidrRanges = append(item.CidrRanges, x)
 					}
-					// Update IP whitelist
-					updated, err := securityc.UpdateIPWhitelist(ctx, item)
+					// Update IP allowlist
+					updated, err := securityc.UpdateIPAllowlist(ctx, item)
 					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to update IP whitelist")
+						log.Fatal().Err(err).Msg("Failed to update IP allowlist")
 					}
 
 					// Show result
-					fmt.Println("Updated IP whitelist!")
-					fmt.Println(format.IPWhitelist(updated, cmd.RootArgs.Format))
+					fmt.Println("Updated IP allowlist!")
+					fmt.Println(format.IPAllowlist(updated, cmd.RootArgs.Format))
 				}
 			}
 		},
