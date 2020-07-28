@@ -14,6 +14,8 @@ github.com/arangodb-managed/apis v0.45.2 h1:/wT7e0SyxPJzUmRvApmUhxazTfa1Pi1LmGvR
 github.com/arangodb-managed/apis v0.45.2/go.mod h1:dSEV+DTPdZNH06qVqFWA+F0OcaL2ePGEo+odyMaU72Y=
 github.com/arangodb-managed/arangocopy v0.0.0-20200709081354-bfbd75ba0f3a h1:RyqLTTmW161HKXLB1KKkAeMSoU2x8a9jsS7hzakoHG8=
 github.com/arangodb-managed/arangocopy v0.0.0-20200709081354-bfbd75ba0f3a/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716082401-3b7b82df9985 h1:fX0XlKZwjttxjOprkw+FXTAZVRDXDaI3Roy0K1FhKF4=
+github.com/arangodb-managed/arangocopy v0.0.0-20200716082401-3b7b82df9985/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4/go.mod h1:JG79qtPYRxUB6CdGWSH1XwpolSBjthuZX+Iaz/H38rA=
 github.com/arangodb/go-velocypack v0.0.0-20200318135517-5af53c29c67e h1:Xg+hGrY2LcQBbxd0ZFdbGSyRKTYMZCfBbw/pMJFOk1g=
