@@ -75,6 +75,7 @@ func init() {
 			f.StringSliceVar(&cargs.excludedGraphs, "excluded-graph", []string{}, "A list of graph names which should be excluded. Exclusion takes priority over inclusion.")
 			f.BoolVarP(&cargs.force, "force", "f", false, "Force the copy automatically overwriting everything at destination.")
 			f.IntVarP(&cargs.batchSize, "batch-size", "b", 4096, "The number of documents to write at once.")
+			f.IntVarP(&cargs.maxRetries, "max-retries", "r", 9, "The number of maximum retries attempts. Increasing this number will also increase the exponential fallback timer.")
 			f.BoolVar(&cargs.noProgressBar, "no-progress-bar", false, "Disable the progress bar but still have partial progress output.")
 			f.DurationVar(&cargs.queryTTL, "query-ttl", time.Hour*2, "Cursor TTL defined as a duration.")
 
