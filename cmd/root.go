@@ -62,6 +62,7 @@ var (
 const (
 	// Prefix of all environment variables
 	envKeyPrefix  = "OASIS_"
+	envKeyProgram = envKeyPrefix + "EXECUTABLE"
 	apiPortSuffix = ":443"
 )
 

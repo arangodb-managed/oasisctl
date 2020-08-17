@@ -24,6 +24,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	_ "github.com/gogo/protobuf/types"
 
@@ -43,7 +44,14 @@ func init() {
 }
 
 func main() {
-	if err := cmd.RootCmd.Execute(); err != nil {
-		log.Fatalf("%v\n", err)
+	var pluginHandler cmd.PluginHandler
+	switch cmd.DefaultPluginHandler() {
+	case "", "default":
+		pluginHandler = cmd.NewDefaultPluginHandler("oasisctl")
+	case "none":
+		pluginHandler = nil
+	default:
+		log.Fatalf("Unknown plugin handler '%s'\n", cmd.DefaultPluginHandler())
 	}
+	cmd.ExecuteCommandOrPlugin(cmd.RootCmd, pluginHandler, os.Args)
 }
