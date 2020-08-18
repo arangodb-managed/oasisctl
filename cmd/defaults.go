@@ -64,3 +64,6 @@ func DefaultDeployment() string { return envOrDefault("DEPLOYMENT", "") }
 
 // DefaultURL returns the default value for a URL
 func DefaultURL() string { return envOrDefault("URL", "") }
+
+// DefaultPluginHandler returns the default value for a URL
+func DefaultPluginHandler() string { return envOrDefault("PLUGIN_HANDLER", "") }
