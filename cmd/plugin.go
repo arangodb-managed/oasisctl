@@ -41,7 +41,7 @@ import (
 // If no such command it found, a plugin searched for and executed
 // when applicable.
 func ExecuteCommandOrPlugin(root *cobra.Command, pluginHandler PluginHandler, args []string) {
-	if len(args) > 1 {
+	if pluginHandler != nil && len(args) > 1 {
 		cmdPathPieces := args[1:]
 
 		// only look for suitable extension executables if
@@ -65,10 +65,10 @@ func ExecuteCommandOrPlugin(root *cobra.Command, pluginHandler PluginHandler, ar
 // and performing executable filename lookups to search
 // for valid plugin files, and execute found plugins.
 type PluginHandler interface {
-	// exists at the given filename, or a boolean false.
 	// Lookup will iterate over a list of given prefixes
 	// in order to recognize valid plugin filenames.
-	// The first filepath to match a prefix is returned.
+	// Returns: the first filepath to match a prefix together with true
+	// or false if no match is found.
 	Lookup(filename string) (string, bool)
 	// Execute receives an executable's filepath, a slice
 	// of arguments, and a slice of environment variables
@@ -120,7 +120,7 @@ func (h *defaultPluginHandler) Execute(executablePath string, cmdArgs, environme
 	}
 
 	// invoke cmd binary relaying the environment and args given
-	// append executablePath to cmdArgs, as execve will make first argument the "binary name".
+	// append executablePath to cmdArgs, as Exec will make first argument the "binary name".
 	return syscall.Exec(executablePath, append([]string{executablePath}, cmdArgs...), environment)
 }
 
