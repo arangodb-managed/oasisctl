@@ -1,7 +1,8 @@
 SHELL = bash
 PROJECT := oasisctl
 
-COMMIT := $(shell git rev-parse --short HEAD)
+COMMIT := $(shell zutano repo build)
+VERSION := $(shell zutano repo version)
 DOCKERIMAGE ?= $(shell zutano docker image --name=$(PROJECT))
 
 all: binaries
@@ -39,6 +40,8 @@ docker:
 docker-push:
 	docker push $(DOCKERIMAGE)
 
+publish-oasis-tools:
+	GITHUB_USERNAME=$(CIRCLE_PROJECT_USERNAME) COMMIT=$(COMMIT) VERSION=$(VERSION) ./scripts/publish-oasis-tools.sh
 
 .PHONY: update-modules
 update-modules:
