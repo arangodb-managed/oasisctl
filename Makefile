@@ -41,7 +41,7 @@ docker-push:
 	docker push $(DOCKERIMAGE)
 
 publish-oasis-tools:
-	GITHUB_USERNAME=$(CIRCLE_PROJECT_USERNAME) ./scripts/publish-oasis-tools.sh
+	GITHUB_USERNAME=$(CIRCLE_PROJECT_USERNAME) COMMIT=$(COMMIT) VERSION=$(VERSION) ./scripts/publish-oasis-tools.sh
 
 .PHONY: update-modules
 update-modules:

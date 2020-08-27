@@ -11,6 +11,10 @@ if [ -z "${GITHUB_TOKEN}" ]; then
     echo GITHUB_TOKEN is not set
     exit 1
 fi
+if [ -z "${GITHUB_EMAIL}" ]; then
+    echo GITHUB_EMAIL is not set
+    exit 1
+fi
 if [ -z "${VERSION}" ]; then
     echo VERSION is not set
     exit 1
@@ -25,6 +29,9 @@ cd ${REPODIR}
 rm -Rf oasis-tools
 git clone "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/arangodb/oasis-tools.git"
 cd oasis-tools
+
+git config user.email "${GITHUB_EMAIL}"
+git config user.name "${GITHUB_USERNAME}"
 
 TARGETDIR=oasisctl/${VERSION}-${COMMIT}
 mkdir -p ${TARGETDIR}
