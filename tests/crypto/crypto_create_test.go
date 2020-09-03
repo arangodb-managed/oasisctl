@@ -23,33 +23,23 @@
 package crypto
 
 import (
+	"os"
 	"testing"
 
-	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
+
+	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 )
 
+// Make a RunCommands framework out of this which just reads in files? Or just used by all tests to run.
 func TestCreateCrypto(t *testing.T) {
 	testName := "TestCreateCrypto"
-	args, err := tests.LoadArguments(testName)
-	if err != nil {
-		t.Fatal(err)
+	org := os.Getenv("OASIS_ORGANIZATION")
+	proj := os.Getenv("OASIS_PROJECT")
+	args := map[string]string{
+		"org":  org,
+		"proj": proj,
+		"id":   "test-id",
 	}
-	root := cmd.RootCmd
-	root.SetArgs(args)
-
-	out, err := tests.CaptureOutput(root.Execute)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	regex, err := tests.LoadGoldenOutput(testName)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !tests.CompareResults([]byte(out), regex) {
-		t.FailNow()
-	}
+	tests.RunCommands(t, testName, args)
 }
