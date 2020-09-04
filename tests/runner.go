@@ -23,12 +23,10 @@
 package tests
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"testing"
 )
 
 const (
@@ -38,26 +36,17 @@ const (
 	darwin   = "darwin"
 )
 
-// RunCommands takes a *testing.T and a name of the test.
-// Performs the steps of the test running the specified
-// set of commands and checks the end results against the
-// golden output.
-func RunCommands(t *testing.T, compare string, args []string, fail bool) {
+// RunCommand finds the oasisctl binary and executes it with the given arguments.
+func RunCommand(args []string) ([]byte, error) {
 	// Find oasisctl executable
 	cmd, err := lookupOasisctl()
 	if err != nil {
-		t.Fatal(err)
+		return nil, err
 	}
-	out, err := exec.Command(cmd, args...).CombinedOutput()
-	if err != nil && !fail {
-		fmt.Println("Failed output: ", string(out))
-		t.Fatal(err)
-	}
-	if !compareResults(out, []byte(compare)) {
-		t.FailNow()
-	}
+	return exec.Command(cmd, args...).CombinedOutput()
 }
 
+// lookupOasisctl finds the oasisctl binary based on os and arch.
 func lookupOasisctl() (string, error) {
 	var path string
 	op := runtime.GOOS

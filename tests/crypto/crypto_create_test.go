@@ -42,5 +42,11 @@ Created-At                 now
 Deleted-At                 -
 $`
 	// perform any setups in here.
-	tests.RunCommands(t, compare, args, false)
+	out, err := tests.RunCommand(args)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !tests.CompareOutput(out, []byte(compare)) {
+		t.FailNow()
+	}
 }

@@ -48,5 +48,12 @@ Global Flags:
 
 .*.unknown.flag:.--invalid
 $`
-	tests.RunCommands(t, compare, args, true)
+	out, err := tests.RunCommand(args)
+	if err == nil {
+		t.Fatal("should have gotten an error, but error was nil")
+	}
+
+	if !tests.CompareOutput(out, []byte(compare)) {
+		t.FailNow()
+	}
 }

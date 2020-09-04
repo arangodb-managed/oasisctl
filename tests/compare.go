@@ -27,10 +27,10 @@ import (
 	"regexp"
 )
 
-// compareResults regex compare the result with the output so keys like .*,
+// CompareOutput regex compare the result with the output so keys like .*,
 // can be used to check random ids, or timestamps or values which should match something but
 // there is no possible way to define what that something will be.
-func compareResults(output []byte, regex []byte) bool {
+func CompareOutput(output []byte, regex []byte) bool {
 	regex = escapeRegexSpecificCharacters(regex)
 	match := regexp.MustCompile(string(regex))
 	if !match.Match(output) {
