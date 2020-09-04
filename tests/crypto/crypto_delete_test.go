@@ -29,18 +29,24 @@ import (
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateCrypto(t *testing.T) {
-	args := []string{"create", "cacertificate", "--name=testcertificate"}
-	compare := `^Success!
-Id                         .*
-Name                       testcertificate
-Description                
-Lifetime                   \d+h0m0s
-Url                        /Organization/_support/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 now
-Deleted-At                 -
+func TestDeleteCryptoInvalidFlag(t *testing.T) {
+	args := []string{"delete", "cacertificate", "--invalid"}
+	compare := `^Error: unknown flag: --invalid
+Usage:
+  oasisctl delete cacertificate [flags]
+
+Flags:
+  -c, --cacertificate-id string   Identifier of the CA certificate
+  -h, --help                      help for cacertificate
+  -o, --organization-id string    Identifier of the organization (default ".*")
+  -p, --project-id string         Identifier of the project (default "\d+")
+
+Global Flags:
+      --endpoint string   API endpoint of the ArangoDB Oasis (default ".*")
+      --format string     Output format (table|json) (default "table")
+      --token string      Token used to authenticate at ArangoDB Oasis
+
+.*.unknown.flag:.--invalid
 $`
-	// perform any setups in here.
-	tests.RunCommands(t, compare, args, false)
+	tests.RunCommands(t, compare, args, true)
 }
