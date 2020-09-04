@@ -53,7 +53,7 @@ func RunCommands(t *testing.T, compare string, args []string, fail bool) {
 		fmt.Println("Failed output: ", string(out))
 		t.Fatal(err)
 	}
-	if !CompareResults(out, []byte(compare)) {
+	if !compareResults(out, []byte(compare)) {
 		t.FailNow()
 	}
 }
