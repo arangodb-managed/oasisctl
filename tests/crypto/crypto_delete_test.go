@@ -25,6 +25,9 @@ package crypto
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
@@ -49,11 +52,6 @@ Global Flags:
 .*.unknown.flag:.--invalid
 $`
 	out, err := tests.RunCommand(args)
-	if err == nil {
-		t.Fatal("should have gotten an error, but error was nil")
-	}
-
-	if !tests.CompareOutput(out, []byte(compare)) {
-		t.FailNow()
-	}
+	require.Error(t, err)
+	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }
