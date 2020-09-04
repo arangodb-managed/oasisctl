@@ -38,8 +38,8 @@ Usage:
 Flags:
   -c, --cacertificate-id string   Identifier of the CA certificate
   -h, --help                      help for cacertificate
-  -o, --organization-id string    Identifier of the organization (default ".*")
-  -p, --project-id string         Identifier of the project (default "\d+")
+  -o, --organization-id string    Identifier of the organization.*
+  -p, --project-id string         Identifier of the project.*
 
 Global Flags:
       --endpoint string   API endpoint of the ArangoDB Oasis (default ".*")
