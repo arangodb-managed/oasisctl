@@ -45,8 +45,6 @@ func CompareOutput(output []byte, regex []byte) bool {
 }
 
 // escapeRegexSpecificCharacters will escape possible interfering characters in the output.
-// TODO: Maybe not use this but have the user escape them by hand in the output?
-// But I think that's just poor user experience.
 func escapeRegexSpecificCharacters(s []byte) []byte {
 	var output []byte
 	for _, c := range s {

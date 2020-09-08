@@ -19,6 +19,7 @@
 //
 // Author Gergely Brautigam
 //
+// +build e2e
 
 package crypto
 
