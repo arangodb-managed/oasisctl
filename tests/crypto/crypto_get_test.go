@@ -30,34 +30,26 @@ import (
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 func TestGetCrypto(t *testing.T) {
-	// Create certificate to Get
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
-	log := cmd.CLILog
-	org := cmd.DefaultOrganization()
-	proj := cmd.DefaultProject()
-
-	conn := cmd.MustDialAPI()
-	cryptoc := crypto.NewCryptoServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
-	// Fetch project
-	project := selection.MustSelectProject(ctx, log, proj, org, rmc)
+	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
 		Name:      "TestGetCrypto",
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Cleanup
 	defer func() {

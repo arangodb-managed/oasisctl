@@ -29,27 +29,17 @@ import (
 	"github.com/stretchr/testify/require"
 
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 func TestDeleteCertificate(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
-	log := cmd.CLILog
-	org := cmd.DefaultOrganization()
-	proj := cmd.DefaultProject()
-
-	conn := cmd.MustDialAPI()
-	cryptoc := crypto.NewCryptoServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
 	ctx := cmd.ContextWithToken()
-	// Fetch project
-	project := selection.MustSelectProject(ctx, log, proj, org, rmc)
+	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
@@ -57,7 +47,7 @@ func TestDeleteCertificate(t *testing.T) {
 		Name:      "TestDeleteCertificate",
 	})
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to delete CA certificate")
+		t.Log("Failed to delete CA certificate")
 	}
 	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId()}
 	compare := `^Deleted.CA.certificate!
@@ -65,6 +55,11 @@ $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
+
+	// Try getting the deleted certificate
+	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId()}
+	_, err = tests.RunCommand(args)
+	require.Error(t, err)
 }
 
 func TestDeleteCryptoInvalidFlag(t *testing.T) {

@@ -29,45 +29,46 @@ import (
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
+	crypto "github.com/arangodb-managed/apis/crypto/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateCrypto(t *testing.T) {
-	args := []string{"create", "cacertificate", "--name=testcertificate"}
-	compare := `^Success!
+func TestUpdateCrypto(t *testing.T) {
+	cmd.RootCmd.PersistentPreRun(nil, nil)
+	ctx := cmd.ContextWithToken()
+	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
+
+	// Create a certificate via the api.
+	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
+		ProjectId: project.GetId(),
+		Name:      "TestUpdateCrypto",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Cleanup
+	defer func() {
+		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: result.GetId()}); err != nil {
+			t.Log("Failed to cleanup certificate: ", err)
+		}
+	}()
+
+	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true"}
+	compare := `Updated CA certificate!
 Id                         .*
-Name                       testcertificate
-Description                
+Name                       NewName
+Description                NewDescription
 Lifetime                   \d+h0m0s
 Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 now
+Use-Well-Known-Certificate ✓
+Created-At                 .*
 Deleted-At                 -
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-	// Cleanup every certificate that exists.
-	if err := cleanUpAllCertificates(); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func cleanUpAllCertificates() error {
-	cmd.RootCmd.PersistentPreRun(nil, nil)
-	ctx := cmd.ContextWithToken()
-	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
-	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
-	if err != nil {
-		return err
-	}
-	for _, cert := range list.GetItems() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
-			return err
-		}
-	}
-	return nil
 }

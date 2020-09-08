@@ -65,7 +65,8 @@ func verbose(s string) {
 		if r == ' ' {
 			fmt.Print(".")
 		} else if r == '\t' {
-			fmt.Print(">")
+			fmt.Print("\\t")
+			fmt.Print("\t")
 		} else if r == '\n' {
 			fmt.Print("\\n")
 			fmt.Println()
