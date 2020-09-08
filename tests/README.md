@@ -1,16 +1,21 @@
 # Testing oasisctl
 
-To run the tests execute the following from oasisctl root:
+**NOTE**: Make sure that the oasisctl binary exists before running the tests.
+
+To run all tests execute the following:
 
 ```bash
-make e2e-test
+go test ./...
 ```
 
-To run a specific test run from root:
+To run a specific test:
 
 ```bash
-# Make sure that the oasisctl binary exists
-make
-# Run the test
-go test tests/crypto/crypto_create_test.go
+go test crypto/crypto_create_test.go -run=TestCreateCertificate
 ```
+
+# Constraints
+
+These tests were designed to be run with either a user which has a single organization
+and project, or defaults being set properly via environment properties:
+`OASIS_ORGANIZATION` and `OASIS_PROJECT`.

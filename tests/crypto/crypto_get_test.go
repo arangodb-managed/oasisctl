@@ -28,6 +28,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
@@ -37,7 +38,8 @@ import (
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestDeleteCertificate(t *testing.T) {
+func TestGetCrypto(t *testing.T) {
+	// Create certificate to Get
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	log := cmd.CLILog
@@ -54,39 +56,27 @@ func TestDeleteCertificate(t *testing.T) {
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
-		Name:      "TestDeleteCertificate",
+		Name:      "TestGetCrypto",
 	})
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to delete CA certificate")
-	}
-	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId()}
-	compare := `^Deleted.CA.certificate!
+
+	// Cleanup
+	defer func() {
+		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: result.GetId()}); err != nil {
+			t.Log("Failed to cleanup certificate: ", err)
+		}
+	}()
+
+	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId()}
+	compare := `Id                         .*
+Name                       TestGetCrypto
+Description                
+Lifetime                   \d+h0m0s
+Url                        /Organization/\d+/Project/\d+/CACertificate/.*
+Use-Well-Known-Certificate -
+Created-At                 .*
+Deleted-At                 -
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
-	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-}
-
-func TestDeleteCryptoInvalidFlag(t *testing.T) {
-	args := []string{"delete", "cacertificate", "--invalid"}
-	compare := `^Error: unknown flag: --invalid
-Usage:
-  oasisctl delete cacertificate [flags]
-
-Flags:
-  -c, --cacertificate-id string   Identifier of the CA certificate
-  -h, --help                      help for cacertificate
-  -o, --organization-id string    Identifier of the organization.*
-  -p, --project-id string         Identifier of the project.*
-
-Global Flags:
-      --endpoint string   API endpoint of the ArangoDB Oasis (default ".*")
-      --format string     Output format (table|json) (default "table")
-      --token string      Token used to authenticate at ArangoDB Oasis
-
-.*.unknown.flag:.--invalid
-$`
-	out, err := tests.RunCommand(args)
-	require.Error(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

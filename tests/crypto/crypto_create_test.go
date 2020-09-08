@@ -39,12 +39,11 @@ Id                         .*
 Name                       testcertificate
 Description                
 Lifetime                   \d+h0m0s
-Url                        /Organization/_support/Project/\d+/CACertificate/.*
+Url                        /Organization/\d+/Project/\d+/CACertificate/.*
 Use-Well-Known-Certificate -
 Created-At                 now
 Deleted-At                 -
 $`
-	// perform any setups in here.
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
