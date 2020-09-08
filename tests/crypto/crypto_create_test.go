@@ -59,7 +59,7 @@ $`
 func cleanUpAllCertificates() error {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
+	cryptoc, project := getCryptoClientAndProject(ctx)
 	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
 	if err != nil {
 		return err

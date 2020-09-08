@@ -40,7 +40,7 @@ func TestGetCrypto(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
+	cryptoc, project := getCryptoClientAndProject(ctx)
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{

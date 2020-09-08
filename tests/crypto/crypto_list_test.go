@@ -40,7 +40,7 @@ func TestListCrypto(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := tests.GetCryptoClientAndProject(ctx)
+	cryptoc, project := getCryptoClientAndProject(ctx)
 
 	// Make sure our certificate is the only certificate
 	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})

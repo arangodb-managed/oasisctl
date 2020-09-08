@@ -20,7 +20,7 @@
 // Author Gergely Brautigam
 //
 
-package tests
+package crypto
 
 import (
 	"context"
@@ -35,8 +35,8 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
-// GetCryptoClientAndProject creates a crypto client and a project for the tests to work with.
-func GetCryptoClientAndProject(ctx context.Context) (crypto.CryptoServiceClient, *rm.Project) {
+// getCryptoClientAndProject creates a crypto client and a project for the tests to work with.
+func getCryptoClientAndProject(ctx context.Context) (crypto.CryptoServiceClient, *rm.Project) {
 	log := zerolog.New(zerolog.ConsoleWriter{
 		Out:     os.Stderr,
 		NoColor: true,

@@ -1,6 +1,6 @@
 # Testing oasisctl
 
-**NOTE**: Make sure that the oasisctl binary exists before running the tests.
+**NOTE**: Make sure the oasisctl binary exists before running the tests.
 
 To run all tests execute the following:
 
@@ -8,10 +8,10 @@ To run all tests execute the following:
 go test ./...
 ```
 
-To run a specific test:
+To run a specific test, `cd` into the folder you wish to run tests for and execute for example:
 
 ```bash
-go test crypto/crypto_create_test.go -run=TestCreateCertificate
+go test -run=TestCreateCertificate
 ```
 
 # Constraints
