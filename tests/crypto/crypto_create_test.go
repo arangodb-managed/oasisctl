@@ -29,9 +29,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	common "github.com/arangodb-managed/apis/common/v1"
-
-	"github.com/arangodb-managed/oasisctl/cmd"
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
@@ -52,23 +49,7 @@ $`
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 	// Cleanup every certificate that exists.
-	if err := cleanUpAllCertificates(); err != nil {
+	if err := cleanupCertificates(); err != nil {
 		t.Fatal(err)
 	}
-}
-
-func cleanUpAllCertificates() error {
-	cmd.RootCmd.PersistentPreRun(nil, nil)
-	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
-	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
-	if err != nil {
-		return err
-	}
-	for _, cert := range list.GetItems() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
-			return err
-		}
-	}
-	return nil
 }

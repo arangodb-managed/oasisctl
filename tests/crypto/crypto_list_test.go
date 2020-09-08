@@ -44,14 +44,8 @@ func TestListCrypto(t *testing.T) {
 	cryptoc, project := getCryptoClientAndProject(ctx)
 
 	// Make sure our certificate is the only certificate
-	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
-	if err != nil {
+	if err := cleanupCertificates(); err != nil {
 		t.Fatal(err)
-	}
-	for _, cert := range list.GetItems() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
-			t.Fatal(err)
-		}
 	}
 
 	// Create a certificate via the api.
