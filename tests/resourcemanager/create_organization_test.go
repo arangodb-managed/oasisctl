@@ -21,52 +21,54 @@
 //
 // +build e2e
 
-package crypto
+package resourcemanager
 
 import (
 	"testing"
 
+	"github.com/arangodb-managed/oasisctl/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
-	crypto "github.com/arangodb-managed/apis/crypto/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
-	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestUpdateCrypto(t *testing.T) {
+func TestCreateOrganization(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
+	conn := cmd.MustDialAPI()
+	rmc := rm.NewResourceManagerServiceClient(conn)
 
-	// Create a certificate via the api.
-	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId: project.GetId(),
-		Name:      "TestUpdateCrypto",
-	})
-	assert.NoError(t, err)
-
-	// Cleanup
+	testOrg := "testCreateOrganization"
 	defer func() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: result.GetId()}); err != nil {
-			t.Log("Failed to cleanup certificate: ", err)
+		list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
+		if err != nil {
+			t.Log(err)
+		}
+		// We only delete the test organization
+		for _, o := range list.GetItems() {
+			if o.GetName() == testOrg {
+				if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: o.GetId()}); err != nil {
+					t.Log(err)
+				}
+				break
+			}
 		}
 	}()
 
-	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true"}
-	compare := `Updated CA certificate!
-Id                         .*
-Name                       NewName
-Description                NewDescription
-Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate ✓
-Created-At                 .*
-Deleted-At                 -
+	compare := `^Success!
+Id          \d+
+Name        ` + testOrg + `
+Description 
+Url         /Organization/\d+
+Created-At  .*
+Deleted-At  -
 $`
+
+	args := []string{"create", "organization", "--name=" + testOrg}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

@@ -21,7 +21,7 @@
 //
 // +build e2e
 
-package crypto
+package platform
 
 import (
 	"testing"
@@ -29,26 +29,19 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateCrypto(t *testing.T) {
-	args := []string{"create", "cacertificate", "--name=testcertificate"}
-	compare := `^Success!
-Id                         .*
-Name                       testcertificate
-Description                
-Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 now
-Deleted-At                 -
+func TestListRegion(t *testing.T) {
+	args := []string{"list", "regions", "--provider-id=aks"}
+	compare := `Id                | Provider-Id | Location                 | Available
+aks-canadacentral | aks         | Central Canada, Toronto  | ✓
+aks-eastus2       | aks         | East US, Virginia        | ✓
+aks-uksouth       | aks         | UK, London               | ✓
+aks-westeurope    | aks         | West Europe, Netherlands | ✓
+aks-westus2       | aks         | West US, Washington      | ✓
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-	// Cleanup every certificate that exists.
-	err = cleanupCertificates()
-	assert.NoError(t, err)
 }

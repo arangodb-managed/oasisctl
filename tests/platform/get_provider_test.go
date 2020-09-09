@@ -21,7 +21,7 @@
 //
 // +build e2e
 
-package crypto
+package platform
 
 import (
 	"testing"
@@ -29,26 +29,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateCrypto(t *testing.T) {
-	args := []string{"create", "cacertificate", "--name=testcertificate"}
-	compare := `^Success!
-Id                         .*
-Name                       testcertificate
-Description                
-Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 now
-Deleted-At                 -
+func TestGetProvider(t *testing.T) {
+	args := []string{"get", "provider", "--provider-id=aks"}
+	compare := `Id   aks
+Name Microsoft Azure
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-	// Cleanup every certificate that exists.
-	err = cleanupCertificates()
-	assert.NoError(t, err)
 }

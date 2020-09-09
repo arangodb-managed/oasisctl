@@ -21,7 +21,7 @@
 //
 // +build e2e
 
-package crypto
+package resourcemanager
 
 import (
 	"testing"
@@ -29,26 +29,37 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
+	common "github.com/arangodb-managed/apis/common/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateCrypto(t *testing.T) {
-	args := []string{"create", "cacertificate", "--name=testcertificate"}
-	compare := `^Success!
-Id                         .*
-Name                       testcertificate
-Description                
-Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 now
-Deleted-At                 -
+func TestGetOrganization(t *testing.T) {
+	cmd.RootCmd.PersistentPreRun(nil, nil)
+	ctx := cmd.ContextWithToken()
+	conn := cmd.MustDialAPI()
+	rmc := rm.NewResourceManagerServiceClient(conn)
+
+	org, err := rmc.CreateOrganization(ctx, &rm.Organization{Name: "testOrg"})
+	assert.NoError(t, err)
+
+	defer func() {
+		if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: org.GetId()}); err != nil {
+			t.Log(err)
+		}
+	}()
+
+	compare := `^Id          \d+
+Name        testOrg
+Description 
+Url         /Organization/\d+
+Created-At  .*
+Deleted-At  -
 $`
+	args := []string{"get", "organization", "--organization-id=" + org.GetId()}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-	// Cleanup every certificate that exists.
-	err = cleanupCertificates()
-	assert.NoError(t, err)
 }

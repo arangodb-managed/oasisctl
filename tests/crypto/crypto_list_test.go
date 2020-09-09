@@ -44,18 +44,15 @@ func TestListCrypto(t *testing.T) {
 	cryptoc, project := getCryptoClientAndProject(ctx)
 
 	// Make sure our certificate is the only certificate
-	if err := cleanupCertificates(); err != nil {
-		t.Fatal(err)
-	}
+	err := cleanupCertificates()
+	assert.NoError(t, err)
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
 		Name:      "TestListCrypto",
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// Cleanup
 	defer func() {

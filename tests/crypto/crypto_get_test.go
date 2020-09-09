@@ -48,9 +48,7 @@ func TestGetCrypto(t *testing.T) {
 		ProjectId: project.GetId(),
 		Name:      "TestGetCrypto",
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	// Cleanup
 	defer func() {
