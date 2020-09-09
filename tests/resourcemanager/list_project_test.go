@@ -61,7 +61,7 @@ func TestListProject(t *testing.T) {
 	// We must acount for the default organization
 	compare := `^Id........|.Name.........|.Description.|.Url.......................................|.Created-At
 .*
-762073585.|.testProject..|.............|./Organization/\d+/Project/\d+.|..*
+\d+.|.testProject..|.............|./Organization/\d+/Project/\d+.|..*
 $`
 	args := []string{"list", "projects"}
 	out, err := tests.RunCommand(args)
