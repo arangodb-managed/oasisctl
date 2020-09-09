@@ -29,7 +29,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	common "github.com/arangodb-managed/apis/common/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
@@ -40,16 +39,10 @@ func TestDeleteProject(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
-	org := cmd.DefaultOrganization()
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
-	if org == "" {
-		// Get the first organization if default is not set.
-		list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
-		assert.NoError(t, err)
-		require.NotEmpty(t, list.GetItems())
-		org = list.GetItems()[0].GetId()
-	}
 	project, err := rmc.CreateProject(ctx, &rm.Project{Name: "testProject", OrganizationId: org})
 	assert.NoError(t, err)
 	compare := `^Deleted project!

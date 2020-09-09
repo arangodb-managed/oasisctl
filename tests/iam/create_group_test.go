@@ -31,30 +31,29 @@ import (
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
+	iam "github.com/arangodb-managed/apis/iam/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
-func TestCreateProject(t *testing.T) {
+func TestCreateGroup(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
-	rmc := rm.NewResourceManagerServiceClient(conn)
+	iamc := iam.NewIAMServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 
-	testProj := "testCreateProject"
+	testGroup := "testGroup"
 	defer func() {
-		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org})
+		list, err := iamc.ListGroups(ctx, &common.ListOptions{ContextId: org})
 		if err != nil {
 			t.Log(err)
 		}
 
-		// We only delete the test organization
-		for _, project := range list.GetItems() {
-			if project.GetName() == testProj {
-				if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: project.GetId()}); err != nil {
+		// We only delete the test group
+		for _, group := range list.GetItems() {
+			if group.GetName() == testGroup {
+				if _, err := iamc.DeleteGroup(ctx, &common.IDOptions{Id: group.GetId()}); err != nil {
 					t.Log(err)
 				}
 				break
@@ -64,14 +63,14 @@ func TestCreateProject(t *testing.T) {
 
 	compare := `^Success!
 Id          \d+
-Name        ` + testProj + `
+Name        ` + testGroup + `
 Description 
-Url         /Organization/\d+/Project/.*
+Url         /Organization/` + org + `/Group/.*
 Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"create", "project", "--name=" + testProj}
+	args := []string{"create", "group", "--name=" + testGroup}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

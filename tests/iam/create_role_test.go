@@ -31,30 +31,29 @@ import (
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
+	iam "github.com/arangodb-managed/apis/iam/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
-func TestCreateProject(t *testing.T) {
+func TestCreateRole(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
-	rmc := rm.NewResourceManagerServiceClient(conn)
+	iamc := iam.NewIAMServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 
-	testProj := "testCreateProject"
+	testRole := "testRole"
 	defer func() {
-		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org})
+		list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org})
 		if err != nil {
 			t.Log(err)
 		}
 
-		// We only delete the test organization
-		for _, project := range list.GetItems() {
-			if project.GetName() == testProj {
-				if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: project.GetId()}); err != nil {
+		// We only delete the test role
+		for _, role := range list.GetItems() {
+			if role.GetName() == testRole {
+				if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: role.GetId()}); err != nil {
 					t.Log(err)
 				}
 				break
@@ -64,14 +63,16 @@ func TestCreateProject(t *testing.T) {
 
 	compare := `^Success!
 Id          \d+
-Name        ` + testProj + `
+Name        ` + testRole + `
 Description 
-Url         /Organization/\d+/Project/.*
+Predefined  false
+Permissions 
+Url         /Organization/\d+/Role/\d+
 Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"create", "project", "--name=" + testProj}
+	args := []string{"create", "role", "--name=" + testRole}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

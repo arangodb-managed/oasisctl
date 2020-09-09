@@ -26,52 +26,32 @@ package resourcemanager
 import (
 	"testing"
 
-	"github.com/arangodb-managed/oasisctl/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	common "github.com/arangodb-managed/apis/common/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	iam "github.com/arangodb-managed/apis/iam/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateProject(t *testing.T) {
+func TestListApiKey(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
-	rmc := rm.NewResourceManagerServiceClient(conn)
+	iamc := iam.NewIAMServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 
-	testProj := "testCreateProject"
-	defer func() {
-		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org})
-		if err != nil {
-			t.Log(err)
-		}
+	key, err := iamc.CreateAPIKey(ctx, &iam.CreateAPIKeyRequest{OrganizationId: org})
+	require.NoError(t, err)
 
-		// We only delete the test organization
-		for _, project := range list.GetItems() {
-			if project.GetName() == testProj {
-				if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: project.GetId()}); err != nil {
-					t.Log(err)
-				}
-				break
-			}
-		}
-	}()
+	args := []string{"list", "apikeys"}
 
-	compare := `^Success!
-Id          \d+
-Name        ` + testProj + `
-Description 
-Url         /Organization/\d+/Project/.*
-Created-At  .*
-Deleted-At  -
+	compare := `^Id                   | User-Id                        | Organization-Id | Readonly | Created-At     | Expires-At  | Revoked-At
+.*` + key.GetId() + ` | auth0|.* | ` + org + `       | -        | .*    | .* |
+.*
 $`
-
-	args := []string{"create", "project", "--name=" + testProj}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
