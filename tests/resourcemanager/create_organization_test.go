@@ -43,21 +43,6 @@ func TestCreateOrganization(t *testing.T) {
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
 	testOrg := "testCreateOrganization"
-	defer func() {
-		list, err := rmc.ListOrganizations(ctx, &common.ListOptions{})
-		if err != nil {
-			t.Log(err)
-		}
-		// We only delete the test organization
-		for _, o := range list.GetItems() {
-			if o.GetName() == testOrg {
-				if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: o.GetId()}); err != nil {
-					t.Log(err)
-				}
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id          \d+
 Name        ` + testOrg + `
@@ -70,5 +55,13 @@ $`
 	args := []string{"create", "organization", "--name=" + testOrg}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+	id, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+	defer func() {
+		if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: id}); err != nil {
+			t.Log(err)
+		}
+	}()
+
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

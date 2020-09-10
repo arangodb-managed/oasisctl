@@ -24,7 +24,6 @@
 package iam
 
 import (
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,23 +45,6 @@ func TestCreateRole(t *testing.T) {
 	require.NoError(t, err)
 
 	testRole := "testRole"
-	defer func() {
-		list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org})
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// We only delete the test role
-		for _, role := range list.GetItems() {
-			if role.GetName() == testRole {
-				if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: role.GetId()}); err != nil {
-					log.Fatal(err)
-				}
-				break
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id          \d+
 Name        ` + testRole + `
@@ -77,5 +59,14 @@ $`
 	args := []string{"create", "role", "--name=" + testRole, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+
+	id, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+	defer func() {
+		if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: id}); err != nil {
+			t.Log(err)
+		}
+	}()
+
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

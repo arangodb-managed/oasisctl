@@ -26,7 +26,10 @@ package data
 import (
 	"errors"
 
+	common "github.com/arangodb-managed/apis/common/v1"
+	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
@@ -45,4 +48,34 @@ func getRegion(provider, org string) (string, error) {
 		return "", errors.New("region list is empty")
 	}
 	return list.GetItems()[0].GetId(), nil
+}
+
+func getDefaultCertificate(proj string) (*crypto.CACertificate, error) {
+	ctx := cmd.ContextWithToken()
+	conn := cmd.MustDialAPI()
+	cryptoc := crypto.NewCryptoServiceClient(conn)
+	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: proj})
+	if err != nil {
+		return nil, err
+	}
+	if len(list.GetItems()) == 0 {
+		return nil, errors.New("no certificates found for project")
+	}
+	for _, c := range list.GetItems() {
+		if c.GetIsDefault() {
+			return c, nil
+		}
+	}
+	return nil, errors.New("no default certificate found")
+}
+
+func getTermsAndConditions(org string) (string, error) {
+	ctx := cmd.ContextWithToken()
+	conn := cmd.MustDialAPI()
+	rmc := rm.NewResourceManagerServiceClient(conn)
+	tandc, err := rmc.GetCurrentTermsAndConditions(ctx, &common.IDOptions{Id: org})
+	if err != nil {
+		return "", err
+	}
+	return tandc.GetId(), nil
 }

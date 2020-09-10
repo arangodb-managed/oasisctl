@@ -45,22 +45,6 @@ func TestCreateProject(t *testing.T) {
 	require.NoError(t, err)
 
 	testProj := "testCreateProject"
-	defer func() {
-		list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org})
-		if err != nil {
-			t.Log(err)
-		}
-
-		// We only delete the test organization
-		for _, project := range list.GetItems() {
-			if project.GetName() == testProj {
-				if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: project.GetId()}); err != nil {
-					t.Log(err)
-				}
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id          \d+
 Name        ` + testProj + `
@@ -73,5 +57,13 @@ $`
 	args := []string{"create", "project", "--name=" + testProj, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+	id, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+
+	defer func() {
+		if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: id}); err != nil {
+			t.Log(err)
+		}
+	}()
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

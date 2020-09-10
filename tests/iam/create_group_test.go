@@ -45,23 +45,6 @@ func TestCreateGroup(t *testing.T) {
 	require.NoError(t, err)
 
 	testGroup := "testGroup"
-	defer func() {
-		list, err := iamc.ListGroups(ctx, &common.ListOptions{ContextId: org})
-		if err != nil {
-			t.Log(err)
-		}
-
-		// We only delete the test group
-		for _, group := range list.GetItems() {
-			if group.GetName() == testGroup {
-				if _, err := iamc.DeleteGroup(ctx, &common.IDOptions{Id: group.GetId()}); err != nil {
-					t.Log(err)
-				}
-				break
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id          \d+
 Name        ` + testGroup + `
@@ -74,5 +57,14 @@ $`
 	args := []string{"create", "group", "--name=" + testGroup, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+
+	id, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+	defer func() {
+		if _, err := iamc.DeleteGroup(ctx, &common.IDOptions{Id: id}); err != nil {
+			t.Log(err)
+		}
+	}()
+
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

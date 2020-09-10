@@ -43,25 +43,6 @@ func TestCreateCrypto(t *testing.T) {
 	certName := "testcertificate"
 	args := []string{"create", "cacertificate", "--name=" + certName, "--organization-id=" + org, "--project-id=" + proj}
 
-	defer func() {
-		// Cleanup
-		cmd.RootCmd.PersistentPreRun(nil, nil)
-		ctx := cmd.ContextWithToken()
-		cryptoc, project, err := getCryptoClientAndProject()
-		list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project})
-		if err != nil {
-			t.Log(err)
-		}
-		for _, cert := range list.GetItems() {
-			if cert.GetName() == certName {
-				if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
-					t.Log(err)
-				}
-				break
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id                         .*
 Name                       testcertificate
@@ -74,5 +55,23 @@ Deleted-At                 -
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+
+	certId, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+	defer func() {
+		// Cleanup
+		cmd.RootCmd.PersistentPreRun(nil, nil)
+		ctx := cmd.ContextWithToken()
+		cryptoc, _, err := getCryptoClientAndProject()
+		if err != nil {
+			t.Log(err)
+			return
+		}
+		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: certId}); err != nil {
+			t.Log(err)
+		}
+	}()
+
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
+
 }

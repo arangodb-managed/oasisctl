@@ -19,6 +19,21 @@
 //
 // Author Gergely Brautigam
 //
-// +build e2e
 
-package data
+package tests
+
+import (
+	"errors"
+	"regexp"
+	"strings"
+)
+
+// GetResourceID takes a `create` call output and greps for the resource's ID.
+func GetResourceID(out string) (string, error) {
+	grepId := regexp.MustCompile(`Success!\sId\s+(\w+)`)
+	matches := grepId.FindStringSubmatch(out)
+	if len(matches) < 2 {
+		return "", errors.New("not enough matches for backup id: " + strings.Join(matches, ", "))
+	}
+	return matches[1], nil
+}

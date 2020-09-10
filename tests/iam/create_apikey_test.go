@@ -44,20 +44,6 @@ func TestCreateApiKey(t *testing.T) {
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 
-	defer func() {
-		list, err := iamc.ListAPIKeys(ctx, &common.ListOptions{ContextId: org})
-		if err != nil {
-			t.Log(err)
-		}
-
-		// We remove all keys.
-		for _, key := range list.GetItems() {
-			if _, err := iamc.DeleteAPIKey(ctx, &common.IDOptions{Id: key.GetId()}); err != nil {
-				t.Log(err)
-			}
-		}
-	}()
-
 	compare := `^Success!
 Id     .*
 Secret .*
@@ -66,5 +52,13 @@ $`
 	args := []string{"create", "apikey", "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
+	id, err := tests.GetResourceID(string(out))
+	require.NoError(t, err)
+	defer func() {
+		if _, err := iamc.DeleteAPIKey(ctx, &common.IDOptions{Id: id}); err != nil {
+			t.Log(err)
+		}
+	}()
+
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

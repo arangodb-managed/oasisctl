@@ -42,8 +42,6 @@ func TestGetCrypto(t *testing.T) {
 	ctx := cmd.ContextWithToken()
 	cryptoc, project, err := getCryptoClientAndProject()
 	require.NoError(t, err)
-	org, err := tests.GetDefaultOrganization()
-	require.NoError(t, err)
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project,
 		Name:      "TestGetCrypto",
@@ -57,7 +55,7 @@ func TestGetCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project}
+	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--project-id=" + project}
 	compare := `Id                         ` + result.GetId() + `
 Name                       ` + result.GetName() + `
 Description                
