@@ -21,7 +21,7 @@
 //
 // +build e2e
 
-package crypto
+package iam
 
 import (
 	"testing"
@@ -29,42 +29,25 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	common "github.com/arangodb-managed/apis/common/v1"
-	crypto "github.com/arangodb-managed/apis/crypto/v1"
+	iam "github.com/arangodb-managed/apis/iam/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestGetCrypto(t *testing.T) {
-	// Initialize the root command.
+func TestDeleteGroup(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
+	conn := cmd.MustDialAPI()
+	iamc := iam.NewIAMServiceClient(conn)
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
 
-	// Create a certificate via the api.
-	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId: project.GetId(),
-		Name:      "TestGetCrypto",
-	})
-	assert.NoError(t, err)
+	group, err := iamc.CreateGroup(ctx, &iam.Group{OrganizationId: org, Name: "testGroup"})
+	require.NoError(t, err)
+	args := []string{"delete", "group", "--group-id=" + group.GetId()}
 
-	// Cleanup
-	defer func() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: result.GetId()}); err != nil {
-			t.Log("Failed to cleanup certificate: ", err)
-		}
-	}()
-
-	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId()}
-	compare := `Id                         .*
-Name                       TestGetCrypto
-Description                
-Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
-Use-Well-Known-Certificate -
-Created-At                 .*
-Deleted-At                 -
+	compare := `^Deleted group!
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)

@@ -23,6 +23,7 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -43,7 +44,11 @@ func RunCommand(args []string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return exec.Command(cmd, args...).CombinedOutput()
+	out, err := exec.Command(cmd, args...).CombinedOutput()
+	if err != nil {
+		fmt.Println("error output from command: ", string(out))
+	}
+	return out, err
 }
 
 // lookupOasisctl finds the oasisctl binary based on os and arch.

@@ -21,7 +21,7 @@
 //
 // +build e2e
 
-package resourcemanager
+package iam
 
 import (
 	"testing"

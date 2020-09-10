@@ -33,7 +33,6 @@ import (
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
