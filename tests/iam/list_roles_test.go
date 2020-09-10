@@ -54,9 +54,7 @@ func TestListRoles(t *testing.T) {
 
 	args := []string{"list", "roles", "--organization-id=" + org}
 
-	compare := `^Id \s+| Name \s+| Description \s+| Predefined | Permissions \s+| Url \s+| Created-At
-.*` + role.GetId() + ` \s+| ` + role.GetName() + ` \s+|\s+| false      |.*| ` + role.GetUrl() + ` \s+| .*
-.*`
+	compare := `^Id\s+| Name\s+| Description\s+| Predefined | Permissions\s+| Url\s+| Created-At(\s.*)*` + role.GetId() + `\s+| ` + role.GetName() + `\s+|\s+| false\s+|.*| ` + role.GetUrl() + `\s+| .*`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

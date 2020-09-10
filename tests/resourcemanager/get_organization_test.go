@@ -51,10 +51,10 @@ func TestGetOrganization(t *testing.T) {
 		}
 	}()
 
-	compare := `^Id          \d+
+	compare := `^Id          ` + org.GetId() + `
 Name        testOrg
 Description 
-Url         /Organization/\d+
+Url         ` + org.GetUrl() + `
 Created-At  .*
 Deleted-At  -
 $`

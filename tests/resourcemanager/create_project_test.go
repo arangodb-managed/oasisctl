@@ -57,7 +57,6 @@ func TestCreateProject(t *testing.T) {
 				if _, err := rmc.DeleteProject(ctx, &common.IDOptions{Id: project.GetId()}); err != nil {
 					t.Log(err)
 				}
-				break
 			}
 		}
 	}()

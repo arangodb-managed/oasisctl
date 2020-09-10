@@ -35,7 +35,9 @@ import (
 func TestCreateCrypto(t *testing.T) {
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
-	args := []string{"create", "cacertificate", "--name=testcertificate", "--organization-id=" + org}
+	proj, err := tests.GetDefaultProject(org)
+	require.NoError(t, err)
+	args := []string{"create", "cacertificate", "--name=testcertificate", "--organization-id=" + org, "--project-id=" + proj}
 	compare := `^Success!
 Id                         .*
 Name                       testcertificate

@@ -52,9 +52,7 @@ func TestListOrganization(t *testing.T) {
 	}()
 
 	// We must acount for the default organization
-	compare := `^Id        | Name                 | Description | Url                     | Created-At
-.*
-.* | ` + org.GetName() + `              |             | /Organization/\d+ | .*
+	compare := `^Id\s+| Name\s+| Description | Url\s+| Created-At(\s.*)*` + org.GetId() + ` | ` + org.GetName() + `              |             | ` + org.GetUrl() + ` | .*
 $`
 	args := []string{"list", "organizations"}
 	out, err := tests.RunCommand(args)

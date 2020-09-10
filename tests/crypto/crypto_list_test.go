@@ -43,8 +43,6 @@ func TestListCrypto(t *testing.T) {
 	cryptoc, project := getCryptoClientAndProject(ctx)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
-	proj, err := tests.GetDefaultProject(org)
-	require.NoError(t, err)
 	// Make sure our certificate is the only certificate
 	err = cleanupCertificates()
 	require.NoError(t, err)
@@ -63,10 +61,8 @@ func TestListCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"list", "cacertificates", "--organization-id=" + org, "--project-id=" + proj}
-	compare := `Id                   | Name           | Description | Lifetime  | Url                                                                          | Use-Well-Known-Certificate | Created-At
-.* | TestListCrypto |             | \d+h0m0s | /Organization/\d+/Project/\d+/CACertificate/.* | -                          | .*
-$`
+	args := []string{"list", "cacertificates", "--organization-id=" + org, "--project-id=" + project.GetId()}
+	compare := `Id\s+| Name\s+| Description | Lifetime\s+| Url\s+| Use-Well-Known-Certificate | Created-At(\s.*)*` + result.GetId() + ` | ` + result.GetName() + ` |.*| \d+h0m0s | ` + result.GetUrl() + ` | - \s+| .*`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

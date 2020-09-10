@@ -40,12 +40,13 @@ func TestGetCrypto(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
+	cryptoc, _ := getCryptoClientAndProject(ctx)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
+	proj, err := tests.GetDefaultProject(org)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId: project.GetId(),
+		ProjectId: proj,
 		Name:      "TestGetCrypto",
 	})
 	require.NoError(t, err)
@@ -57,12 +58,12 @@ func TestGetCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
-	compare := `Id                         .*
-Name                       TestGetCrypto
+	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + proj}
+	compare := `Id                         ` + result.GetId() + `
+Name                       ` + result.GetName() + `
 Description                
 Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
+Url                        ` + result.GetUrl() + `
 Use-Well-Known-Certificate -
 Created-At                 .*
 Deleted-At                 -

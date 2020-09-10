@@ -54,9 +54,7 @@ func TestListGroups(t *testing.T) {
 
 	args := []string{"list", "groups", "--organization-id=" + org}
 
-	compare := `^Id \s+| Name \s+| Description \s+| Url \s+| Created-At
-.*` + group.GetId() + ` \s+| ` + group.GetName() + ` \s+|\s+| ` + group.GetUrl() + ` \s+| .*
-.*`
+	compare := `^Id\s+| Name\s+| Description\s+| Url\s+| Created-At(\s.*)*` + group.GetId() + ` \s+| ` + group.GetName() + ` \s+|\s+| ` + group.GetUrl() + ` \s+| .*`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

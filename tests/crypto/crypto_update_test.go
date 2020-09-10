@@ -56,13 +56,13 @@ func TestUpdateCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true", "--organization-id=" + org}
+	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true", "--organization-id=" + org, "--project-id=" + project.GetId()}
 	compare := `Updated CA certificate!
-Id                         .*
+Id                         ` + result.GetId() + `
 Name                       NewName
 Description                NewDescription
 Lifetime                   \d+h0m0s
-Url                        /Organization/\d+/Project/\d+/CACertificate/.*
+Url                        ` + result.GetUrl() + `
 Use-Well-Known-Certificate ✓
 Created-At                 .*
 Deleted-At                 -

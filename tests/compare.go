@@ -49,7 +49,7 @@ func escapeRegexSpecificCharacters(s []byte) []byte {
 	var output []byte
 	for _, c := range s {
 		switch c {
-		case '[', ']', '(', ')', '|':
+		case '[', ']', '|':
 			output = append(output, '\\', c)
 		default:
 			output = append(output, c)

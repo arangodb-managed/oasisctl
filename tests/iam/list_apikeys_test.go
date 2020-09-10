@@ -54,9 +54,7 @@ func TestListApiKeys(t *testing.T) {
 
 	args := []string{"list", "apikeys"}
 
-	compare := `^Id \s+| User-Id \s+| Organization-Id | Readonly | Created-At \s+| Expires-At | Revoked-At
-` + key.GetId() + ` | .* | .* | - \s+| .* |\s+| 
-$`
+	compare := `^Id\s+| User-Id\s+| Organization-Id | Readonly | Created-At\s+| Expires-At | Revoked-At(\s.*)*` + key.GetId() + ` | .* | .* | - \s+| .* |\s+|`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

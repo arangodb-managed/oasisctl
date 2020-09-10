@@ -51,10 +51,10 @@ func TestGetProject(t *testing.T) {
 			t.Log(err)
 		}
 	}()
-	compare := `^Id          \d+
+	compare := `^Id          ` + project.GetId() + `
 Name        ` + project.GetName() + `
 Description 
-Url         /Organization/\d+/Project/.*
+Url         ` + project.GetUrl() + `
 Created-At  .*
 Deleted-At  -
 $`

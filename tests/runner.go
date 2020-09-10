@@ -46,7 +46,7 @@ func RunCommand(args []string) ([]byte, error) {
 	}
 	out, err := exec.Command(cmd, args...).CombinedOutput()
 	if err != nil {
-		fmt.Println("error output from command: ", string(out))
+		fmt.Printf("error output from command with args (%+v): %s\n", args, string(out))
 	}
 	return out, err
 }

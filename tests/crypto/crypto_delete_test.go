@@ -48,7 +48,7 @@ func TestDeleteCertificate(t *testing.T) {
 		Name:      "TestDeleteCertificate",
 	})
 	require.NoError(t, err)
-	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
+	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project.GetId()}
 	compare := `^Deleted.CA.certificate!
 $`
 	out, err := tests.RunCommand(args)
@@ -56,7 +56,7 @@ $`
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 
 	// Try getting the deleted certificate
-	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
+	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project.GetId()}
 	_, err = tests.RunCommand(args)
 	require.Error(t, err)
 }
