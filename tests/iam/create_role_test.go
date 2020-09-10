@@ -24,6 +24,7 @@
 package iam
 
 import (
+	"log"
 	"testing"
 
 	"github.com/arangodb-managed/oasisctl/tests"
@@ -47,14 +48,14 @@ func TestCreateRole(t *testing.T) {
 	defer func() {
 		list, err := iamc.ListRoles(ctx, &common.ListOptions{ContextId: org})
 		if err != nil {
-			t.Log(err)
+			log.Fatal(err)
 		}
 
 		// We only delete the test role
 		for _, role := range list.GetItems() {
 			if role.GetName() == testRole {
 				if _, err := iamc.DeleteRole(ctx, &common.IDOptions{Id: role.GetId()}); err != nil {
-					t.Log(err)
+					log.Fatal(err)
 				}
 				break
 			}
@@ -72,7 +73,7 @@ Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"create", "role", "--name=" + testRole}
+	args := []string{"create", "role", "--name=" + testRole, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

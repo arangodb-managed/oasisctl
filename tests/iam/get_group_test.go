@@ -53,7 +53,7 @@ func TestGetGroup(t *testing.T) {
 		}
 	}()
 
-	args := []string{"get", "group", "--group-id=" + group.GetId()}
+	args := []string{"get", "group", "--group-id=" + group.GetId(), "--organization-id=" + org}
 	compare := `^Id          ` + group.GetId() + `
 Name        ` + group.GetName() + `
 Description ` + group.GetDescription() + `

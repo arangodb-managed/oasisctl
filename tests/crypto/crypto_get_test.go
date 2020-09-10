@@ -41,13 +41,14 @@ func TestGetCrypto(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	cryptoc, project := getCryptoClientAndProject(ctx)
-
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
 		Name:      "TestGetCrypto",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Cleanup
 	defer func() {
@@ -56,7 +57,7 @@ func TestGetCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId()}
+	args := []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
 	compare := `Id                         .*
 Name                       TestGetCrypto
 Description                

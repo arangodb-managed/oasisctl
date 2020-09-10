@@ -70,7 +70,7 @@ Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"create", "group", "--name=" + testGroup}
+	args := []string{"create", "group", "--name=" + testGroup, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

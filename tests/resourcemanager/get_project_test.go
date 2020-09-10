@@ -58,7 +58,7 @@ Url         /Organization/\d+/Project/.*
 Created-At  .*
 Deleted-At  -
 $`
-	args := []string{"get", "project", "--project-id=" + project.GetId()}
+	args := []string{"get", "project", "--project-id=" + project.GetId(), "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

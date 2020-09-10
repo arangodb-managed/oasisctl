@@ -53,7 +53,7 @@ func TestGetRole(t *testing.T) {
 		}
 	}()
 
-	args := []string{"get", "role", "--role-id=" + role.GetId()}
+	args := []string{"get", "role", "--role-id=" + role.GetId(), "--organization-id=" + org}
 	compare := `^Id          ` + role.GetId() + `
 Name        ` + role.GetName() + `
 Description ` + role.GetDescription() + `

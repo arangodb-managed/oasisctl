@@ -26,7 +26,6 @@ package resourcemanager
 import (
 	"testing"
 
-	"github.com/arangodb-managed/oasisctl/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -34,6 +33,7 @@ import (
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 func TestCreateOrganization(t *testing.T) {
@@ -54,7 +54,6 @@ func TestCreateOrganization(t *testing.T) {
 				if _, err := rmc.DeleteOrganization(ctx, &common.IDOptions{Id: o.GetId()}); err != nil {
 					t.Log(err)
 				}
-				break
 			}
 		}
 	}()

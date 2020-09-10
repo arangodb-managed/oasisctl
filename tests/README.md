@@ -5,6 +5,9 @@ These tests should be ignored by regular `go test ./...`. This is achieved by a 
 The test must have a `// +build e2e` tag at the top to make sure they aren't executed via CI or a regular
 `go test ./...` run.
 
+The command line options must contain `--organization-id=1234` because otherwise the parallel nature
+of these tests might step on each other. You could get an error like, you are a member of 2 or more organizations...
+
 # Running the tests
 
 **NOTE**: Make sure the oasisctl binary exists before running the tests.

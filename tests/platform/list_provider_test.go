@@ -33,7 +33,9 @@ import (
 )
 
 func TestListProvider(t *testing.T) {
-	args := []string{"list", "providers"}
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
+	args := []string{"list", "providers", "--organization-id=" + org}
 	compare := `Id  | Name
 aks | Microsoft Azure
 aws | Amazon Web Services

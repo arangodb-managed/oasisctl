@@ -71,7 +71,7 @@ Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"create", "project", "--name=" + testProj}
+	args := []string{"create", "project", "--name=" + testProj, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

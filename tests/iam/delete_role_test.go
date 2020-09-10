@@ -45,7 +45,7 @@ func TestDeleteRole(t *testing.T) {
 
 	role, err := iamc.CreateRole(ctx, &iam.Role{OrganizationId: org, Name: "testRole"})
 	require.NoError(t, err)
-	args := []string{"delete", "role", "--role-id=" + role.GetId()}
+	args := []string{"delete", "role", "--role-id=" + role.GetId(), "--organization-id=" + org}
 
 	compare := `^Deleted role!
 $`

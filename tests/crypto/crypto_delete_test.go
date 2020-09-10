@@ -40,16 +40,15 @@ func TestDeleteCertificate(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	cryptoc, project := getCryptoClientAndProject(ctx)
-
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
 		Name:      "TestDeleteCertificate",
 	})
-	if err != nil {
-		t.Log("Failed to delete CA certificate")
-	}
-	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId()}
+	require.NoError(t, err)
+	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
 	compare := `^Deleted.CA.certificate!
 $`
 	out, err := tests.RunCommand(args)
@@ -57,31 +56,7 @@ $`
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 
 	// Try getting the deleted certificate
-	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId()}
+	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org}
 	_, err = tests.RunCommand(args)
 	require.Error(t, err)
-}
-
-func TestDeleteCryptoInvalidFlag(t *testing.T) {
-	args := []string{"delete", "cacertificate", "--invalid"}
-	compare := `^Error: unknown flag: --invalid
-Usage:
-  oasisctl delete cacertificate [flags]
-
-Flags:
-  -c, --cacertificate-id string   Identifier of the CA certificate
-  -h, --help                      help for cacertificate
-  -o, --organization-id string    Identifier of the organization.*
-  -p, --project-id string         Identifier of the project.*
-
-Global Flags:
-      --endpoint string   API endpoint of the ArangoDB Oasis (default ".*")
-      --format string     Output format (table|json) (default "table")
-      --token string      Token used to authenticate at ArangoDB Oasis
-
-.*.unknown.flag:.--invalid
-$`
-	out, err := tests.RunCommand(args)
-	require.Error(t, err)
-	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 }

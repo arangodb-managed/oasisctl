@@ -33,6 +33,7 @@ import (
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
+	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 // getCryptoClientAndProject creates a crypto client and a project for the tests to work with.
@@ -41,8 +42,14 @@ func getCryptoClientAndProject(ctx context.Context) (crypto.CryptoServiceClient,
 		Out:     os.Stderr,
 		NoColor: true,
 	}).With().Timestamp().Logger()
-	org := cmd.DefaultOrganization()
-	proj := cmd.DefaultProject()
+	org, err := tests.GetDefaultOrganization()
+	if err != nil {
+		log.Fatal().Err(err)
+	}
+	proj, err := tests.GetDefaultProject(org)
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 
 	conn := cmd.MustDialAPI()
 	cryptoc := crypto.NewCryptoServiceClient(conn)

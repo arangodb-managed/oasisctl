@@ -33,7 +33,9 @@ import (
 )
 
 func TestGetProvider(t *testing.T) {
-	args := []string{"get", "provider", "--provider-id=aks"}
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
+	args := []string{"get", "provider", "--provider-id=aks", "--organization-id=" + org}
 	compare := `Id   aks
 Name Microsoft Azure
 $`

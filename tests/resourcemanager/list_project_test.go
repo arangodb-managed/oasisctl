@@ -57,7 +57,7 @@ func TestListProject(t *testing.T) {
 .*
 \d+ | testProject   |             | /Organization/\d+/Project/\d+ | .*
 $`
-	args := []string{"list", "projects"}
+	args := []string{"list", "projects", "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

@@ -64,7 +64,7 @@ Created-At  .*
 Deleted-At  -
 $`
 
-	args := []string{"update", "project", "--project-id=" + project.GetId(), "--name=" + newName, "--description=" + newDescription}
+	args := []string{"update", "project", "--project-id=" + project.GetId(), "--name=" + newName, "--description=" + newDescription, "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

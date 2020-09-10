@@ -52,7 +52,7 @@ func TestListRoles(t *testing.T) {
 		}
 	}()
 
-	args := []string{"list", "roles"}
+	args := []string{"list", "roles", "--organization-id=" + org}
 
 	compare := `^Id \s+| Name \s+| Description \s+| Predefined | Permissions \s+| Url \s+| Created-At
 .*` + role.GetId() + ` \s+| ` + role.GetName() + ` \s+|\s+| false      |.*| ` + role.GetUrl() + ` \s+| .*

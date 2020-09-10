@@ -33,7 +33,9 @@ import (
 )
 
 func TestGetRegion(t *testing.T) {
-	args := []string{"get", "region", "--region-id=aks-eastus2"}
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
+	args := []string{"get", "region", "--region-id=aks-eastus2", "--organization-id=" + org}
 	compare := `Id          aks-eastus2
 Provider-Id aks
 Location    East US, Virginia

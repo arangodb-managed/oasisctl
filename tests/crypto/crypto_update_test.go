@@ -40,13 +40,14 @@ func TestUpdateCrypto(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	cryptoc, project := getCryptoClientAndProject(ctx)
-
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project.GetId(),
 		Name:      "TestUpdateCrypto",
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Cleanup
 	defer func() {
@@ -55,7 +56,7 @@ func TestUpdateCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true"}
+	args := []string{"update", "cacertificate", "--cacertificate-id=" + result.GetId(), "--name=NewName", "--description=NewDescription", "--use-well-known-certificate=true", "--organization-id=" + org}
 	compare := `Updated CA certificate!
 Id                         .*
 Name                       NewName

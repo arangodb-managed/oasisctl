@@ -58,12 +58,11 @@ func TestCreateApiKey(t *testing.T) {
 	}()
 
 	compare := `^Success!
-Success!
 Id     .*
 Secret .*
 $`
 
-	args := []string{"create", "apikey"}
+	args := []string{"create", "apikey", "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

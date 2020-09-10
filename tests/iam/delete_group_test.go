@@ -45,7 +45,7 @@ func TestDeleteGroup(t *testing.T) {
 
 	group, err := iamc.CreateGroup(ctx, &iam.Group{OrganizationId: org, Name: "testGroup"})
 	require.NoError(t, err)
-	args := []string{"delete", "group", "--group-id=" + group.GetId()}
+	args := []string{"delete", "group", "--group-id=" + group.GetId(), "--organization-id=" + org}
 
 	compare := `^Deleted group!
 $`
