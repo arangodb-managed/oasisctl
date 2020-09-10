@@ -29,13 +29,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestListApiKey(t *testing.T) {
+func TestListApiKeys(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
@@ -45,12 +46,16 @@ func TestListApiKey(t *testing.T) {
 
 	key, err := iamc.CreateAPIKey(ctx, &iam.CreateAPIKeyRequest{OrganizationId: org})
 	require.NoError(t, err)
+	defer func() {
+		if _, err := iamc.DeleteAPIKey(ctx, &common.IDOptions{Id: key.GetId()}); err != nil {
+			t.Log(err)
+		}
+	}()
 
 	args := []string{"list", "apikeys"}
 
-	compare := `^Id                   | User-Id                        | Organization-Id | Readonly | Created-At     | Expires-At  | Revoked-At
-.*` + key.GetId() + ` | auth0|.* | ` + org + `       | -        | .*    | .* |
-.*
+	compare := `^Id                   | User-Id                        | Organization-Id | Readonly | Created-At   | Expires-At | Revoked-At
+` + key.GetId() + ` | .* | .* | -        | .* |            | 
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
