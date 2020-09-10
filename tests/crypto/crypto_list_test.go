@@ -44,9 +44,6 @@ func TestListCrypto(t *testing.T) {
 	require.NoError(t, err)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
-	// Make sure our certificate is the only certificate
-	err = cleanupCertificates()
-	require.NoError(t, err)
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{

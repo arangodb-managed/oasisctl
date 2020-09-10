@@ -26,13 +26,14 @@ package iam
 import (
 	"testing"
 
-	"github.com/arangodb-managed/oasisctl/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
+
 	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 func TestCreateGroup(t *testing.T) {

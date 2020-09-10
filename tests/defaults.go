@@ -11,9 +11,8 @@ package tests
 import (
 	"errors"
 
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
 	common "github.com/arangodb-managed/apis/common/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 )

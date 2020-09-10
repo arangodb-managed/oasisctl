@@ -29,6 +29,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	common "github.com/arangodb-managed/apis/common/v1"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
@@ -37,7 +40,28 @@ func TestCreateCrypto(t *testing.T) {
 	require.NoError(t, err)
 	proj, err := tests.GetDefaultProject(org)
 	require.NoError(t, err)
-	args := []string{"create", "cacertificate", "--name=testcertificate", "--organization-id=" + org, "--project-id=" + proj}
+	certName := "testcertificate"
+	args := []string{"create", "cacertificate", "--name=" + certName, "--organization-id=" + org, "--project-id=" + proj}
+
+	defer func() {
+		// Cleanup
+		cmd.RootCmd.PersistentPreRun(nil, nil)
+		ctx := cmd.ContextWithToken()
+		cryptoc, project, err := getCryptoClientAndProject()
+		list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project})
+		if err != nil {
+			t.Log(err)
+		}
+		for _, cert := range list.GetItems() {
+			if cert.GetName() == certName {
+				if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
+					t.Log(err)
+				}
+				break
+			}
+		}
+	}()
+
 	compare := `^Success!
 Id                         .*
 Name                       testcertificate
@@ -51,7 +75,4 @@ $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-	// Cleanup every certificate that exists.
-	err = cleanupCertificates()
-	assert.NoError(t, err)
 }

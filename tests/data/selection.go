@@ -19,31 +19,30 @@
 //
 // Author Gergely Brautigam
 //
+// +build e2e
 
-package crypto
+package data
 
 import (
-	common "github.com/arangodb-managed/apis/common/v1"
+	"errors"
+
+	platform "github.com/arangodb-managed/apis/platform/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
-// cleanupCertificates cleans up all certificates.
-func cleanupCertificates() error {
-	cmd.RootCmd.PersistentPreRun(nil, nil)
+// getRegion returns the first available region for an organization and a provider.
+func getRegion(provider, org string) (string, error) {
 	ctx := cmd.ContextWithToken()
-	cryptoc, project, err := getCryptoClientAndProject()
+	conn := cmd.MustDialAPI()
+	platformc := platform.NewPlatformServiceClient(conn)
+	// select the first available region
+	list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{OrganizationId: org, ProviderId: provider})
 	if err != nil {
-		return err
+		return "", err
 	}
-	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project})
-	if err != nil {
-		return err
+	if len(list.GetItems()) == 0 {
+		return "", errors.New("region list is empty")
 	}
-	for _, cert := range list.GetItems() {
-		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: cert.GetId()}); err != nil {
-			return err
-		}
-	}
-	return err
+	return list.GetItems()[0].GetId(), nil
 }
