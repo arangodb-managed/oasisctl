@@ -40,7 +40,8 @@ func TestListCrypto(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
+	cryptoc, project, err := getCryptoClientAndProject()
+	require.NoError(t, err)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 	// Make sure our certificate is the only certificate
@@ -49,7 +50,7 @@ func TestListCrypto(t *testing.T) {
 
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId: project.GetId(),
+		ProjectId: project,
 		Name:      "TestListCrypto",
 	})
 	require.NoError(t, err)
@@ -61,7 +62,7 @@ func TestListCrypto(t *testing.T) {
 		}
 	}()
 
-	args := []string{"list", "cacertificates", "--organization-id=" + org, "--project-id=" + project.GetId()}
+	args := []string{"list", "cacertificates", "--organization-id=" + org, "--project-id=" + project}
 	compare := `Id\s+| Name\s+| Description | Lifetime\s+| Url\s+| Use-Well-Known-Certificate | Created-At(\s.*)*` + result.GetId() + ` | ` + result.GetName() + ` |.*| \d+h0m0s | ` + result.GetUrl() + ` | - \s+| .*`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)

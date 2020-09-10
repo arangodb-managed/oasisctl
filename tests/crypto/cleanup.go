@@ -32,8 +32,11 @@ import (
 func cleanupCertificates() error {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
-	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project.GetId()})
+	cryptoc, project, err := getCryptoClientAndProject()
+	if err != nil {
+		return err
+	}
+	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: project})
 	if err != nil {
 		return err
 	}

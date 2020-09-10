@@ -53,7 +53,7 @@ func GetDefaultProject(org string) (string, error) {
 
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
-	// Get the first organization if default is not set.
+	// Get the first project if default is not set.
 	list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org})
 	if err != nil {
 		return "", err

@@ -23,37 +23,23 @@
 package crypto
 
 import (
-	"context"
-	"os"
-
-	"github.com/rs/zerolog"
-
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
 // getCryptoClientAndProject creates a crypto client and a project for the tests to work with.
-func getCryptoClientAndProject(ctx context.Context) (crypto.CryptoServiceClient, *rm.Project) {
-	log := zerolog.New(zerolog.ConsoleWriter{
-		Out:     os.Stderr,
-		NoColor: true,
-	}).With().Timestamp().Logger()
+func getCryptoClientAndProject() (crypto.CryptoServiceClient, string, error) {
 	org, err := tests.GetDefaultOrganization()
 	if err != nil {
-		log.Fatal().Err(err)
+		return nil, "", err
 	}
 	proj, err := tests.GetDefaultProject(org)
 	if err != nil {
-		log.Fatal().Err(err)
+		return nil, "", err
 	}
 
 	conn := cmd.MustDialAPI()
 	cryptoc := crypto.NewCryptoServiceClient(conn)
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	project := selection.MustSelectProject(ctx, log, proj, org, rmc)
-	return cryptoc, project
+	return cryptoc, proj, nil
 }

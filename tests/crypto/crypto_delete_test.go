@@ -39,16 +39,17 @@ func TestDeleteCertificate(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project := getCryptoClientAndProject(ctx)
+	cryptoc, project, err := getCryptoClientAndProject()
+	require.NoError(t, err)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
-		ProjectId: project.GetId(),
+		ProjectId: project,
 		Name:      "TestDeleteCertificate",
 	})
 	require.NoError(t, err)
-	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project.GetId()}
+	args := []string{"delete", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project}
 	compare := `^Deleted.CA.certificate!
 $`
 	out, err := tests.RunCommand(args)
@@ -56,7 +57,7 @@ $`
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 
 	// Try getting the deleted certificate
-	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project.GetId()}
+	args = []string{"get", "cacertificate", "--cacertificate-id=" + result.GetId(), "--organization-id=" + org, "--project-id=" + project}
 	_, err = tests.RunCommand(args)
 	require.Error(t, err)
 }
