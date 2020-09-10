@@ -39,9 +39,11 @@ import (
 func TestUpdateCrypto(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project, err := getCryptoClientAndProject()
-	require.NoError(t, err)
+	conn := cmd.MustDialAPI()
+	cryptoc := crypto.NewCryptoServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
+	project, err := tests.GetDefaultProject(org)
 	require.NoError(t, err)
 	// Create a certificate via the api.
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{

@@ -40,7 +40,11 @@ func TestGetCrypto(t *testing.T) {
 	// Initialize the root command.
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
-	cryptoc, project, err := getCryptoClientAndProject()
+	conn := cmd.MustDialAPI()
+	cryptoc := crypto.NewCryptoServiceClient(conn)
+	org, err := tests.GetDefaultOrganization()
+	require.NoError(t, err)
+	project, err := tests.GetDefaultProject(org)
 	require.NoError(t, err)
 	result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 		ProjectId: project,

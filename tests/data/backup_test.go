@@ -37,7 +37,7 @@ import (
 	"github.com/arangodb-managed/oasisctl/tests"
 )
 
-func TestCreateBackup(t *testing.T) {
+func TestCRUDOperationsForBackup(t *testing.T) {
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 	proj, err := tests.GetDefaultProject(org)

@@ -30,6 +30,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
+	crypto "github.com/arangodb-managed/apis/crypto/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/tests"
@@ -59,14 +60,9 @@ $`
 	certId, err := tests.GetResourceID(string(out))
 	require.NoError(t, err)
 	defer func() {
-		// Cleanup
-		cmd.RootCmd.PersistentPreRun(nil, nil)
+		conn := cmd.MustDialAPI()
 		ctx := cmd.ContextWithToken()
-		cryptoc, _, err := getCryptoClientAndProject()
-		if err != nil {
-			t.Log(err)
-			return
-		}
+		cryptoc := crypto.NewCryptoServiceClient(conn)
 		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: certId}); err != nil {
 			t.Log(err)
 		}
