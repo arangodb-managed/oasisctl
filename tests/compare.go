@@ -44,7 +44,7 @@ func CompareOutput(output []byte, regex []byte) bool {
 	return true
 }
 
-// escapeRegexSpecificCharacters will escape possible interfering characters in the output.
+// escapeRegexSpecificCharacters will escape the most common interfering characters from the regex.
 func escapeRegexSpecificCharacters(s []byte) []byte {
 	var output []byte
 	for _, c := range s {
@@ -58,6 +58,7 @@ func escapeRegexSpecificCharacters(s []byte) []byte {
 	return output
 }
 
+// verbose makes the output more verbose so number of characters can be seen like space, newline, tabs.
 func verbose(s string) {
 	for _, r := range s {
 		if r == ' ' {

@@ -26,18 +26,23 @@ package data
 import (
 	"errors"
 
+	"google.golang.org/grpc"
+
 	common "github.com/arangodb-managed/apis/common/v1"
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
+
+type client struct {
+	conn *grpc.ClientConn
+}
 
 // getRegion returns the first available region for an organization and a provider.
 func getRegion(provider, org string) (string, error) {
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	platformc := platform.NewPlatformServiceClient(conn)
 	// select the first available region
 	list, err := platformc.ListRegions(ctx, &platform.ListRegionsRequest{OrganizationId: org, ProviderId: provider})
@@ -53,6 +58,7 @@ func getRegion(provider, org string) (string, error) {
 func getDefaultCertificate(proj string) (*crypto.CACertificate, error) {
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	cryptoc := crypto.NewCryptoServiceClient(conn)
 	list, err := cryptoc.ListCACertificates(ctx, &common.ListOptions{ContextId: proj})
 	if err != nil {
@@ -67,15 +73,4 @@ func getDefaultCertificate(proj string) (*crypto.CACertificate, error) {
 		}
 	}
 	return nil, errors.New("no default certificate found")
-}
-
-func getTermsAndConditions(org string) (string, error) {
-	ctx := cmd.ContextWithToken()
-	conn := cmd.MustDialAPI()
-	rmc := rm.NewResourceManagerServiceClient(conn)
-	tandc, err := rmc.GetCurrentTermsAndConditions(ctx, &common.IDOptions{Id: org})
-	if err != nil {
-		return "", err
-	}
-	return tandc.GetId(), nil
 }

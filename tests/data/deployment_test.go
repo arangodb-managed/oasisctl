@@ -53,7 +53,8 @@ func TestCRUDOperationsForDeployment(t *testing.T) {
 	deplName := "TestCreateDeployment"
 	cert, err := getDefaultCertificate(proj)
 	require.NoError(t, err)
-	args := []string{"create", "deployment", "--name=" + deplName, "--organization-id=" + org, "--project-id=" + proj, "--region-id=" + region, "--version=" + version.GetVersion(), "--cacertificate-id=" + cert.GetId(), "--accept"}
+	args := []string{"create", "deployment", "--name=" + deplName, "--organization-id=" + org, "--project-id=" +
+		proj, "--region-id=" + region, "--version=" + version.GetVersion(), "--cacertificate-id=" + cert.GetId(), "--accept"}
 
 	compare := `Success!
 Id                      .*
@@ -137,7 +138,8 @@ Node-Size-Id            c4-a4
 
 	t.Run("list deployments", func(tt *testing.T) {
 		args := []string{"list", "deployments", "--project-id=" + proj}
-		compare := `Id\s+| Name\s+| Description\s+| Region\s+| Version | Ipallowlist | Url\s+| Paused | Created-At\s+| Model\s+| Node-Count | Node-Disk-Size | Node-Size-Id(\s.*)*` + deplId + ` | ` + deplName + ` |\s+| ` + region + ` | ` + version.GetVersion() + `\s+|\s+| .* | -\s+| .* | oneshard | 3\s+| 10GB\s+| c4-a4
+		compare := `Id\s+| Name\s+| Description\s+| Region\s+| Version | Ipallowlist | Url\s+| Paused | Created-At\s+| Model\s+| Node-Count | Node-Disk-Size | Node-Size-Id(\s.*)*` +
+			deplId + ` | ` + deplName + ` |\s+| ` + region + ` | ` + version.GetVersion() + `\s+|\s+| .* | -\s+| .* | oneshard | 3\s+| 10GB\s+| c4-a4
 `
 		out, err := tests.RunCommand(args)
 		assert.NoError(tt, err)

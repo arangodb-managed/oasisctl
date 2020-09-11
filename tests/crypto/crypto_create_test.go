@@ -69,5 +69,4 @@ $`
 	}()
 
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
-
 }

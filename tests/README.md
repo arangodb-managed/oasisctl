@@ -26,6 +26,9 @@ go test -run=TestCreateCertificate -tags=e2c
 
 # Constraints
 
-These tests were designed to be run with either a user which has a single organization
-and project, or defaults being set properly via environment properties:
-`OASIS_ORGANIZATION` and `OASIS_PROJECT`.
+The following assumptions are based on the system:
+
+- There is a user with an organization and a project.
+- The project has a Default Certificate. The certificate will not be deleted.
+
+The tests are designed so that they can be run in parallel which is the default of `go test`.

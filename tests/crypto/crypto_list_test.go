@@ -62,7 +62,8 @@ func TestListCrypto(t *testing.T) {
 	}()
 
 	args := []string{"list", "cacertificates", "--organization-id=" + org, "--project-id=" + project}
-	compare := `Id\s+| Name\s+| Description | Lifetime\s+| Url\s+| Use-Well-Known-Certificate | Created-At(\s.*)*` + result.GetId() + ` | ` + result.GetName() + `\s+|.*| \d+h0m0s\s+| ` + result.GetUrl() + `\s+| -\s+| .*`
+	compare := `Id\s+| Name\s+| Description | Lifetime\s+| Url\s+| Use-Well-Known-Certificate | Created-At(\s.*)*` +
+		result.GetId() + ` | ` + result.GetName() + `\s+|.*| \d+h0m0s\s+| ` + result.GetUrl() + `\s+| -\s+| .*`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))

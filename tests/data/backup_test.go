@@ -54,37 +54,27 @@ func TestCRUDOperationsForBackup(t *testing.T) {
 	deplName := "TestCreateDeployment"
 	cert, err := getDefaultCertificate(proj)
 	require.NoError(t, err)
-	tandc, err := getTermsAndConditions(org)
+
+	args := []string{"create", "deployment", "--name=" + deplName, "--organization-id=" + org, "--project-id=" +
+		proj, "--region-id=" + region, "--version=" + version.GetVersion(), "--cacertificate-id=" + cert.GetId(), "--accept"}
+	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
-	depl, err := datac.CreateDeployment(ctx, &data.Deployment{
-		Name:                         deplName,
-		RegionId:                     region,
-		Version:                      version.GetVersion(),
-		ProjectId:                    proj,
-		Certificates:                 &data.Deployment_CertificateSpec{CaCertificateId: cert.GetId()},
-		AcceptedTermsAndConditionsId: tandc,
-		Model: &data.Deployment_ModelSpec{
-			Model:        data.ModelOneShard,
-			NodeSizeId:   "c4-a4",
-			NodeCount:    3,
-			NodeDiskSize: 10,
-		},
-	})
+	deplId, err := tests.GetResourceID(string(out))
 	require.NoError(t, err)
 
 	defer func() {
-		if _, err := datac.DeleteDeployment(ctx, &common.IDOptions{Id: depl.GetId()}); err != nil {
+		if _, err := datac.DeleteDeployment(ctx, &common.IDOptions{Id: deplId}); err != nil {
 			t.Log(err)
 		}
 	}()
 
 	testBackup := "TestBackup"
-	args := []string{"create", "backup", "--name=" + testBackup, "--deployment-id=" + depl.GetId()}
+	args = []string{"create", "backup", "--name=" + testBackup, "--deployment-id=" + deplId}
 	compare := `Success!
 Id               .*
 Backup-Policy-Id 
 Deleted          false
-Deployment-Id    ` + depl.GetId() + `
+Deployment-Id    ` + deplId + `
 Description      
 Name             ` + testBackup + `
 Upload           false
@@ -94,7 +84,7 @@ Created-At       now
 Deleted-At       
 Dbservers        3
 `
-	out, err := tests.RunCommand(args)
+	out, err = tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
 
@@ -106,7 +96,7 @@ Dbservers        3
 		compare := `Id               ` + backupId + `
 Backup-Policy-Id 
 Deleted          false
-Deployment-Id    ` + depl.GetId() + `
+Deployment-Id    ` + deplId + `
 Description      
 Name             ` + testBackup + `
 Upload           false
@@ -122,8 +112,10 @@ Dbservers        3
 	})
 
 	t.Run("list backups", func(tt *testing.T) {
-		args := []string{"list", "backups", "--deployment-id=" + depl.GetId()}
-		compare := `Id\s+| Backup-Policy-Id | Deleted | Deployment-Id\s+| Description | Name\s+| Upload | Url\s+| State | Db-Servers | Uploaded | Auto-Deleted-At\s+| Created-At | Deleted-At(\s.*)*` + backupId + ` |.*| false\s+| ` + depl.GetId() + ` |.*| TestBackup | false  | /Organization/` + org + `/Project/` + proj + `/Deployment/` + depl.GetId() + `/Backup/` + backupId + ` |.*| 3\s+| false\s+| .* |.*| `
+		args := []string{"list", "backups", "--deployment-id=" + deplId}
+		compare := `Id\s+| Backup-Policy-Id | Deleted | Deployment-Id\s+| Description | Name\s+| Upload | Url\s+| State | Db-Servers | Uploaded | Auto-Deleted-At\s+| Created-At | Deleted-At(\s.*)*` +
+			backupId + ` |.*| false\s+| ` + deplId + ` |.*| TestBackup | false  | /Organization/` +
+			org + `/Project/` + proj + `/Deployment/` + deplId + `/Backup/` + backupId + ` |.*| 3\s+| false\s+| .* |.*| `
 		out, err := tests.RunCommand(args)
 		require.NoError(tt, err)
 		assert.True(tt, tests.CompareOutput(out, []byte(compare)))
@@ -135,7 +127,7 @@ Dbservers        3
 Id               ` + backupId + `
 Backup-Policy-Id 
 Deleted          false
-Deployment-Id    ` + depl.GetId() + `
+Deployment-Id    ` + deplId + `
 Description      
 Name             NewName
 Upload           false

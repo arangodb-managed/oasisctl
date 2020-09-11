@@ -54,7 +54,7 @@ func TestListProject(t *testing.T) {
 
 	// We must acount for the default organization
 	// (\s.*\s.*)+? -> match any number of rows in between lazily
-	compare := `^Id        | Name\s+| Description\s+| Url\s+| Created-At(\s.*)*` + project.GetId() + ` | testProject\s+|.*| ` + project.GetUrl() + ` | .*`
+	compare := `^Id\s+| Name\s+| Description\s+| Url\s+| Created-At(\s.*)*` + project.GetId() + ` | testProject\s+|.*| ` + project.GetUrl() + ` | .*`
 	args := []string{"list", "projects", "--organization-id=" + org}
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)

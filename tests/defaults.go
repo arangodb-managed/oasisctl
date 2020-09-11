@@ -40,6 +40,7 @@ func GetDefaultOrganization() (string, error) {
 	}
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
@@ -63,6 +64,7 @@ func GetDefaultProject(org string) (string, error) {
 	}
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 
 	rmc := rm.NewResourceManagerServiceClient(conn)
 

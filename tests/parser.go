@@ -33,7 +33,7 @@ func GetResourceID(out string) (string, error) {
 	grepId := regexp.MustCompile(`Success!\sId\s+(\w+)`)
 	matches := grepId.FindStringSubmatch(out)
 	if len(matches) < 2 {
-		return "", errors.New("not enough matches for backup id: " + strings.Join(matches, ", "))
+		return "", errors.New("not enough matches for id: " + strings.Join(matches, ", "))
 	}
 	return matches[1], nil
 }
