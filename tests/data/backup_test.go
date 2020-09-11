@@ -27,7 +27,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 
 	common "github.com/arangodb-managed/apis/common/v1"
