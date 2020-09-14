@@ -36,13 +36,7 @@ func TestListRegion(t *testing.T) {
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 	args := []string{"list", "regions", "--provider-id=aks", "--organization-id=" + org}
-	compare := `Id                | Provider-Id | Location                 | Available
-aks-canadacentral | aks         | Central Canada, Toronto  | ✓
-aks-eastus2       | aks         | East US, Virginia        | ✓
-aks-uksouth       | aks         | UK, London               | ✓
-aks-westeurope    | aks         | West Europe, Netherlands | ✓
-aks-westus2       | aks         | West US, Washington      | ✓
-$`
+	compare := `Id\s+| Provider-Id\s+| Location\s+| Available(\s.*)*aks-uksouth\s+| aks\s+| UK, London\s+| ✓\saks-westeurope\s+| aks\s+| West Europe, Netherlands\s+| ✓\saks-westus2\s+| aks\s+| West US, Washington\s+| ✓`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
 	assert.True(t, tests.CompareOutput(out, []byte(compare)))
