@@ -40,6 +40,7 @@ func TestUpdateProject(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)
 	rmc := rm.NewResourceManagerServiceClient(conn)

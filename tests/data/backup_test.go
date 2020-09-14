@@ -45,6 +45,7 @@ func TestCRUDOperationsForBackup(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	datac := data.NewDataServiceClient(conn)
 	region, err := getRegion("aws", org)
 	require.NoError(t, err)

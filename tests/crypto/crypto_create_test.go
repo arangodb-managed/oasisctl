@@ -61,6 +61,7 @@ $`
 	require.NoError(t, err)
 	defer func() {
 		conn := cmd.MustDialAPI()
+		defer conn.Close()
 		ctx := cmd.ContextWithToken()
 		cryptoc := crypto.NewCryptoServiceClient(conn)
 		if _, err := cryptoc.DeleteCACertificate(ctx, &common.IDOptions{Id: certId}); err != nil {

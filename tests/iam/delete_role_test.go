@@ -39,6 +39,7 @@ func TestDeleteRole(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	iamc := iam.NewIAMServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)

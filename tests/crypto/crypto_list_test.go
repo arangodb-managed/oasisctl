@@ -41,6 +41,7 @@ func TestListCrypto(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	cryptoc := crypto.NewCryptoServiceClient(conn)
 	org, err := tests.GetDefaultOrganization()
 	require.NoError(t, err)

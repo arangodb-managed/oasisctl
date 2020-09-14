@@ -39,6 +39,7 @@ func TestDeleteOrganization(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
 	org, err := rmc.CreateOrganization(ctx, &rm.Organization{Name: "testOrg"})

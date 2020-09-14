@@ -40,6 +40,7 @@ func TestUpdateOrganization(t *testing.T) {
 	cmd.RootCmd.PersistentPreRun(nil, nil)
 	ctx := cmd.ContextWithToken()
 	conn := cmd.MustDialAPI()
+	defer conn.Close()
 	rmc := rm.NewResourceManagerServiceClient(conn)
 
 	testOrg := "testOrg"
