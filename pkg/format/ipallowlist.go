@@ -36,6 +36,7 @@ func IPAllowlist(x *security.IPAllowlist, opts Options) string {
 		kv{"description", x.GetDescription()},
 		kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
 		kv{"url", x.GetUrl()},
+		kv{"locked", formatBool(opts, x.GetLocked())},
 		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 	)
 }
@@ -45,12 +46,13 @@ func IPAllowlistList(list []*security.IPAllowlist, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
-			kv{"id", x.GetId()},
-			kv{"name", x.GetName()},
-			kv{"description", x.GetDescription()},
-			kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
-			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"description", x.GetDescription()},
+			{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
+			{"url", x.GetUrl()},
+			{"locked", formatBool(opts, x.GetLocked())},
+			{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}
 	}, false)
 }
