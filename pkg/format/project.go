@@ -33,6 +33,7 @@ func Project(x *rm.Project, opts Options) string {
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
 		kv{"url", x.GetUrl()},
+		kv{"locked", formatBool(opts, x.GetLocked())},
 		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 	)
@@ -43,11 +44,12 @@ func ProjectList(list []*rm.Project, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
-			kv{"id", x.GetId()},
-			kv{"name", x.GetName()},
-			kv{"description", x.GetDescription()},
-			kv{"url", x.GetUrl()},
-			kv{"created-at", formatTime(opts, x.GetCreatedAt())},
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"description", x.GetDescription()},
+			{"url", x.GetUrl()},
+			{"locked", formatBool(opts, x.GetLocked())},
+			{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}
 	}, false)
 }
