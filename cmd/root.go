@@ -26,12 +26,14 @@ import (
 	"context"
 	"crypto/tls"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/keepalive"
 
 	"github.com/arangodb-managed/apis/common/auth"
 
@@ -99,10 +101,19 @@ func envOrDefault(envKeySuffix string, defaultValue string) string {
 }
 
 // MustDialAPI dials the ArangoDB Oasis API
-func MustDialAPI() *grpc.ClientConn {
+func MustDialAPI(setKeepalive ...bool) *grpc.ClientConn {
 	// Set up a connection to the server.
-	tc := credentials.NewTLS(&tls.Config{})
-	conn, err := grpc.Dial(RootArgs.endpoint+apiPortSuffix, grpc.WithTransportCredentials(tc))
+	dialOpts := []grpc.DialOption{
+		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),
+	}
+	if len(setKeepalive) > 0 && setKeepalive[0] {
+		dialOpts = append(dialOpts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time:                time.Minute / 2,
+			Timeout:             time.Minute,
+			PermitWithoutStream: true,
+		}))
+	}
+	conn, err := grpc.Dial(RootArgs.endpoint+apiPortSuffix, dialOpts...)
 	if err != nil {
 		CLILog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Oasis API")
 	}

@@ -67,7 +67,7 @@ func init() {
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
-				conn := cmd.MustDialAPI()
+				conn := cmd.MustDialAPI(true)
 				datac := data.NewDataServiceClient(conn)
 				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
