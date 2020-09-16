@@ -6,10 +6,11 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.47.0
+	github.com/arangodb-managed/apis v0.48.0
 	github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
+	github.com/gizak/termui/v3 v3.1.0
 	github.com/gogo/protobuf v1.3.0
 	github.com/rs/zerolog v1.19.0
 	github.com/ryanuber/columnize v2.1.0+incompatible

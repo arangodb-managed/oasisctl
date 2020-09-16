@@ -23,10 +23,29 @@
 package format
 
 import (
+	"strconv"
+	"strings"
+
+	"github.com/dustin/go-humanize"
+
 	data "github.com/arangodb-managed/apis/data/v1"
 )
 
-// DeploymentList returns a list of deployments formatted for humans.
+func formatCPU(value float64) string {
+	if value < 1.0 {
+		return strconv.Itoa(int(value*1000.0)) + "m"
+	}
+	return humanize.FormatFloat("", value)
+}
+
+func formatDisk(value uint64, serverType string) string {
+	if value == 0 && serverType == "Coordinator" {
+		return "-"
+	}
+	return humanize.Bytes(value)
+}
+
+// ServerStatusList returns a list of deployment servers formatted for humans.
 func ServerStatusList(list []*data.Deployment_ServerStatus, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
@@ -35,6 +54,9 @@ func ServerStatusList(list []*data.Deployment_ServerStatus, opts Options) string
 			{"description", x.GetDescription()},
 			{"version", x.GetVersion()},
 			{"type", x.GetType()},
+			{"memory", humanize.Bytes(uint64(x.GetLastMemoryUsage()))},
+			{"cpu", formatCPU(float64(x.GetLastCpuUsage()))},
+			{"disk", formatDisk(uint64(x.GetDataVolumeInfo().GetUsedBytes()), x.GetType())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"last-started-at", formatTime(opts, x.GetLastStartedAt())},
 			{"creating", formatBool(opts, x.GetCreating())},
@@ -46,4 +68,10 @@ func ServerStatusList(list []*data.Deployment_ServerStatus, opts Options) string
 		}
 		return d
 	}, false)
+}
+
+// ServerStatusListAsRows returns a list of deployment servers formatted for a table.
+func ServerStatusListAsRows(list []*data.Deployment_ServerStatus, opts Options) []string {
+	all := ServerStatusList(list, opts)
+	return strings.Split(all, "\n")
 }
