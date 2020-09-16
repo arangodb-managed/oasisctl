@@ -124,12 +124,12 @@ func init() {
 				// Render update & fetch events
 				uiEvents := ui.PollEvents()
 				lastUpdate := time.Now()
+				depl := item
 				var lastError error
 				var lastErrorTS time.Time
 				for {
 					select {
-					case depl := <-updates:
-						list.Rows = format.ServerStatusListAsRows(depl.GetStatus().GetServers(), cmd.RootArgs.Format)
+					case depl = <-updates:
 						lastUpdate = time.Now()
 						lastError = nil
 					case err := <-errors:
@@ -145,6 +145,7 @@ func init() {
 					if lastError != nil && time.Since(lastErrorTS) > time.Second*15 {
 						lastError = nil
 					}
+					list.Rows = format.ServerStatusListAsRows(depl.GetStatus().GetServers(), cmd.RootArgs.Format)
 					if lastError != nil {
 						sb.TextStyle.Bg = ui.ColorRed
 						sb.TextStyle.Fg = ui.ColorWhite
