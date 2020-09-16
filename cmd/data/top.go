@@ -99,10 +99,15 @@ func init() {
 
 				// Start fetching updates
 				go func() {
+					defer func() {
+						close(updates)
+						close(errors)
+					}()
 					for {
 						server, err := datac.GetDeploymentUpdates(ctx, &common.IDOptions{Id: item.GetId()})
 						if err != nil {
-							log.Fatal().Err(err).Msg("Failed to fetch status updates")
+							errors <- err
+							return
 						}
 						for {
 							depl, err := server.Recv()
@@ -110,7 +115,8 @@ func init() {
 								// Connection closed normally, retry connection
 								break
 							} else if common.IsUnauthenticated(err) {
-								log.Fatal().Err(err).Msg("Failed to receive status update")
+								errors <- err
+								return
 							} else if err != nil {
 								errors <- err
 								break
@@ -127,13 +133,13 @@ func init() {
 				depl := item
 				var lastError error
 				var lastErrorTS time.Time
+				ok := true
 				for {
 					select {
-					case depl = <-updates:
+					case depl, ok = <-updates:
 						lastUpdate = time.Now()
 						lastError = nil
-					case err := <-errors:
-						lastError = err
+					case lastError, ok = <-errors:
 						lastErrorTS = time.Now()
 					case e := <-uiEvents:
 						switch e.ID {
@@ -141,6 +147,9 @@ func init() {
 							return
 						}
 					case <-time.After(time.Second):
+					}
+					if !ok {
+						return
 					}
 					if lastError != nil && time.Since(lastErrorTS) > time.Second*15 {
 						lastError = nil
