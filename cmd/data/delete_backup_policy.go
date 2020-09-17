@@ -34,27 +34,23 @@ import (
 	"github.com/arangodb-managed/oasisctl/cmd"
 )
 
-var (
-	deleteBackupCmd = &cobra.Command{
-		Use:   "backup",
-		Short: "Delete a backup for a given ID.",
-	}
-)
-
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
 		deleteBackupCmd,
+		&cobra.Command{
+			Use:   "policy",
+			Short: "Delete a backup policy for a given ID.",
+		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
+				id string
 			}{}
-			f.StringVarP(&cargs.backupID, "id", "i", "", "Identifier of the backup")
+			f.StringVarP(&cargs.id, "id", "i", "", "Identifier of the backup policy")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				backupID, argsUsed := cmd.OptOption("id", cargs.backupID, args, 0)
+				id, argsUsed := cmd.OptOption("id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -63,12 +59,12 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Delete backup
-				if _, err := backupc.DeleteBackup(ctx, &common.IDOptions{Id: backupID}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete backup")
+				if _, err := backupc.DeleteBackupPolicy(ctx, &common.IDOptions{Id: id}); err != nil {
+					log.Fatal().Err(err).Msg("Failed to delete backup policy")
 				}
 
 				// Show result
-				fmt.Println("Deleted backup!")
+				fmt.Println("Deleted backup policy!")
 			}
 		},
 	)

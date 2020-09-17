@@ -36,13 +36,17 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
+var (
+	listBackupsCmd = &cobra.Command{
+		Use:   "backups",
+		Short: "List backups",
+	}
+)
+
 func init() {
 	cmd.InitCommand(
 		cmd.ListCmd,
-		&cobra.Command{
-			Use:   "backups",
-			Short: "List backups",
-		},
+		listBackupsCmd,
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				deploymentID string

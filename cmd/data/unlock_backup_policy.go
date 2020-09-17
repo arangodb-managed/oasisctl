@@ -29,32 +29,29 @@ import (
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
-	common "github.com/arangodb-managed/apis/common/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-)
-
-var (
-	deleteBackupCmd = &cobra.Command{
-		Use:   "backup",
-		Short: "Delete a backup for a given ID.",
-	}
+	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
-		deleteBackupCmd,
+		cmd.UnlockCmd,
+		&cobra.Command{
+			Use:   "policy",
+			Short: "Unlock a backup policy",
+		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
+				id string
 			}{}
-			f.StringVarP(&cargs.backupID, "id", "i", "", "Identifier of the backup")
+			f.StringVarP(&cargs.id, "backup-policy-id", "d", "", "Identifier of the backup policy")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				backupID, argsUsed := cmd.OptOption("id", cargs.backupID, args, 0)
+				id, argsUsed := cmd.OptOption("backup-policy-id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -62,13 +59,18 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Delete backup
-				if _, err := backupc.DeleteBackup(ctx, &common.IDOptions{Id: backupID}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete backup")
+				// Select a backup policy to update
+				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
+				item.Locked = false
+
+				updated, err := backupc.UpdateBackupPolicy(ctx, item)
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to unlock backup")
 				}
 
 				// Show result
-				fmt.Println("Deleted backup!")
+				fmt.Println("Unlocked backup policy!")
+				fmt.Println(format.BackupPolicy(updated, cmd.RootArgs.Format))
 			}
 		},
 	)

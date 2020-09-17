@@ -31,28 +31,23 @@ import (
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
+
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
-)
-
-const (
-	// Schedule Types
-	hourly  = "Hourly"
-	daily   = "Daily"
-	monthly = "Monthly"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		createBackupCmd,
+		updateBackupCmd,
 		&cobra.Command{
 			Use:   "policy",
-			Short: "Create a new backup policy",
+			Short: "Update a backup policy",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				id                string
 				name              string
-				deploymentID      string
 				description       string
 				emailNotification string
 				scheduleType      string
@@ -81,8 +76,8 @@ func init() {
 				upload          bool
 				locked          bool
 			}{}
+			f.StringVarP(&cargs.id, "backup-policy-id", "d", "", "Identifier of the backup policy")
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
-			f.StringVar(&cargs.deploymentID, "deployment-id", "", "ID of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
 			f.StringVar(&cargs.emailNotification, "email-notificatetion", "", "Email notification setting (Never|FailureOnly|Always)")
 			f.StringVar(&cargs.scheduleType, "schedule-type", "", "Schedule of the policy (Hourly|Daily|Monthly)")
@@ -106,8 +101,7 @@ func init() {
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				name, argsUsed := cmd.ReqOption("name", cargs.name, args, 0)
-				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.deploymentID, args, 0)
+				id, argsUsed := cmd.OptOption("backup-policy-id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -115,62 +109,140 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				b := &backup.BackupPolicy{
-					Name:         name,
-					Description:  cargs.description,
-					DeploymentId: deploymentID,
-					Schedule: &backup.BackupPolicy_Schedule{
-						ScheduleType: cargs.scheduleType,
-					},
-					Upload:            cargs.upload,
-					EmailNotification: cargs.emailNotification,
-					Locked:            cargs.locked,
-					IsPaused:          cargs.paused,
+				// Select a backup policy to update
+				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
+
+				// Set changes
+				f := c.Flags()
+				hasChanges := false
+				if f.Changed("name") {
+					item.Name = cargs.name
+					hasChanges = true
+				}
+				if f.Changed("description") {
+					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("upload") {
+					item.Upload = cargs.upload
+					hasChanges = true
+				}
+				if f.Changed("paused") {
+					item.IsPaused = cargs.paused
+					hasChanges = true
+				}
+				if f.Changed("email-notificatetion") {
+					item.EmailNotification = cargs.emailNotification
+					hasChanges = true
+				}
+				if f.Changed("schedule-type") {
+					item.Schedule.ScheduleType = cargs.scheduleType
+					switch item.Schedule.ScheduleType {
+					case hourly:
+						if item.GetSchedule().GetHourlySchedule() == nil {
+							item.Schedule.HourlySchedule = &backup.BackupPolicy_HourlySchedule{}
+							item.Schedule.DailySchedule = nil
+							item.Schedule.MonthlySchedule = nil
+						}
+					case daily:
+						if item.GetSchedule().GetDailySchedule() == nil {
+							item.Schedule.DailySchedule = &backup.BackupPolicy_DailySchedule{}
+							item.Schedule.HourlySchedule = nil
+							item.Schedule.MonthlySchedule = nil
+						}
+					case monthly:
+						if item.GetSchedule().GetHourlySchedule() == nil {
+							item.Schedule.MonthlySchedule = &backup.BackupPolicy_MonthlySchedule{}
+							item.Schedule.HourlySchedule = nil
+							item.Schedule.DailySchedule = nil
+						}
+					}
+					hasChanges = true
+				}
+				if f.Changed("retention-period") {
+					t := time.Duration(cargs.retentionPeriod) * time.Hour
+					item.RetentionPeriod = types.DurationProto(t)
+					hasChanges = true
 				}
 
-				switch cargs.scheduleType {
-				case hourly:
-					b.Schedule.HourlySchedule = &backup.BackupPolicy_HourlySchedule{
-						ScheduleEveryIntervalHours: cargs.hourlySchedule.scheduleEveryIntervalHours,
+				if f.Changed("monday") {
+					item.Schedule.DailySchedule.Monday = cargs.dailySchedule.monday
+					hasChanges = true
+				}
+				if f.Changed("tuesday") {
+					item.Schedule.DailySchedule.Tuesday = cargs.dailySchedule.tuesday
+					hasChanges = true
+				}
+				if f.Changed("wednesday") {
+					item.Schedule.DailySchedule.Wednesday = cargs.dailySchedule.wednesday
+					hasChanges = true
+				}
+				if f.Changed("thursday") {
+					item.Schedule.DailySchedule.Thursday = cargs.dailySchedule.thursday
+					hasChanges = true
+				}
+				if f.Changed("friday") {
+					item.Schedule.DailySchedule.Friday = cargs.dailySchedule.friday
+					hasChanges = true
+				}
+				if f.Changed("saturday") {
+					item.Schedule.DailySchedule.Saturday = cargs.dailySchedule.saturday
+					hasChanges = true
+				}
+				if f.Changed("sunday") {
+					item.Schedule.DailySchedule.Sunday = cargs.dailySchedule.sunday
+					hasChanges = true
+				}
+				if f.Changed("locked") {
+					item.Locked = cargs.locked
+					hasChanges = true
+				}
+				if f.Changed("hours") {
+					switch item.Schedule.ScheduleType {
+					case daily:
+						item.Schedule.DailySchedule.ScheduleAt.Hours = cargs.timeofday.hours
+					case monthly:
+						item.Schedule.MonthlySchedule.ScheduleAt.Hours = cargs.timeofday.hours
 					}
-				case daily:
-					b.Schedule.DailySchedule = &backup.BackupPolicy_DailySchedule{
-						Monday:    cargs.dailySchedule.monday,
-						Tuesday:   cargs.dailySchedule.tuesday,
-						Wednesday: cargs.dailySchedule.wednesday,
-						Thursday:  cargs.dailySchedule.thursday,
-						Friday:    cargs.dailySchedule.friday,
-						Saturday:  cargs.dailySchedule.saturday,
-						Sunday:    cargs.dailySchedule.sunday,
-						ScheduleAt: &backup.TimeOfDay{
-							Hours:    cargs.timeofday.hours,
-							Minutes:  cargs.timeofday.minutes,
-							TimeZone: cargs.timeofday.timezone,
-						},
+					hasChanges = true
+				}
+				if f.Changed("minutes") {
+					switch item.Schedule.ScheduleType {
+					case daily:
+						item.Schedule.DailySchedule.ScheduleAt.Minutes = cargs.timeofday.minutes
+					case monthly:
+						item.Schedule.MonthlySchedule.ScheduleAt.Minutes = cargs.timeofday.minutes
 					}
-				case monthly:
-					b.Schedule.MonthlySchedule = &backup.BackupPolicy_MonthlySchedule{
-						DayOfMonth: cargs.monthlySchedule.dayOfMonth,
-						ScheduleAt: &backup.TimeOfDay{
-							Hours:    cargs.timeofday.hours,
-							Minutes:  cargs.timeofday.minutes,
-							TimeZone: cargs.timeofday.timezone,
-						},
+					hasChanges = true
+				}
+				if f.Changed("time-zone") {
+					switch item.Schedule.ScheduleType {
+					case daily:
+						item.Schedule.DailySchedule.ScheduleAt.TimeZone = cargs.timeofday.timezone
+					case monthly:
+						item.Schedule.MonthlySchedule.ScheduleAt.TimeZone = cargs.timeofday.timezone
 					}
+					hasChanges = true
+				}
+				if f.Changed("day-of-the-month") {
+					item.Schedule.MonthlySchedule.DayOfMonth = cargs.monthlySchedule.dayOfMonth
+					hasChanges = true
 				}
 
-				t := time.Duration(cargs.retentionPeriod) * time.Hour
-				b.RetentionPeriod = types.DurationProto(t)
+				if !hasChanges {
+					fmt.Println("No changes")
+					return
+				}
 
-				result, err := backupc.CreateBackupPolicy(ctx, b)
-
+				// Update backup
+				updated, err := backupc.UpdateBackupPolicy(ctx, item)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to create backup")
+					log.Fatal().Err(err).Msg("Failed to update backup policy")
 				}
 
 				// Show result
-				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.BackupPolicy(result, cmd.RootArgs.Format))
+				fmt.Println("Updated backup policy!")
+				fmt.Println(format.BackupPolicy(updated, cmd.RootArgs.Format))
 			}
 		},
 	)

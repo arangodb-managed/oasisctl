@@ -34,13 +34,17 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
+var (
+	getBackupCmd = &cobra.Command{
+		Use:   "backup",
+		Short: "Get a backup",
+	}
+)
+
 func init() {
 	cmd.InitCommand(
 		cmd.GetCmd,
-		&cobra.Command{
-			Use:   "backup",
-			Short: "Get a backup",
-		},
+		getBackupCmd,
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				ID string

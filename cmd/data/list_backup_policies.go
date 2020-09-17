@@ -17,7 +17,7 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Gergely Brautigam
+// Author Brautigam Gergely
 //
 
 package data
@@ -29,32 +29,29 @@ import (
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
-	common "github.com/arangodb-managed/apis/common/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-)
-
-var (
-	deleteBackupCmd = &cobra.Command{
-		Use:   "backup",
-		Short: "Delete a backup for a given ID.",
-	}
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
-		deleteBackupCmd,
+		listBackupsCmd,
+		&cobra.Command{
+			Use:   "policies",
+			Short: "List backup policies",
+		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
+				deploymentID   string
+				includeDeleted bool
 			}{}
-			f.StringVarP(&cargs.backupID, "id", "i", "", "Identifier of the backup")
-
+			f.StringVar(&cargs.deploymentID, "deployment-id", "", "The ID of the deployment to list backup policies for")
+			f.BoolVar(&cargs.includeDeleted, "include-deleted", false, "If set, the result includes all backup policies, including those who set to deleted, however are not removed from the system currently")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				backupID, argsUsed := cmd.OptOption("id", cargs.backupID, args, 0)
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -62,13 +59,18 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Delete backup
-				if _, err := backupc.DeleteBackup(ctx, &common.IDOptions{Id: backupID}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete backup")
+				req := backup.ListBackupPoliciesRequest{
+					DeploymentId:   deploymentID,
+					IncludeDeleted: cargs.includeDeleted,
+				}
+
+				list, err := backupc.ListBackupPolicies(ctx, &req)
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list backup policies")
 				}
 
 				// Show result
-				fmt.Println("Deleted backup!")
+				fmt.Println(format.BackupPolicyList(list.Items, cmd.RootArgs.Format))
 			}
 		},
 	)

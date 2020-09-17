@@ -37,13 +37,17 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
+var (
+	updateBackupCmd = &cobra.Command{
+		Use:   "backup",
+		Short: "Update a backup",
+	}
+)
+
 func init() {
 	cmd.InitCommand(
 		cmd.UpdateCmd,
-		&cobra.Command{
-			Use:   "backup",
-			Short: "Update a backup",
-		},
+		updateBackupCmd,
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				backupID      string
