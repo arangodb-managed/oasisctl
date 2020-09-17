@@ -25,6 +25,7 @@ package data
 import (
 	"fmt"
 	"time"
+	"unicode"
 
 	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
@@ -115,6 +116,7 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				cargs.scheduleType = capitalizeScheduleType(cargs.scheduleType)
 				b := &backup.BackupPolicy{
 					Name:         name,
 					Description:  cargs.description,
@@ -174,4 +176,12 @@ func init() {
 			}
 		},
 	)
+}
+
+// capitalizeScheduleType creates Daily, Hourly, Monthly out of the uncapitalized words.
+func capitalizeScheduleType(t string) string {
+	head := t[0]
+	tail := t[1:]
+	h := unicode.ToUpper(rune(head))
+	return string(h) + tail
 }

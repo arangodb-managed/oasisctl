@@ -111,7 +111,6 @@ func init() {
 
 				// Select a backup policy to update
 				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
-
 				// Set changes
 				f := c.Flags()
 				hasChanges := false
@@ -136,25 +135,27 @@ func init() {
 					hasChanges = true
 				}
 				if f.Changed("schedule-type") {
+					cargs.scheduleType = capitalizeScheduleType(cargs.scheduleType)
 					item.Schedule.ScheduleType = cargs.scheduleType
 					switch item.Schedule.ScheduleType {
 					case hourly:
-						if item.GetSchedule().GetHourlySchedule() == nil {
-							item.Schedule.HourlySchedule = &backup.BackupPolicy_HourlySchedule{}
-							item.Schedule.DailySchedule = nil
-							item.Schedule.MonthlySchedule = nil
+						item.Schedule = &backup.BackupPolicy_Schedule{
+							HourlySchedule: &backup.BackupPolicy_HourlySchedule{},
+							ScheduleType:   hourly,
 						}
 					case daily:
-						if item.GetSchedule().GetDailySchedule() == nil {
-							item.Schedule.DailySchedule = &backup.BackupPolicy_DailySchedule{}
-							item.Schedule.HourlySchedule = nil
-							item.Schedule.MonthlySchedule = nil
+						item.Schedule = &backup.BackupPolicy_Schedule{
+							DailySchedule: &backup.BackupPolicy_DailySchedule{
+								ScheduleAt: &backup.TimeOfDay{},
+							},
+							ScheduleType: daily,
 						}
 					case monthly:
-						if item.GetSchedule().GetHourlySchedule() == nil {
-							item.Schedule.MonthlySchedule = &backup.BackupPolicy_MonthlySchedule{}
-							item.Schedule.HourlySchedule = nil
-							item.Schedule.DailySchedule = nil
+						item.Schedule = &backup.BackupPolicy_Schedule{
+							MonthlySchedule: &backup.BackupPolicy_MonthlySchedule{
+								ScheduleAt: &backup.TimeOfDay{},
+							},
+							ScheduleType: monthly,
 						}
 					}
 					hasChanges = true
@@ -228,12 +229,15 @@ func init() {
 					item.Schedule.MonthlySchedule.DayOfMonth = cargs.monthlySchedule.dayOfMonth
 					hasChanges = true
 				}
+				if f.Changed("every-interval-hours") {
+					item.Schedule.HourlySchedule.ScheduleEveryIntervalHours = cargs.hourlySchedule.scheduleEveryIntervalHours
+					hasChanges = true
+				}
 
 				if !hasChanges {
 					fmt.Println("No changes")
 					return
 				}
-
 				// Update backup
 				updated, err := backupc.UpdateBackupPolicy(ctx, item)
 				if err != nil {
