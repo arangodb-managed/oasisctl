@@ -180,6 +180,9 @@ func init() {
 
 // capitalizeScheduleType creates Daily, Hourly, Monthly out of the uncapitalized words.
 func capitalizeScheduleType(t string) string {
+	if t == "" {
+		return ""
+	}
 	head := t[0]
 	tail := t[1:]
 	h := unicode.ToUpper(rune(head))
