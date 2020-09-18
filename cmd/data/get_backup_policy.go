@@ -25,11 +25,12 @@ package data
 import (
 	"fmt"
 
-	v1 "github.com/arangodb-managed/apis/common/v1"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
+	v1 "github.com/arangodb-managed/apis/common/v1"
+
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
