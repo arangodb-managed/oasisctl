@@ -35,21 +35,21 @@ const (
 
 // BackupPolicy returns a single backup policy formatted for humans.
 func BackupPolicy(x *backup.BackupPolicy, opts Options) string {
-	data := parseBackupPolicyToKeyValueList(x, opts)
+	data := backupPolicyToKeyValueList(x, opts)
 	return formatObject(opts, data...)
 }
 
-func parseBackupPolicyToKeyValueList(x *backup.BackupPolicy, opts Options) []kv {
+func backupPolicyToKeyValueList(x *backup.BackupPolicy, opts Options) []kv {
 	data := []kv{
 		{"id", x.GetId()},
-		{"deleted", x.GetIsDeleted()},
+		{"deleted", formatBool(opts, x.GetIsDeleted())},
 		{"deployment-id", x.GetDeploymentId()},
 		{"description", x.GetDescription()},
 		{"name", x.GetName()},
-		{"upload", x.GetUpload()},
+		{"upload", formatBool(opts, x.GetUpload())},
 		{"url", x.GetUrl()},
-		{"locked", x.GetLocked()},
-		{"paused", x.GetIsPaused()},
+		{"locked", formatBool(opts, x.GetLocked())},
+		{"paused", formatBool(opts, x.GetIsPaused())},
 		{"schedule-type", x.GetSchedule().GetScheduleType()},
 		{"retention-period", formatDuration(opts, x.GetRetentionPeriod())},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},

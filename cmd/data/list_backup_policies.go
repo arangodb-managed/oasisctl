@@ -36,7 +36,7 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		listBackupsCmd,
+		cmd.BackupListRootCmd,
 		&cobra.Command{
 			Use:   "policies",
 			Short: "List backup policies",

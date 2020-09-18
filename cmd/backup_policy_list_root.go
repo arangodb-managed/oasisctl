@@ -20,16 +20,19 @@
 // Author Gergely Brautigam
 //
 
-package format
+package cmd
 
-import (
-	backup "github.com/arangodb-managed/apis/backup/v1"
+import "github.com/spf13/cobra"
+
+var (
+	// BackupListRootCmd is root for various `list backup ...` commands
+	BackupListRootCmd = &cobra.Command{
+		Use:   "backup",
+		Short: "A list command for various backup resources",
+		Run:   ShowUsage,
+	}
 )
 
-// BackupPolicyList returns a list of backup policies for a deployment.
-func BackupPolicyList(list []*backup.BackupPolicy, opts Options) string {
-	return formatList(opts, list, func(i int) []kv {
-		x := list[i]
-		return backupPolicyToKeyValueList(x, opts)
-	}, false)
+func init() {
+	ListCmd.AddCommand(BackupListRootCmd)
 }

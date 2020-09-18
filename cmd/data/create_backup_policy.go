@@ -85,7 +85,7 @@ func init() {
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.deploymentID, "deployment-id", "", "ID of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
-			f.StringVar(&cargs.emailNotification, "email-notificatetion", "", "Email notification setting (Never|FailureOnly|Always)")
+			f.StringVar(&cargs.emailNotification, "email-notification", "", "Email notification setting (Never|FailureOnly|Always)")
 			f.StringVar(&cargs.scheduleType, "schedule-type", "", "Schedule of the policy (Hourly|Daily|Monthly)")
 			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded")
 			f.BoolVar(&cargs.paused, "paused", false, "The policy is paused")
@@ -98,7 +98,6 @@ func init() {
 			f.BoolVar(&cargs.dailySchedule.friday, "friday", false, "If set, a backup will be created on Fridays.")
 			f.BoolVar(&cargs.dailySchedule.saturday, "saturday", false, "If set, a backup will be created on Saturdays")
 			f.BoolVar(&cargs.dailySchedule.sunday, "sunday", false, "If set, a backup will be created on Sundays")
-			f.BoolVar(&cargs.locked, "locked", false, "If set, this backup policy cannot be deleted. To delete, first update the with locked set to false.")
 			f.Int32Var(&cargs.timeofday.hours, "hours", 0, "Hours part of the time of day (0-23)")
 			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-23)")
 			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time-zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
@@ -126,7 +125,6 @@ func init() {
 					},
 					Upload:            cargs.upload,
 					EmailNotification: cargs.emailNotification,
-					Locked:            cargs.locked,
 					IsPaused:          cargs.paused,
 				}
 
