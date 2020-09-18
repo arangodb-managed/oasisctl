@@ -25,46 +25,46 @@ package data
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
-	v1 "github.com/arangodb-managed/apis/common/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
-var getBackupCmd = cmd.InitCommand(
-	cmd.GetCmd,
-	&cobra.Command{
-		Use:   "backup",
-		Short: "Get a backup",
-	},
-	func(c *cobra.Command, f *flag.FlagSet) {
-		cargs := &struct {
-			ID string
-		}{}
-		f.StringVarP(&cargs.ID, "id", "i", "", "Identifier of the backup")
+func init() {
+	cmd.InitCommand(
+		getBackupCmd,
+		&cobra.Command{
+			Use:   "policy",
+			Short: "Get an existing backup policy",
+		},
+		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				ID string
+			}{}
+			f.StringVarP(&cargs.ID, "id", "i", "", "Identifier of the backup policy (Id|Name|Url)")
 
-		c.Run = func(c *cobra.Command, args []string) {
-			// Validate arguments
-			log := cmd.CLILog
-			id, argsUsed := cmd.OptOption("id", cargs.ID, args, 0)
-			cmd.MustCheckNumberOfArgs(args, argsUsed)
+			c.Run = func(c *cobra.Command, args []string) {
+				// Validate arguments
+				log := cmd.CLILog
+				id, argsUsed := cmd.OptOption("id", cargs.ID, args, 0)
+				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-			// Connect
-			conn := cmd.MustDialAPI()
-			backupc := backup.NewBackupServiceClient(conn)
-			ctx := cmd.ContextWithToken()
+				// Connect
+				conn := cmd.MustDialAPI()
+				backupc := backup.NewBackupServiceClient(conn)
+				ctx := cmd.ContextWithToken()
 
-			// Fetch backup
-			b, err := backupc.GetBackup(ctx, &v1.IDOptions{Id: id})
-			if err != nil {
-				log.Fatal().Err(err).Msg("Failed to fetch backup")
+				// Fetch backup policy
+				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
+
+				// Show result
+				fmt.Println(format.BackupPolicy(item, cmd.RootArgs.Format))
 			}
-
-			// Show result
-			fmt.Println(format.Backup(b, cmd.RootArgs.Format))
-		}
-	},
-)
+		},
+	)
+}
