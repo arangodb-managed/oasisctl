@@ -58,9 +58,12 @@ func SelectCACertificate(ctx context.Context, log zerolog.Logger, id, projectID,
 			log.Debug().Err(err).Msg("Failed to list CA certificates")
 			return nil, err
 		}
+		if cert, found := selectDefaultCertificate(list); found {
+			return cert, nil
+		}
 		if len(list.Items) != 1 {
-			log.Debug().Err(err).Msgf("You have access to %d CA certificates. Please specify one explicitly.", len(list.Items))
-			return nil, fmt.Errorf("You have access to %d CA certificates. Please specify one explicitly.", len(list.Items))
+			log.Debug().Err(err).Msgf("You have access to %d CA certificates and no defaults were found. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You have access to %d CA certificates and no defaults were found. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
 	}
@@ -85,4 +88,14 @@ func SelectCACertificate(ctx context.Context, log zerolog.Logger, id, projectID,
 		return nil, err
 	}
 	return result, nil
+}
+
+// selectDefaultCertificate looks for the default certificate in a list of certificates.
+func selectDefaultCertificate(list *crypto.CACertificateList) (*crypto.CACertificate, bool) {
+	for _, c := range list.GetItems() {
+		if c.GetIsDefault() {
+			return c, true
+		}
+	}
+	return nil, false
 }
