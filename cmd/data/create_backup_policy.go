@@ -84,7 +84,7 @@ func init() {
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.deploymentID, "deployment-id", "", "ID of the deployment")
-			f.StringVar(&cargs.description, "description", "", "Description of the backup")
+			f.StringVar(&cargs.description, "description", "", "Description of the backup policy")
 			f.StringVar(&cargs.emailNotification, "email-notification", "", "Email notification setting (Never|FailureOnly|Always)")
 			f.StringVar(&cargs.scheduleType, "schedule-type", "", "Schedule of the policy (Hourly|Daily|Monthly)")
 			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded")
@@ -99,7 +99,7 @@ func init() {
 			f.BoolVar(&cargs.dailySchedule.saturday, "saturday", false, "If set, a backup will be created on Saturdays")
 			f.BoolVar(&cargs.dailySchedule.sunday, "sunday", false, "If set, a backup will be created on Sundays")
 			f.Int32Var(&cargs.timeofday.hours, "hours", 0, "Hours part of the time of day (0-23)")
-			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-23)")
+			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-59)")
 			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time-zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
 			f.Int32Var(&cargs.monthlySchedule.dayOfMonth, "day-of-the-month", 1, "Run the backup on the specified day of the month (1-31)")
 
@@ -157,6 +157,8 @@ func init() {
 							TimeZone: cargs.timeofday.timezone,
 						},
 					}
+				default:
+					log.Fatal().Msgf("Invalid schedule type %s", cargs.scheduleType)
 				}
 
 				t := time.Duration(cargs.retentionPeriod) * time.Hour
@@ -165,7 +167,7 @@ func init() {
 				result, err := backupc.CreateBackupPolicy(ctx, b)
 
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to create backup")
+					log.Fatal().Err(err).Msg("Failed to create backup policy")
 				}
 
 				// Show result

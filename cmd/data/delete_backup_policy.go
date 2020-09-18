@@ -25,6 +25,8 @@ package data
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -43,9 +45,13 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				id string
+				id             string
+				organizationID string
+				projectID      string
 			}{}
 			f.StringVarP(&cargs.id, "id", "i", "", "Identifier of the backup policy")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -58,8 +64,11 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Delete backup
-				if _, err := backupc.DeleteBackupPolicy(ctx, &common.IDOptions{Id: id}); err != nil {
+				// Fetch backup policy
+				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
+
+				// Delete backup policy
+				if _, err := backupc.DeleteBackupPolicy(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 					log.Fatal().Err(err).Msg("Failed to delete backup policy")
 				}
 

@@ -25,12 +25,12 @@ package data
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
-	v1 "github.com/arangodb-managed/apis/common/v1"
-
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
@@ -46,7 +46,7 @@ func init() {
 			cargs := &struct {
 				ID string
 			}{}
-			f.StringVarP(&cargs.ID, "id", "i", "", "Identifier of the backup policy")
+			f.StringVarP(&cargs.ID, "id", "i", "", "Identifier of the backup policy (Id|Name|Url)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -59,14 +59,11 @@ func init() {
 				backupc := backup.NewBackupServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch backup
-				b, err := backupc.GetBackupPolicy(ctx, &v1.IDOptions{Id: id})
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to fetch backup policy")
-				}
+				// Fetch backup policy
+				item := selection.MustSelectBackupPolicy(ctx, log, id, backupc)
 
 				// Show result
-				fmt.Println(format.BackupPolicy(b, cmd.RootArgs.Format))
+				fmt.Println(format.BackupPolicy(item, cmd.RootArgs.Format))
 			}
 		},
 	)

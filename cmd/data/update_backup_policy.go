@@ -79,21 +79,21 @@ func init() {
 			f.StringVarP(&cargs.id, "backup-policy-id", "d", "", "Identifier of the backup policy")
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
 			f.StringVar(&cargs.description, "description", "", "Description of the backup")
-			f.StringVar(&cargs.emailNotification, "email-notificatetion", "", "Email notification setting (Never|FailureOnly|Always)")
+			f.StringVar(&cargs.emailNotification, "email-notification", "", "Email notification setting (Never|FailureOnly|Always)")
 			f.StringVar(&cargs.scheduleType, "schedule-type", "", "Schedule of the policy (Hourly|Daily|Monthly)")
-			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded")
-			f.BoolVar(&cargs.paused, "paused", false, "The policy is paused")
+			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.paused, "paused", false, "The policy is paused. Set to false explicitely to clear the flag.")
 			f.IntVar(&cargs.retentionPeriod, "retention-period", 0, "Backups created by this policy will be automatically deleted after the specified retention period. A value of 0 means that backup will never be deleted.")
 			f.Int32Var(&cargs.hourlySchedule.scheduleEveryIntervalHours, "every-interval-hours", 0, "Schedule should run with an interval of the specified hours (1-23)")
-			f.BoolVar(&cargs.dailySchedule.monday, "monday", false, "If set, a backup will be created on Mondays")
-			f.BoolVar(&cargs.dailySchedule.tuesday, "tuesday", false, "If set, a backup will be created on Tuesdays")
-			f.BoolVar(&cargs.dailySchedule.wednesday, "wednesday", false, "If set, a backup will be created on Wednesdays")
-			f.BoolVar(&cargs.dailySchedule.thursday, "thursday", false, "If set, a backup will be created on Thursdays")
-			f.BoolVar(&cargs.dailySchedule.friday, "friday", false, "If set, a backup will be created on Fridays.")
-			f.BoolVar(&cargs.dailySchedule.saturday, "saturday", false, "If set, a backup will be created on Saturdays")
-			f.BoolVar(&cargs.dailySchedule.sunday, "sunday", false, "If set, a backup will be created on Sundays")
+			f.BoolVar(&cargs.dailySchedule.monday, "monday", false, "If set, a backup will be created on Mondays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.tuesday, "tuesday", false, "If set, a backup will be created on Tuesdays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.wednesday, "wednesday", false, "If set, a backup will be created on Wednesdays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.thursday, "thursday", false, "If set, a backup will be created on Thursdays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.friday, "friday", false, "If set, a backup will be created on Fridays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.saturday, "saturday", false, "If set, a backup will be created on Saturdays. Set to false explicitely to clear the flag.")
+			f.BoolVar(&cargs.dailySchedule.sunday, "sunday", false, "If set, a backup will be created on Sundays. Set to false explicitely to clear the flag.")
 			f.Int32Var(&cargs.timeofday.hours, "hours", 0, "Hours part of the time of day (0-23)")
-			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-23)")
+			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-59)")
 			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time-zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
 			f.Int32Var(&cargs.monthlySchedule.dayOfMonth, "day-of-the-month", 1, "Run the backup on the specified day of the month (1-31)")
 
@@ -129,14 +129,13 @@ func init() {
 					item.IsPaused = cargs.paused
 					hasChanges = true
 				}
-				if f.Changed("email-notificatetion") {
+				if f.Changed("email-notification") {
 					item.EmailNotification = cargs.emailNotification
 					hasChanges = true
 				}
 				if f.Changed("schedule-type") {
 					cargs.scheduleType = capitalizeScheduleType(cargs.scheduleType)
-					item.Schedule.ScheduleType = cargs.scheduleType
-					switch item.Schedule.ScheduleType {
+					switch cargs.scheduleType {
 					case hourly:
 						item.Schedule = &backup.BackupPolicy_Schedule{
 							HourlySchedule: &backup.BackupPolicy_HourlySchedule{},
@@ -156,6 +155,8 @@ func init() {
 							},
 							ScheduleType: monthly,
 						}
+					default:
+						log.Fatal().Msgf("Invalid schedule type %s", cargs.scheduleType)
 					}
 					hasChanges = true
 				}

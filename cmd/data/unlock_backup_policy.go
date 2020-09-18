@@ -65,7 +65,7 @@ func init() {
 
 				updated, err := backupc.UpdateBackupPolicy(ctx, item)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to unlock backup")
+					log.Fatal().Err(err).Msg("Failed to unlock backup policy")
 				}
 
 				// Show result
