@@ -58,6 +58,7 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			c.Run = func(c *cobra.Command, args []string) {
+				log := CLILog
 				convertVersionToString := func(major int, minor int, patch int) string {
 					return fmt.Sprintf("%d.%d.%d", major, minor, patch)
 				}
@@ -74,10 +75,10 @@ func init() {
 				versions[security.APIID] = convertVersionToString(security.APIMajorVersion, security.APIMinorVersion, security.APIPatchVersion)
 				content, err := json.Marshal(versions)
 				if err != nil {
-					CLILog.Fatal().Err(err).Msg("Failed to marshal map to json.")
+					log.Fatal().Err(err).Msg("Failed to marshal map to json.")
 				}
 				if err := ioutil.WriteFile(apisJSONFilename, content, os.ModePerm); err != nil {
-					CLILog.Fatal().Err(err).Msg("Failed to write out file.")
+					log.Fatal().Err(err).Msg("Failed to write out file.")
 				}
 			}
 		},
