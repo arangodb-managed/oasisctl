@@ -43,7 +43,7 @@ import (
 )
 
 const (
-	jsonFilename = "apis.json"
+	apisJSONFilename = "apis.json"
 )
 
 func init() {
@@ -75,7 +75,7 @@ func init() {
 				if err != nil {
 					CLILog.Fatal().Err(err).Msg("Failed to marshal map to json.")
 				}
-				if err := ioutil.WriteFile(jsonFilename, content, 0755); err != nil {
+				if err := ioutil.WriteFile(apisJSONFilename, content, 0755); err != nil {
 					CLILog.Fatal().Err(err).Msg("Failed to write out file.")
 				}
 			}
