@@ -138,33 +138,33 @@ func collectCurrentApiVersions() []*tools.APIVersionPair {
 	return resp
 }
 
-// dialOptions of MustDialAPI
-type dialOptions struct {
+// mustDialOptions of MustDialAPI
+type mustDialOptions struct {
 	keepAlive    bool
 	versionCheck bool
 }
 
-// DialOption type for MustDialAPI
-type DialOption func(*dialOptions)
+// MustDialOption type for MustDialAPI
+type MustDialOption func(*mustDialOptions)
 
 // WithoutVersionCheck disables the compatibility check during the dial operation
-func WithoutVersionCheck() DialOption {
-	return func(options *dialOptions) {
+func WithoutVersionCheck() MustDialOption {
+	return func(options *mustDialOptions) {
 		options.versionCheck = false
 	}
 }
 
 // WithKeepAlive sets the connection to keepalive.
-func WithKeepAlive() DialOption {
-	return func(options *dialOptions) {
+func WithKeepAlive() MustDialOption {
+	return func(options *mustDialOptions) {
 		options.keepAlive = true
 	}
 }
 
 // MustDialAPI dials the ArangoDB Oasis API
-func MustDialAPI(opts ...DialOption) *grpc.ClientConn {
+func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 	// default configuration
-	options := dialOptions{
+	options := mustDialOptions{
 		keepAlive:    false,
 		versionCheck: true,
 	}
