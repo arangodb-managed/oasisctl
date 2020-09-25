@@ -26,6 +26,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -75,7 +76,7 @@ func init() {
 				if err != nil {
 					CLILog.Fatal().Err(err).Msg("Failed to marshal map to json.")
 				}
-				if err := ioutil.WriteFile(apisJSONFilename, content, 0755); err != nil {
+				if err := ioutil.WriteFile(apisJSONFilename, content, os.ModePerm); err != nil {
 					CLILog.Fatal().Err(err).Msg("Failed to write out file.")
 				}
 			}
