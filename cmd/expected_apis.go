@@ -63,11 +63,11 @@ func init() {
 					return fmt.Sprintf("%d.%d.%d", major, minor, patch)
 				}
 				versions := make(map[string]string)
-				versions[iam.APIID] = convertVersionToString(iam.APIMajorVersion, iam.APIMinorVersion, iam.APIPatchVersion)
 				versions[backup.APIID] = convertVersionToString(backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion)
 				versions[crypto.APIID] = convertVersionToString(crypto.APIMajorVersion, crypto.APIMinorVersion, crypto.APIPatchVersion)
 				versions[data.APIID] = convertVersionToString(data.APIMajorVersion, data.APIMinorVersion, data.APIPatchVersion)
 				versions[example.APIID] = convertVersionToString(example.APIMajorVersion, example.APIMinorVersion, example.APIPatchVersion)
+				versions[iam.APIID] = convertVersionToString(iam.APIMajorVersion, iam.APIMinorVersion, iam.APIPatchVersion)
 				versions[mon.APIID] = convertVersionToString(mon.APIMajorVersion, mon.APIMinorVersion, mon.APIPatchVersion)
 				versions[platform.APIID] = convertVersionToString(platform.APIMajorVersion, platform.APIMinorVersion, platform.APIPatchVersion)
 				versions[replication.APIID] = convertVersionToString(replication.APIMajorVersion, replication.APIMinorVersion, replication.APIPatchVersion)
