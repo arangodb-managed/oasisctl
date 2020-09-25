@@ -73,7 +73,7 @@ func init() {
 				versions[replication.APIID] = convertVersionToString(replication.APIMajorVersion, replication.APIMinorVersion, replication.APIPatchVersion)
 				versions[rm.APIID] = convertVersionToString(rm.APIMajorVersion, rm.APIMinorVersion, rm.APIPatchVersion)
 				versions[security.APIID] = convertVersionToString(security.APIMajorVersion, security.APIMinorVersion, security.APIPatchVersion)
-				content, err := json.Marshal(versions)
+				content, err := json.MarshalIndent(versions, "", "  ")
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to marshal map to json.")
 				}
