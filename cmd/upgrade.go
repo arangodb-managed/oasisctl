@@ -25,6 +25,7 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -39,18 +40,24 @@ import (
 	flag "github.com/spf13/pflag"
 
 	tools "github.com/arangodb-managed/apis/tools/v1"
+
+	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
 func init() {
 	InitCommand(
 		RootCmd,
 		&cobra.Command{
-			Use:    "upgrade",
-			Short:  "Upgrade Oasisctl tool",
-			Long:   "Check the latest, compatible version and upgrade this tool to that.",
-			Hidden: true,
+			Use:   "upgrade",
+			Short: "Upgrade Oasisctl tool",
+			Long:  "Check the latest, compatible version and upgrade this tool to that.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
+			cargs := &struct {
+				dryRun bool
+			}{}
+			f.BoolVarP(&cargs.dryRun, "dry-run", "d", false, "Do an upgrade without applying the version.")
+
 			c.Run = func(c *cobra.Command, args []string) {
 				log := CLILog
 				conn := MustDialAPI(WithoutVersionCheck())
@@ -64,7 +71,13 @@ func init() {
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to get latest version for tool.")
 				}
-				log.Info().Str("latest_version", resp.GetLatestVersion()).Msg("Found latest version.")
+				if cargs.dryRun {
+					fmt.Println("dry-run enabled, skipping applying version")
+					fmt.Println(format.ToolsVersion(resp, RootArgs.Format))
+					return
+				}
+
+				log.Info().Str("latest_version", resp.GetLatestVersion()).Msg("Applying latest version...")
 				if err := upgradeBinary(log, resp.GetDownloadUrl()); err != nil {
 					log.Fatal().Err(err).Msg("Error while upgrading to latest compatible version.")
 				}
@@ -77,7 +90,7 @@ func init() {
 // upgradeBinary takes a url to download the latest release from, extracts it
 // and moves the os and architecture based file to the current executables location.
 func upgradeBinary(log zerolog.Logger, url string) error {
-	log.Info().Msg("Downloading latest version...")
+	log.Info().Msg("Downloading...")
 	response, err := http.Get(url)
 	if err != nil {
 		log.Debug().Err(err).Str("url", url).Msg("Failed to get the download url.")
@@ -85,6 +98,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	}
 	defer response.Body.Close()
 
+	log.Info().Msg("done. Extracting...")
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Debug().Err(err).Msg("Failed to read body.")
@@ -144,7 +158,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		outFile.Close()
 		rc.Close()
 	}
-	log.Info().Msg("Release unzipped... updating binary.")
+	log.Info().Msg("done. Updating binary...")
 
 	if err := os.Rename(filepath.Join(dest, execName), filepath.Join(originalPath, execName)); err != nil {
 		log.Debug().Err(err).Msg("Failed to move new version.")
