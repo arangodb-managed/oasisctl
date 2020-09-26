@@ -120,27 +120,29 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 
 	for _, f := range zipReader.File {
 		dir := path.Dir(f.Name)
-		if strings.Contains(dir, filepath.Join(ops, arch)) && f.Mode().IsRegular() {
-			filename := filepath.Base(f.Name)
-			outFile, err := os.OpenFile(filepath.Join(dest, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-			if err != nil {
-				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to create file.")
-				return err
-			}
-
-			rc, err := f.Open()
-			if err != nil {
-				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to open file.")
-				return err
-			}
-			if _, err := io.Copy(outFile, rc); err != nil {
-				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to copy file content.")
-				return err
-			}
-
-			outFile.Close()
-			rc.Close()
+		// only decompress the binary this system needs and don't bother with creating the folders.
+		if !strings.Contains(dir, filepath.Join(ops, arch)) || f.Mode().IsDir() {
+			continue
 		}
+		filename := filepath.Base(f.Name)
+		outFile, err := os.OpenFile(filepath.Join(dest, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to create file.")
+			return err
+		}
+
+		rc, err := f.Open()
+		if err != nil {
+			log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to open file.")
+			return err
+		}
+		if _, err := io.Copy(outFile, rc); err != nil {
+			log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to copy file content.")
+			return err
+		}
+
+		outFile.Close()
+		rc.Close()
 	}
 	log.Info().Msg("Release unzipped... updating binary.")
 
