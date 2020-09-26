@@ -32,6 +32,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -100,35 +101,11 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		log.Debug().Err(err).Msg("Failed to create temp folder for decrompressing.")
 		return err
 	}
-	for _, f := range zipReader.File {
-		if f.FileInfo().IsDir() {
-			if err := os.MkdirAll(filepath.Join(dest, f.Name), os.ModePerm); err != nil {
-				log.Debug().Err(err).Str("dest", dest).Str("file", f.Name).Msg("Failed to create folder.")
-				return err
-			}
-			continue
+	defer func() {
+		if err := os.RemoveAll(dest); err != nil {
+			log.Debug().Err(err).Str("folder", dest).Msg("Failed to perform cleanup. Please remove manually.")
 		}
-
-		outFile, err := os.OpenFile(filepath.Join(dest, f.Name), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-		if err != nil {
-			log.Debug().Err(err).Str("dest", dest).Str("file", f.Name).Msg("Failed to create file.")
-			return err
-		}
-
-		rc, err := f.Open()
-		if err != nil {
-			log.Debug().Err(err).Str("dest", dest).Str("file", f.Name).Msg("Failed to open file.")
-			return err
-		}
-		if _, err := io.Copy(outFile, rc); err != nil {
-			log.Debug().Err(err).Str("dest", dest).Str("file", f.Name).Msg("Failed to copy file content.")
-			return err
-		}
-
-		outFile.Close()
-		rc.Close()
-	}
-	log.Info().Msg("Release unzipped... updating binary.")
+	}()
 
 	ops := runtime.GOOS
 	arch := runtime.GOARCH
@@ -141,7 +118,33 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	originalPath := path.Dir(currentExecutable)
 	execName := filepath.Base(os.Args[0])
 
-	if err := os.Rename(filepath.Join(dest, "bin", ops, arch, execName), filepath.Join(originalPath, execName)); err != nil {
+	for _, f := range zipReader.File {
+		dir := path.Dir(f.Name)
+		if strings.Contains(dir, filepath.Join(ops, arch)) && f.Mode().IsRegular() {
+			filename := filepath.Base(f.Name)
+			outFile, err := os.OpenFile(filepath.Join(dest, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to create file.")
+				return err
+			}
+
+			rc, err := f.Open()
+			if err != nil {
+				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to open file.")
+				return err
+			}
+			if _, err := io.Copy(outFile, rc); err != nil {
+				log.Debug().Err(err).Str("dest", dest).Str("file", filename).Msg("Failed to copy file content.")
+				return err
+			}
+
+			outFile.Close()
+			rc.Close()
+		}
+	}
+	log.Info().Msg("Release unzipped... updating binary.")
+
+	if err := os.Rename(filepath.Join(dest, execName), filepath.Join(originalPath, execName)); err != nil {
 		log.Debug().Err(err).Msg("Failed to move new version.")
 		return err
 	}
