@@ -81,7 +81,10 @@ func init() {
 
 				latestVersion := semver.New(strings.TrimPrefix(resp.GetLatestVersion(), "v"))
 				if latestVersion.Equal(*currentVersion) {
-					log.Info().Msg("Already using latest version. Nothing to do.")
+					log.Info().
+						Str("latest_version", latestVersion.String()).
+						Str("current_version", currentVersion.String()).
+						Msg("Already using latest version. Nothing to do.")
 					return
 				}
 				log.Info().Str("latest_version", resp.GetLatestVersion()).Msg("Applying latest version...")
