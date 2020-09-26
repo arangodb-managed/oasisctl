@@ -35,6 +35,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/coreos/go-semver/semver"
+
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -77,6 +79,11 @@ func init() {
 					return
 				}
 
+				latestVersion := semver.New(strings.TrimPrefix(resp.GetLatestVersion(), "v"))
+				if latestVersion.Equal(*currentVersion) {
+					log.Info().Msg("Already using latest version. Nothing to do.")
+					return
+				}
 				log.Info().Str("latest_version", resp.GetLatestVersion()).Msg("Applying latest version...")
 				if err := upgradeBinary(log, resp.GetDownloadUrl()); err != nil {
 					log.Fatal().Err(err).Msg("Error while upgrading to latest compatible version.")
