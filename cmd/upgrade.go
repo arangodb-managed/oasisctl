@@ -80,7 +80,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	log.Info().Msg("Downloading latest version...")
 	response, err := http.Get(url)
 	if err != nil {
-		log.Debug().Err(err).Msg("Failed to get the download url.")
+		log.Debug().Err(err).Str("url", url).Msg("Failed to get the download url.")
 		return err
 	}
 	defer response.Body.Close()
