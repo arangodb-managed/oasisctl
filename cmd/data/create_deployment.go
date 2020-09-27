@@ -65,6 +65,7 @@ func init() {
 				dbserverMemorySize    int32
 				dbserverDiskSize      int32
 				acceptTAndC           bool
+				customImage           string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -87,6 +88,7 @@ func init() {
 			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
+			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -163,6 +165,10 @@ func init() {
 				if cargs.acceptTAndC {
 					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
 					req.AcceptedTermsAndConditionsId = tandc.GetId()
+				}
+
+				if cargs.customImage != "" {
+					req.CustomImage = cargs.customImage
 				}
 
 				// Create deployment
