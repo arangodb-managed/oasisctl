@@ -187,7 +187,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 
 	defer func() {
 		if ops == "windows" {
-			log.Info().Msg("Please remove binary with extension .old.")
+			log.Info().Str("old", old).Msg("Please remove binary with extension .old.")
 			return
 		}
 		if err := os.RemoveAll(old); err != nil {
