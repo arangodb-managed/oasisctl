@@ -112,10 +112,9 @@ func envOrDefault(envKeySuffix string, defaultValue string) string {
 	return defaultValue
 }
 
-// collectCurrentApiVersions collects all current api versions and converts them into apiversionpairs.
-func collectCurrentApiVersions() []*tools.APIVersionPair {
-	resp := make([]*tools.APIVersionPair, 0)
-	convertToApiVersionPair := func(apiid string, major int, minor int, patch int) *tools.APIVersionPair {
+// collectCurrentAPIVersions collects all current api versions and converts them into apiversionpairs.
+func collectCurrentAPIVersions() []*tools.APIVersionPair {
+	convertToAPIVersionPair := func(apiid string, major int, minor int, patch int) *tools.APIVersionPair {
 		return &tools.APIVersionPair{
 			Version: &common.Version{
 				Major: int32(major),
@@ -125,23 +124,25 @@ func collectCurrentApiVersions() []*tools.APIVersionPair {
 			ApiId: apiid,
 		}
 	}
-	resp = append(resp, convertToApiVersionPair(backup.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(crypto.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(data.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(example.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(iam.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(mon.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(platform.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(replication.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(rm.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToApiVersionPair(security.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion))
+	resp := []*tools.APIVersionPair{
+		convertToAPIVersionPair(backup.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(crypto.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(data.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(example.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(iam.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(mon.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(platform.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(replication.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(rm.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(security.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+	}
 	return resp
 }
 
 // mustDialOptions of MustDialAPI
 type mustDialOptions struct {
-	keepAlive    bool
-	versionCheck bool
+	keepAlive      bool
+	noVersionCheck bool
 }
 
 // MustDialOption type for MustDialAPI
@@ -150,7 +151,7 @@ type MustDialOption func(*mustDialOptions)
 // WithoutVersionCheck disables the compatibility check during the dial operation
 func WithoutVersionCheck() MustDialOption {
 	return func(options *mustDialOptions) {
-		options.versionCheck = false
+		options.noVersionCheck = true
 	}
 }
 
@@ -164,10 +165,7 @@ func WithKeepAlive() MustDialOption {
 // MustDialAPI dials the ArangoDB Oasis API
 func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 	// default configuration
-	options := mustDialOptions{
-		keepAlive:    false,
-		versionCheck: true,
-	}
+	options := mustDialOptions{}
 	// apply options
 	for _, opt := range opts {
 		opt(&options)
@@ -189,12 +187,12 @@ func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 		CLILog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Oasis API")
 	}
 	// version check
-	if options.versionCheck {
-		versions := collectCurrentApiVersions()
+	if !options.noVersionCheck {
+		versions := collectCurrentAPIVersions()
 		toolsc := tools.NewToolsServiceClient(conn)
 		ctx := ContextWithToken()
 		resp, err := toolsc.GetLatestVersion(ctx, &tools.GetLatestVersionRequest{
-			Name:                "oasisctl",
+			Name:                tools.ToolNameOasisctl,
 			ExpectedApiVersions: versions,
 		})
 		if err != nil {
