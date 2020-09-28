@@ -41,6 +41,7 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	common "github.com/arangodb-managed/apis/common/v1"
 	tools "github.com/arangodb-managed/apis/tools/v1"
 
 	"github.com/arangodb-managed/oasisctl/pkg/format"
@@ -132,12 +133,6 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		}
 	}()
 
-	// Make sure destination exists
-	if err := os.MkdirAll(dest, os.ModePerm); err != nil {
-		log.Debug().Err(err).Msg("Failed to ensure temp folder.")
-		return err
-	}
-
 	ops := runtime.GOOS
 	arch := runtime.GOARCH
 
@@ -149,12 +144,14 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	originalPath := path.Dir(currentExecutable)
 	execName := filepath.Base(os.Args[0])
 
+	binaryFound := false
 	for _, f := range zipReader.File {
 		dir := path.Dir(f.Name)
 		// only decompress the binary this system needs and don't bother with creating the folders.
-		if !strings.Contains(dir, filepath.Join(ops, arch)) || f.Mode().IsDir() {
+		if !strings.Contains(filepath.ToSlash(dir), filepath.ToSlash(filepath.Join(ops, arch))) || f.Mode().IsDir() {
 			continue
 		}
+		binaryFound = true
 		filename := filepath.Base(f.Name)
 		outFile, err := os.OpenFile(filepath.Join(dest, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {
@@ -174,6 +171,9 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 
 		outFile.Close()
 		rc.Close()
+	}
+	if !binaryFound {
+		return common.Unknown("No binary found for your os/architecture %s/%s", ops, arch)
 	}
 	log.Info().Msg("done. Updating binary...")
 
