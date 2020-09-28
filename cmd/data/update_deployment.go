@@ -51,6 +51,7 @@ func init() {
 				name           string
 				description    string
 				ipallowlistID  string
+				customImage    string
 
 				version               string
 				model                 string
@@ -81,6 +82,7 @@ func init() {
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
 			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
+			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -161,6 +163,10 @@ func init() {
 				}
 				if f.Changed("dbserver-disk-size") {
 					ensureServers().DbserverDiskSize = cargs.dbserverDiskSize
+					hasChanges = true
+				}
+				if f.Changed("custom-image") {
+					item.CustomImage = cargs.customImage
 					hasChanges = true
 				}
 				if !hasChanges {

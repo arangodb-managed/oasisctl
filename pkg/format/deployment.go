@@ -74,6 +74,9 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 			kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
 			kv{"node-size-id", x.Model.NodeSizeId})
 	}
+	if x.GetCustomImage() != "" {
+		d = append(d, kv{"custom-image", x.GetCustomImage()})
+	}
 	return formatObject(opts, d...)
 }
 
