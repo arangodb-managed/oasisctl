@@ -127,14 +127,19 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		log.Debug().Err(err).Msg("Failed to create temp folder for decrompressing.")
 		return err
 	}
+
+	ops := runtime.GOOS
+	arch := runtime.GOARCH
+
 	defer func() {
+		if ops == "windows" {
+			log.Info().Str("temp_folder", dest).Msgf("The old executable has been deposited under the displayed temp folder.")
+			return
+		}
 		if err := os.RemoveAll(dest); err != nil {
 			log.Debug().Err(err).Str("folder", dest).Msg("Failed to perform cleanup. Please remove manually.")
 		}
 	}()
-
-	ops := runtime.GOOS
-	arch := runtime.GOARCH
 
 	currentExecutable, err := os.Executable()
 	if err != nil {
@@ -176,6 +181,15 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		return common.Unknown("No binary found for your os/architecture %s/%s", ops, arch)
 	}
 	log.Info().Msg("done. Updating binary...")
+
+	// on windows, we have to move the currently running binary away before
+	// putting the new binary in place.
+	if ops == "windows" {
+		if err := os.Rename(filepath.Join(originalPath, execName), filepath.Join(dest, execName+"_old")); err != nil {
+			log.Debug().Err(err).Msg("Failed to move old binary to temp folder.")
+			return err
+		}
+	}
 
 	if err := os.Rename(filepath.Join(dest, execName), filepath.Join(originalPath, execName)); err != nil {
 		log.Debug().Err(err).Msg("Failed to move new version.")
