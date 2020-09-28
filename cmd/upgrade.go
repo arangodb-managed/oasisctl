@@ -132,6 +132,12 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		}
 	}()
 
+	// Make sure destination exists
+	if err := os.MkdirAll(dest, os.ModePerm); err != nil {
+		log.Debug().Err(err).Msg("Failed to ensure temp folder.")
+		return err
+	}
+
 	ops := runtime.GOOS
 	arch := runtime.GOARCH
 
