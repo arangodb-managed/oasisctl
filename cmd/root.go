@@ -201,7 +201,7 @@ func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 			CLILog.Fatal().Err(err).Msg("Failed to call compatibility checker.")
 		}
 		if !resp.GetIsCompatible() {
-			CLILog.Fatal().Msg("This tool is not compatible with the current API. Please upgrade.")
+			CLILog.Fatal().Str("current_version", currentVersion.String()).Msg("This tool is not compatible with the current API. Please upgrade.")
 		}
 	}
 	return conn
