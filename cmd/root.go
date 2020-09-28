@@ -35,7 +35,19 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 
+	backup "github.com/arangodb-managed/apis/backup/v1"
 	"github.com/arangodb-managed/apis/common/auth"
+	common "github.com/arangodb-managed/apis/common/v1"
+	crypto "github.com/arangodb-managed/apis/crypto/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
+	example "github.com/arangodb-managed/apis/example/v1"
+	iam "github.com/arangodb-managed/apis/iam/v1"
+	mon "github.com/arangodb-managed/apis/monitoring/v1"
+	platform "github.com/arangodb-managed/apis/platform/v1"
+	replication "github.com/arangodb-managed/apis/replication/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	security "github.com/arangodb-managed/apis/security/v1"
+	tools "github.com/arangodb-managed/apis/tools/v1"
 
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
@@ -100,13 +112,70 @@ func envOrDefault(envKeySuffix string, defaultValue string) string {
 	return defaultValue
 }
 
+// collectCurrentAPIVersions collects all current api versions and converts them into apiversionpairs.
+func collectCurrentAPIVersions() []*tools.APIVersionPair {
+	convertToAPIVersionPair := func(apiid string, major int, minor int, patch int) *tools.APIVersionPair {
+		return &tools.APIVersionPair{
+			Version: &common.Version{
+				Major: int32(major),
+				Minor: int32(minor),
+				Patch: int32(patch),
+			},
+			ApiId: apiid,
+		}
+	}
+	resp := []*tools.APIVersionPair{
+		convertToAPIVersionPair(backup.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(crypto.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(data.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(example.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(iam.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(mon.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(platform.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(replication.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(rm.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(security.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+	}
+	return resp
+}
+
+// mustDialOptions of MustDialAPI
+type mustDialOptions struct {
+	keepAlive      bool
+	noVersionCheck bool
+}
+
+// MustDialOption type for MustDialAPI
+type MustDialOption func(*mustDialOptions)
+
+// WithoutVersionCheck disables the compatibility check during the dial operation
+func WithoutVersionCheck() MustDialOption {
+	return func(options *mustDialOptions) {
+		options.noVersionCheck = true
+	}
+}
+
+// WithKeepAlive sets the connection to keepalive.
+func WithKeepAlive() MustDialOption {
+	return func(options *mustDialOptions) {
+		options.keepAlive = true
+	}
+}
+
 // MustDialAPI dials the ArangoDB Oasis API
-func MustDialAPI(setKeepalive ...bool) *grpc.ClientConn {
+func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
+	// default configuration
+	options := mustDialOptions{}
+	// apply options
+	for _, opt := range opts {
+		opt(&options)
+	}
 	// Set up a connection to the server.
 	dialOpts := []grpc.DialOption{
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),
 	}
-	if len(setKeepalive) > 0 && setKeepalive[0] {
+	// keepalive
+	if options.keepAlive {
 		dialOpts = append(dialOpts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
 			Time:                time.Minute / 2,
 			Timeout:             time.Minute,
@@ -116,6 +185,21 @@ func MustDialAPI(setKeepalive ...bool) *grpc.ClientConn {
 	conn, err := grpc.Dial(RootArgs.endpoint+apiPortSuffix, dialOpts...)
 	if err != nil {
 		CLILog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Oasis API")
+	}
+	// version check
+	if !options.noVersionCheck {
+		versions := collectCurrentAPIVersions()
+		toolsc := tools.NewToolsServiceClient(conn)
+		resp, err := toolsc.GetLatestVersion(context.Background(), &tools.GetLatestVersionRequest{
+			Name:                tools.ToolNameOasisctl,
+			ExpectedApiVersions: versions,
+		})
+		if err != nil {
+			CLILog.Fatal().Err(err).Msg("Failed to call compatibility checker.")
+		}
+		if !resp.GetIsCompatible() {
+			CLILog.Fatal().Str("current_version", currentVersion.String()).Msg("This tool is not compatible with the current API. Please upgrade.")
+		}
 	}
 	return conn
 }
