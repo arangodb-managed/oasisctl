@@ -132,10 +132,6 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	arch := runtime.GOARCH
 
 	defer func() {
-		if ops == "windows" {
-			log.Info().Str("temp_folder", dest).Msgf("The old executable has been deposited under the displayed temp folder.")
-			return
-		}
 		if err := os.RemoveAll(dest); err != nil {
 			log.Debug().Err(err).Str("folder", dest).Msg("Failed to perform cleanup. Please remove manually.")
 		}
@@ -182,17 +178,54 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	}
 	log.Info().Msg("done. Updating binary...")
 
-	// on windows, we have to move the currently running binary away before
-	// putting the new binary in place.
-	if ops == "windows" {
-		if err := os.Rename(filepath.Join(originalPath, execName), filepath.Join(dest, execName+"_old")); err != nil {
-			log.Debug().Err(err).Msg("Failed to move old binary to temp folder.")
-			return err
-		}
+	// Rename the original running binary so updating on Windows can also work.
+	old := filepath.Join(originalPath, execName+".old")
+	if err := os.Rename(filepath.Join(originalPath, execName), old); err != nil {
+		log.Debug().Err(err).Msg("Failed to rename current running binary.")
+		return err
 	}
 
-	if err := os.Rename(filepath.Join(dest, execName), filepath.Join(originalPath, execName)); err != nil {
-		log.Debug().Err(err).Msg("Failed to move new version.")
+	defer func() {
+		if ops == "windows" {
+			log.Info().Msg("Please remove binary with extension .old.")
+			return
+		}
+		if err := os.RemoveAll(old); err != nil {
+			log.Debug().Err(err).Str("old", old).Msg("Failed to perform cleanup. Please remove manually.")
+		}
+	}()
+
+	if err := copyFile(log, filepath.Join(dest, execName), filepath.Join(originalPath, execName)); err != nil {
+		log.Debug().Err(err).Msg("Failed to copy new version.")
+		return err
+	}
+	return nil
+}
+
+// copyFile does a safe copy which works over partitions as well as locally.
+func copyFile(log zerolog.Logger, src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		log.Debug().Err(err).Str("dest", dst).Msg("Failed to open src file.")
+		return err
+	}
+	defer srcFile.Close()
+
+	// get src file mode
+	srcMode, err := os.Stat(srcFile.Name())
+	if err != nil {
+		log.Debug().Err(err).Str("dest", dst).Msg("Failed to stat src file.")
+		return err
+	}
+	dstFile, err := os.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, srcMode.Mode())
+	if err != nil {
+		log.Debug().Err(err).Str("dest", dst).Msg("Failed to create destination file.")
+		return err
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		log.Debug().Err(err).Str("dest", dst).Str("src", src).Msg("Failed to copy file content.")
 		return err
 	}
 	return nil
