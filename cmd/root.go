@@ -190,8 +190,7 @@ func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 	if !options.noVersionCheck {
 		versions := collectCurrentAPIVersions()
 		toolsc := tools.NewToolsServiceClient(conn)
-		ctx := ContextWithToken()
-		resp, err := toolsc.GetLatestVersion(ctx, &tools.GetLatestVersionRequest{
+		resp, err := toolsc.GetLatestVersion(context.Background(), &tools.GetLatestVersionRequest{
 			Name:                tools.ToolNameOasisctl,
 			ExpectedApiVersions: versions,
 		})

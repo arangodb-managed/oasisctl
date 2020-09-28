@@ -64,7 +64,6 @@ func init() {
 				log := CLILog
 				conn := MustDialAPI(WithoutVersionCheck())
 				toolsc := tools.NewToolsServiceClient(conn)
-				// ctx := ContextWithToken()
 				versions := collectCurrentAPIVersions()
 				resp, err := toolsc.GetLatestVersion(context.Background(), &tools.GetLatestVersionRequest{
 					Name:                tools.ToolNameOasisctl,
