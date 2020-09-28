@@ -57,8 +57,10 @@ func init() {
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				dryRun bool
+				force  bool
 			}{}
 			f.BoolVarP(&cargs.dryRun, "dry-run", "d", false, "Do an upgrade without applying the version.")
+			f.BoolVarP(&cargs.force, "force", "f", false, "Force an upgrade even if the versions match.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				log := CLILog
@@ -79,7 +81,7 @@ func init() {
 				}
 
 				latestVersion := semver.New(strings.TrimPrefix(resp.GetLatestVersion(), "v"))
-				if latestVersion.Equal(*currentVersion) {
+				if latestVersion.Equal(*currentVersion) && !cargs.force {
 					log.Info().
 						Str("latest_version", latestVersion.String()).
 						Str("current_version", currentVersion.String()).
