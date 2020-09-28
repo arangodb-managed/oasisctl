@@ -25,6 +25,7 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -63,9 +64,9 @@ func init() {
 				log := CLILog
 				conn := MustDialAPI(WithoutVersionCheck())
 				toolsc := tools.NewToolsServiceClient(conn)
-				ctx := ContextWithToken()
+				// ctx := ContextWithToken()
 				versions := collectCurrentAPIVersions()
-				resp, err := toolsc.GetLatestVersion(ctx, &tools.GetLatestVersionRequest{
+				resp, err := toolsc.GetLatestVersion(context.Background(), &tools.GetLatestVersionRequest{
 					Name:                tools.ToolNameOasisctl,
 					ExpectedApiVersions: versions,
 				})
