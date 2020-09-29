@@ -48,7 +48,7 @@ publish-oasis-tools:
 
 update-apis-json: binaries
 	./bin/$(GOOS)/$(GOARCH)/$(PROJECT)$(GOEXE) expected-apis
-	git status apis.json --porcelain && git add apis.json && git commit -m 'Update apis.json' apis.json
+	git diff --quiet apis.json || sh -c "git add apis.json ; git commit -m 'Update apis.json' apis.json"
 
 .PHONY: update-modules
 update-modules:
