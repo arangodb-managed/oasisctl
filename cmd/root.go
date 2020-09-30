@@ -126,15 +126,15 @@ func collectCurrentAPIVersions() []*tools.APIVersionPair {
 	}
 	resp := []*tools.APIVersionPair{
 		convertToAPIVersionPair(backup.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(crypto.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(data.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(example.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(iam.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(mon.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(platform.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(replication.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(rm.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(security.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
+		convertToAPIVersionPair(crypto.APIID, crypto.APIMajorVersion, crypto.APIMinorVersion, crypto.APIPatchVersion),
+		convertToAPIVersionPair(data.APIID, data.APIMajorVersion, data.APIMinorVersion, data.APIPatchVersion),
+		convertToAPIVersionPair(example.APIID, example.APIMajorVersion, example.APIMinorVersion, example.APIPatchVersion),
+		convertToAPIVersionPair(iam.APIID, iam.APIMajorVersion, iam.APIMinorVersion, iam.APIPatchVersion),
+		convertToAPIVersionPair(mon.APIID, mon.APIMajorVersion, mon.APIMinorVersion, mon.APIPatchVersion),
+		convertToAPIVersionPair(platform.APIID, platform.APIMajorVersion, platform.APIMinorVersion, platform.APIPatchVersion),
+		convertToAPIVersionPair(replication.APIID, replication.APIMajorVersion, replication.APIMinorVersion, replication.APIPatchVersion),
+		convertToAPIVersionPair(rm.APIID, rm.APIMajorVersion, rm.APIMinorVersion, rm.APIPatchVersion),
+		convertToAPIVersionPair(security.APIID, security.APIMajorVersion, security.APIMinorVersion, security.APIPatchVersion),
 	}
 	return resp
 }
