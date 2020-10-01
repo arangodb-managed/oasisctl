@@ -43,11 +43,13 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
-				regionID string
+				backupID             string
+				regionID             string
+				termsAndConditionsID string
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "b", "", "Clone a deployment from a backup using the backup's ID.")
 			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optionally defined region in which the new deployment should be created in.")
+			f.StringVar(&cargs.termsAndConditionsID, "terms-and-conditions-id", "", "Set the current terms and conditions to accept.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -61,7 +63,8 @@ func init() {
 				repl := replication.NewReplicationServiceClient(conn)
 
 				req := &replication.CloneDeploymentFromBackupRequest{
-					BackupId: backupID,
+					BackupId:                     backupID,
+					AcceptedTermsAndConditionsId: cargs.termsAndConditionsID,
 				}
 				// Clone deployment
 				created, err := repl.CloneDeploymentFromBackup(ctx, req)
