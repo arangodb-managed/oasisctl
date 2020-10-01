@@ -71,8 +71,7 @@ func init() {
 				}
 				if cargs.acceptTAndC {
 					rmc := rm.NewResourceManagerServiceClient(conn)
-					org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
-					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", org.GetId(), rmc)
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
 					req.AcceptedTermsAndConditionsId = tandc.GetId()
 				}
 
