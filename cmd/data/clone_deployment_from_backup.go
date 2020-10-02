@@ -29,9 +29,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	replication "github.com/arangodb-managed/apis/replication/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -43,11 +45,15 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				backupID string
-				regionID string
+				backupID       string
+				organizationID string
+				regionID       string
+				acceptTAndC    bool
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "b", "", "Clone a deployment from a backup using the backup's ID.")
 			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optionally defined region in which the new deployment should be created in.")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the clone in")
+			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -63,6 +69,12 @@ func init() {
 				req := &replication.CloneDeploymentFromBackupRequest{
 					BackupId: backupID,
 				}
+				if cargs.acceptTAndC {
+					rmc := rm.NewResourceManagerServiceClient(conn)
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
+					req.AcceptedTermsAndConditionsId = tandc.GetId()
+				}
+
 				// Clone deployment
 				created, err := repl.CloneDeploymentFromBackup(ctx, req)
 				if err != nil {
