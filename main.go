@@ -29,6 +29,7 @@ import (
 	_ "github.com/gogo/protobuf/types"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
+	_ "github.com/arangodb-managed/oasisctl/cmd/audit"
 	_ "github.com/arangodb-managed/oasisctl/cmd/crypto"
 	_ "github.com/arangodb-managed/oasisctl/cmd/data"
 	_ "github.com/arangodb-managed/oasisctl/cmd/example"
