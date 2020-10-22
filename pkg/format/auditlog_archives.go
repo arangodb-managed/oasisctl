@@ -32,8 +32,11 @@ func AuditLogArchiveList(list []*audit.AuditLogArchive, opts Options) string {
 		x := list[i]
 		return []kv{
 			{"id", x.GetId()},
+			{"auditlog-id", x.GetAuditlogId()},
+			{"deployment-id", x.GetDeploymentId()},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
+			{"size-in-bytes-changed-at", formatTime(opts, x.GetSizeInBytesChangedAt(), "-")},
 		}
 	}, false)
 }
