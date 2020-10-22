@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
+	"github.com/gogo/protobuf/types"
 )
 
 // ParseTimeFromNow parse a timestamp or duration before now.
@@ -38,4 +39,18 @@ func ParseTimeFromNow(value string) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return ts, nil
+}
+
+// ParseTime parses a given date string in RFC3339 to a proto timestamp.
+// Usually used by from / to settings.
+func ParseTime(date string) (*types.Timestamp, error) {
+	d, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		return nil, err
+	}
+	stamp, err := types.TimestampProto(d)
+	if err != nil {
+		return nil, err
+	}
+	return stamp, nil
 }

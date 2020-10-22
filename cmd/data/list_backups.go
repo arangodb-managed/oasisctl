@@ -24,9 +24,7 @@ package data
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -34,6 +32,7 @@ import (
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/util"
 )
 
 var listBackupsCmd = cmd.InitCommand(
@@ -68,7 +67,7 @@ var listBackupsCmd = cmd.InitCommand(
 
 			if len(cargs.from) > 0 {
 				var err error
-				req.From, err = parseTime(cargs.from)
+				req.From, err = util.ParseTime(cargs.from)
 				if err != nil {
 					log.Fatal().Err(err)
 				}
@@ -76,7 +75,7 @@ var listBackupsCmd = cmd.InitCommand(
 
 			if len(cargs.to) > 0 {
 				var err error
-				req.To, err = parseTime(cargs.to)
+				req.To, err = util.ParseTime(cargs.to)
 				if err != nil {
 					log.Fatal().Err(err)
 				}
@@ -93,15 +92,3 @@ var listBackupsCmd = cmd.InitCommand(
 		}
 	},
 )
-
-func parseTime(date string) (*types.Timestamp, error) {
-	d, err := time.Parse(time.RFC3339, date)
-	if err != nil {
-		return nil, err
-	}
-	stamp, err := types.TimestampProto(d)
-	if err != nil {
-		return nil, err
-	}
-	return stamp, nil
-}
