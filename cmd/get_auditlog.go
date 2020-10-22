@@ -36,5 +36,5 @@ var (
 )
 
 func init() {
-	RootCmd.AddCommand(GetAuditLogCmd)
+	GetCmd.AddCommand(GetAuditLogCmd)
 }
