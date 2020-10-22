@@ -29,49 +29,44 @@ import (
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListCmd,
+		cmd.ListAuditLogCmd,
 		&cobra.Command{
-			Use:   "auditlogs",
-			Short: "List auditlogs",
+			Use:   "archives",
+			Short: "List auditlog archives",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				organizationID string
+				auditLogID string
 			}{}
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				orgID, argsUsed := cmd.ReqOption("organization-id", cargs.organizationID, args, 0)
+				auditLogId, argsUsed := cmd.ReqOption("organization-id", cargs.auditLogID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
-				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				org := selection.MustSelectOrganization(ctx, log, orgID, rmc)
-
 				// Make the call
-				result, err := auditc.ListAuditLogs(ctx, &audit.ListAuditLogsRequest{OrganizationId: org.GetId()})
+				result, err := auditc.ListAuditLogArchives(ctx, &audit.ListAuditLogArchivesRequest{AuditlogId: auditLogId})
 				if err != nil {
-					log.Fatal().Err(err).Str("orgnization-id", org.GetId()).Msg("Failed to list audit log.")
+					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to list auditlog archives.")
 				}
 
 				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogList(result.GetItems(), cmd.RootArgs.Format))
+				fmt.Println(format.AuditLogArchiveList(result.GetItems(), cmd.RootArgs.Format))
 			}
 		},
 	)
