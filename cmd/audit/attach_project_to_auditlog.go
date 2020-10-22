@@ -23,34 +23,33 @@
 package audit
 
 import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
-
 	audit "github.com/arangodb-managed/apis/audit/v1"
-
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListCmd,
+		cmd.AuditLogCmd,
 		&cobra.Command{
-			Use:   "auditlogs",
-			Short: "List auditlogs",
+			Use:   "attach",
+			Short: "Attach a project to an audit log",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				organizationID string
+				id        string
+				projectID string
 			}{}
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to list audit logs in")
+			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to attach to.")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to attach to the audit log.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				orgID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
+				auditID, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
+				projID, argsUsed := cmd.ReqOption("project-id", cargs.projectID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -59,14 +58,15 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Make the call
-				result, err := auditc.ListAuditLogs(ctx, &audit.ListAuditLogsRequest{OrganizationId: orgID})
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list audit log.")
+				if _, err := auditc.AttachProjectToAuditLog(ctx, &audit.AttachProjectToAuditLogRequest{
+					ProjectId:  projID,
+					AuditlogId: auditID,
+				}); err != nil {
+					log.Fatal().Err(err).Str("project-id", projID).Str("auditlog-id", auditID).Msg("Failed to attach to project.")
 				}
 
 				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogList(result.GetItems(), cmd.RootArgs.Format))
 			}
 		},
 	)

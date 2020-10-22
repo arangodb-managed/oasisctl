@@ -63,7 +63,7 @@ func init() {
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
 			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the deployment in")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create an audit log in")
 			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
 			f.StringVar(&cargs.destinationType, "destination-type", "", `Type of destination. Possible values are: "cloud", "https-post"`)
 			f.StringVar(&cargs.url, "destination-https-url", "", "URL of the server to POST to. Scheme must be HTTPS.")

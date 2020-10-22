@@ -23,34 +23,31 @@
 package audit
 
 import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
-
 	audit "github.com/arangodb-managed/apis/audit/v1"
-
+	common "github.com/arangodb-managed/apis/common/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListCmd,
+		cmd.AuditLogCmd,
 		&cobra.Command{
-			Use:   "auditlogs",
-			Short: "List auditlogs",
+			Use:   "detach",
+			Short: "Detach a project from an auditlog",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				organizationID string
+				projectID string
 			}{}
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to list audit logs in")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to detach the audit log.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				orgID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
+				projID, argsUsed := cmd.ReqOption("project-id", cargs.projectID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -59,14 +56,12 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Make the call
-				result, err := auditc.ListAuditLogs(ctx, &audit.ListAuditLogsRequest{OrganizationId: orgID})
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list audit log.")
+				if _, err := auditc.DetachProjectFromAuditLog(ctx, &common.IDOptions{Id: projID}); err != nil {
+					log.Fatal().Err(err).Str("project-id", projID).Msg("Failed to detach to project.")
 				}
 
 				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogList(result.GetItems(), cmd.RootArgs.Format))
 			}
 		},
 	)
