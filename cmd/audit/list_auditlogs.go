@@ -25,6 +25,9 @@ package audit
 import (
 	"fmt"
 
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -45,23 +48,26 @@ func init() {
 			cargs := &struct {
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to list audit logs in")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				orgID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
+				orgID, argsUsed := cmd.ReqOption("organization-id", cargs.organizationID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				org := selection.MustSelectOrganization(ctx, log, orgID, rmc)
+
 				// Make the call
-				result, err := auditc.ListAuditLogs(ctx, &audit.ListAuditLogsRequest{OrganizationId: orgID})
+				result, err := auditc.ListAuditLogs(ctx, &audit.ListAuditLogsRequest{OrganizationId: org.GetId()})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list audit log.")
+					log.Fatal().Err(err).Str("orgnization-id", org.GetId()).Msg("Failed to list audit log.")
 				}
 
 				// Show result

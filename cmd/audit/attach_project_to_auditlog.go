@@ -23,11 +23,15 @@
 package audit
 
 import (
-	audit "github.com/arangodb-managed/apis/audit/v1"
-	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+
+	audit "github.com/arangodb-managed/apis/audit/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -39,30 +43,36 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				id        string
-				projectID string
+				id             string
+				projectID      string
+				organizationID string
 			}{}
 			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to attach to.")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to attach to the audit log.")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
 				auditID, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
 				projID, argsUsed := cmd.ReqOption("project-id", cargs.projectID, args, 0)
+				orgID, argsUsed := cmd.OptOption("organization-id", cargs.projectID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+
+				proj := selection.MustSelectProject(ctx, log, projID, orgID, rmc)
 
 				// Make the call
 				if _, err := auditc.AttachProjectToAuditLog(ctx, &audit.AttachProjectToAuditLogRequest{
-					ProjectId:  projID,
+					ProjectId:  proj.GetId(),
 					AuditlogId: auditID,
 				}); err != nil {
-					log.Fatal().Err(err).Str("project-id", projID).Str("auditlog-id", auditID).Msg("Failed to attach to project.")
+					log.Fatal().Err(err).Str("project-id", proj.GetId()).Str("auditlog-id", auditID).Msg("Failed to attach to project.")
 				}
 
 				// Show result

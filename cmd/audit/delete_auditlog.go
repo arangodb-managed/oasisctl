@@ -49,7 +49,7 @@ func init() {
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				id, argsUsed := cmd.OptOption("auditlog-id", cargs.id, args, 0)
+				id, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect

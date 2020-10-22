@@ -30,9 +30,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 const (
@@ -63,7 +65,7 @@ func init() {
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
 			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create an audit log in")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
 			f.StringVar(&cargs.destinationType, "destination-type", "", `Type of destination. Possible values are: "cloud", "https-post"`)
 			f.StringVar(&cargs.url, "destination-https-url", "", "URL of the server to POST to. Scheme must be HTTPS.")
@@ -83,7 +85,9 @@ func init() {
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+				org := selection.MustSelectOrganization(ctx, log, orgID, rmc)
 
 				// Construct destination
 				destination := &audit.AuditLog_Destination{}
@@ -124,7 +128,7 @@ func init() {
 				req := &audit.AuditLog{
 					Name:           name,
 					Description:    cargs.description,
-					OrganizationId: orgID,
+					OrganizationId: org.GetId(),
 					IsDefault:      cargs.isDefault,
 					Destinations:   []*audit.AuditLog_Destination{destination},
 				}

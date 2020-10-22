@@ -23,12 +23,16 @@
 package audit
 
 import (
-	audit "github.com/arangodb-managed/apis/audit/v1"
-	common "github.com/arangodb-managed/apis/common/v1"
-	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+
+	audit "github.com/arangodb-managed/apis/audit/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
+	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+
+	"github.com/arangodb-managed/oasisctl/cmd"
+	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
@@ -40,23 +44,29 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				projectID string
+				organizationID string
+				projectID      string
 			}{}
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to detach the audit log.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
 				projID, argsUsed := cmd.ReqOption("project-id", cargs.projectID, args, 0)
+				organizationID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
+				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				proj := selection.MustSelectProject(ctx, log, projID, organizationID, rmc)
+
 				// Make the call
-				if _, err := auditc.DetachProjectFromAuditLog(ctx, &common.IDOptions{Id: projID}); err != nil {
+				if _, err := auditc.DetachProjectFromAuditLog(ctx, &common.IDOptions{Id: proj.GetId()}); err != nil {
 					log.Fatal().Err(err).Str("project-id", projID).Msg("Failed to detach to project.")
 				}
 
