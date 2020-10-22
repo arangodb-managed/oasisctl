@@ -33,38 +33,36 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
-func init() {
-	cmd.InitCommand(
-		cmd.DeleteCmd,
-		&cobra.Command{
-			Use:   "auditlog",
-			Short: "Delete an auditlog",
-		},
-		func(c *cobra.Command, f *flag.FlagSet) {
-			cargs := &struct {
-				id string
-			}{}
-			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
+var deleteAuditLogCmd = cmd.InitCommand(
+	cmd.DeleteCmd,
+	&cobra.Command{
+		Use:   "auditlog",
+		Short: "Delete an auditlog",
+	},
+	func(c *cobra.Command, f *flag.FlagSet) {
+		cargs := &struct {
+			id string
+		}{}
+		f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
 
-			c.Run = func(c *cobra.Command, args []string) {
-				// Validate arguments
-				log := cmd.CLILog
-				id, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
-				cmd.MustCheckNumberOfArgs(args, argsUsed)
+		c.Run = func(c *cobra.Command, args []string) {
+			// Validate arguments
+			log := cmd.CLILog
+			id, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
+			cmd.MustCheckNumberOfArgs(args, argsUsed)
 
-				// Connect
-				conn := cmd.MustDialAPI()
-				auditc := audit.NewAuditServiceClient(conn)
-				ctx := cmd.ContextWithToken()
+			// Connect
+			conn := cmd.MustDialAPI()
+			auditc := audit.NewAuditServiceClient(conn)
+			ctx := cmd.ContextWithToken()
 
-				// Make the call
-				if _, err := auditc.DeleteAuditLog(ctx, &common.IDOptions{Id: id}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete audit log.")
-				}
-
-				// Show result
-				format.DisplaySuccess(cmd.RootArgs.Format)
+			// Make the call
+			if _, err := auditc.DeleteAuditLog(ctx, &common.IDOptions{Id: id}); err != nil {
+				log.Fatal().Err(err).Msg("Failed to delete audit log.")
 			}
-		},
-	)
-}
+
+			// Show result
+			format.DisplaySuccess(cmd.RootArgs.Format)
+		}
+	},
+)

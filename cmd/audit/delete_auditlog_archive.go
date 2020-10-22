@@ -34,7 +34,7 @@ import (
 )
 
 var deleteAuditArchive = cmd.InitCommand(
-	cmd.DeleteAuditCmd,
+	deleteAuditLogCmd,
 	&cobra.Command{
 		Use:   "archive",
 		Short: "Delete an auditlog archive",

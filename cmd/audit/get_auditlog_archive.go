@@ -37,7 +37,7 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.GetAuditCmd,
+		cmd.GetAuditLogCmd,
 		&cobra.Command{
 			Use:   "archive",
 			Short: "Get auditlog archive",
