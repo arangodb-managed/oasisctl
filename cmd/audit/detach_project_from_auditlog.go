@@ -48,7 +48,7 @@ func init() {
 				projectID      string
 			}{}
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to detach the audit log.")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

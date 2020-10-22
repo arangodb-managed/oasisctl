@@ -42,14 +42,14 @@ func init() {
 		cmd.AuditLogGetAttachedCmd,
 		&cobra.Command{
 			Use:   "project",
-			Short: "Get an attached project",
+			Short: "Get an attached log to a project",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				projectID      string
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to attach to the audit log.")
+			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
