@@ -26,17 +26,26 @@ import (
 	audit "github.com/arangodb-managed/apis/audit/v1"
 )
 
+// AuditLogArchive returns a formatted auditlog archive.
+func AuditLogArchive(x *audit.AuditLogArchive, opts Options) string {
+	return formatObject(opts, generateKeyValuePairs(x, opts)...)
+}
+
 // AuditLogArchiveList returns a formatted list of auditlog archives.
 func AuditLogArchiveList(list []*audit.AuditLogArchive, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
-		return []kv{
-			{"id", x.GetId()},
-			{"auditlog-id", x.GetAuditlogId()},
-			{"deployment-id", x.GetDeploymentId()},
-			{"created-at", formatTime(opts, x.GetCreatedAt())},
-			{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-			{"size-in-bytes-changed-at", formatTime(opts, x.GetSizeInBytesChangedAt(), "-")},
-		}
+		return generateKeyValuePairs(x, opts)
 	}, false)
+}
+
+func generateKeyValuePairs(x *audit.AuditLogArchive, opts Options) []kv {
+	return []kv{
+		{"id", x.GetId()},
+		{"auditlog-id", x.GetAuditlogId()},
+		{"deployment-id", x.GetDeploymentId()},
+		{"created-at", formatTime(opts, x.GetCreatedAt())},
+		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
+		{"size-in-bytes-changed-at", formatTime(opts, x.GetSizeInBytesChangedAt(), "-")},
+	}
 }

@@ -27,14 +27,14 @@ import (
 )
 
 var (
-	// ListCmd is root for various `auditlog ...` commands
-	ListAuditLogCmd = &cobra.Command{
-		Use:   "auditlog",
-		Short: "List resources for auditlogs",
+	// GetAuditCmd is root for various `get audit...` commands
+	GetAuditCmd = &cobra.Command{
+		Use:   "audit",
+		Short: "Get audit information",
 		Run:   ShowUsage,
 	}
 )
 
 func init() {
-	ListCmd.AddCommand(ListAuditLogCmd)
+	RootCmd.AddCommand(GetCmd)
 }

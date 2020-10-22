@@ -29,6 +29,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
@@ -36,10 +37,10 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListAuditLogCmd,
+		cmd.GetAuditCmd,
 		&cobra.Command{
-			Use:   "archives",
-			Short: "List auditlog archives",
+			Use:   "archive",
+			Short: "Get auditlog archive",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -59,14 +60,14 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Make the call
-				result, err := auditc.ListAuditLogArchives(ctx, &audit.ListAuditLogArchivesRequest{AuditlogId: auditLogId})
+				result, err := auditc.GetAuditLogArchive(ctx, &common.IDOptions{Id: auditLogId})
 				if err != nil {
 					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to list auditlog archives.")
 				}
 
 				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogArchiveList(result.GetItems(), cmd.RootArgs.Format))
+				fmt.Println(format.AuditLogArchive(result, cmd.RootArgs.Format))
 			}
 		},
 	)
