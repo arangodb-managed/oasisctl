@@ -23,6 +23,9 @@
 package format
 
 import (
+	"fmt"
+	"strings"
+
 	audit "github.com/arangodb-managed/apis/audit/v1"
 )
 
@@ -40,7 +43,7 @@ func AuditLog(x *audit.AuditLog, opts Options) string {
 		{"default", formatBool(opts, x.GetIsDefault())},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},
 		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-		{"destinations", formatDestinations(opts, x.GetDestinations())},
+		{"destinations", AuditLogDestinationList(x.GetDestinations(), opts)},
 	}
 	return formatObject(opts, d...)
 }
@@ -56,16 +59,17 @@ func AuditLogList(list []*audit.AuditLog, opts Options) string {
 			{"default", formatBool(opts, x.GetIsDefault())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-			{"destinations", formatDestinations(opts, x.GetDestinations())},
+			{"destinations", AuditLogDestinationList(x.GetDestinations(), opts)},
 		}
 	}, false)
 }
 
-// formatDestinations returns a list of configured destinations.
-func formatDestinations(opts Options, list []*audit.AuditLog_Destination) string {
+// AuditLogDestinationList returns a list of configured destinations.
+func AuditLogDestinationList(list []*audit.AuditLog_Destination, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		formattedList := []kv{
+			{"index", i},
 			{"type", x.GetType()},
 		}
 		if x.GetType() == httpsPost {
@@ -80,11 +84,9 @@ func formatDestinations(opts Options, list []*audit.AuditLog_Destination) string
 
 // formatHeaders returns a list of formatted headers for a destination
 func formatHeaders(opts Options, list []*audit.AuditLog_Header) string {
-	return formatList(opts, list, func(i int) []kv {
-		x := list[i]
-		return []kv{
-			{"key", x.GetKey()},
-			{"value", x.GetValue()},
-		}
-	}, true)
+	var headers []string
+	for _, x := range list {
+		headers = append(headers, fmt.Sprintf("%s=%s", x.GetKey(), x.GetValue()))
+	}
+	return strings.Join(headers, ",")
 }

@@ -25,75 +25,61 @@ package audit
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.CreateCmd,
+		deleteAuditLogCmd,
 		&cobra.Command{
-			Use:   "auditlog",
-			Short: "Create an auditlog",
+			Use:   "destination",
+			Short: "Delete a destination from an auditlog",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name                 string
-				description          string
-				organizationID       string
-				isDefault            bool
-				destinationType      string
-				url                  string
-				trustedServerCAPem   string
-				clientCertificatePem string
-				clientKeyPem         string
-				headers              []string
-				excludedTopics       []string
+				id             string
+				name           string
+				index          int
+				organizationID string
 			}{}
-			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
-			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
+			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
+			f.IntVar(&cargs.index, "index", -1, "Index of the destination to remove.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				orgID, argsUsed := cmd.OptOption("organization-id", cargs.organizationID, args, 0)
-				name, argsUsed := cmd.OptOption("name", cargs.name, args, 0)
+				id, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
+
+				if cargs.index < 0 {
+					log.Fatal().Msg("Please provide a valid index.")
+				}
 
 				// Connect
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
-				rmc := rm.NewResourceManagerServiceClient(conn)
 				ctx := cmd.ContextWithToken()
-				org := selection.MustSelectOrganization(ctx, log, orgID, rmc)
-
-				// Construct the default destination
-				destination := &audit.AuditLog_Destination{
-					Type: cloud,
-				}
-
-				// Construct request
-				req := &audit.AuditLog{
-					Name:           name,
-					Description:    cargs.description,
-					OrganizationId: org.GetId(),
-					IsDefault:      cargs.isDefault,
-					Destinations:   []*audit.AuditLog_Destination{destination},
-				}
 
 				// Make the call
-				result, err := auditc.CreateAuditLog(ctx, req)
+				auditLog := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
+				destinations := auditLog.GetDestinations()
+				if cargs.index >= len(destinations) {
+					log.Fatal().Msg("The index is larger than the length of destinations.")
+				}
+				destinations = append(destinations[:cargs.index], destinations[cargs.index+1:]...)
+				auditLog.Destinations = destinations
+
+				// Update auditlog with the new destinations.
+				result, err := auditc.UpdateAuditLog(ctx, auditLog)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to create audit log.")
+					log.Fatal().Err(err).Msg("Failed to delete destination.")
 				}
 
 				// Show result
