@@ -31,6 +31,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
@@ -109,7 +110,7 @@ func init() {
 				// We don't display success as the stream could break in between.
 				for {
 					events, err := result.Recv()
-					if err == io.EOF {
+					if err == io.EOF || common.IsCanceled(err) {
 						// Connection closed normally, retry connection
 						break
 					}
