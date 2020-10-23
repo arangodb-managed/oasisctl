@@ -25,13 +25,13 @@ package audit
 import (
 	"fmt"
 
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
