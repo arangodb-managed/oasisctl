@@ -68,16 +68,16 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Make the call
-				auditLog := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
-				destinations := auditLog.GetDestinations()
+				item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
+				destinations := item.GetDestinations()
 				if cargs.index >= len(destinations) {
 					log.Fatal().Msg("The index is larger than the length of destinations.")
 				}
 				destinations = append(destinations[:cargs.index], destinations[cargs.index+1:]...)
-				auditLog.Destinations = destinations
+				item.Destinations = destinations
 
 				// Update auditlog with the new destinations.
-				result, err := auditc.UpdateAuditLog(ctx, auditLog)
+				result, err := auditc.UpdateAuditLog(ctx, item)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to delete destination.")
 				}

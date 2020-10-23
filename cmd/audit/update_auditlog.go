@@ -25,8 +25,6 @@ package audit
 import (
 	"fmt"
 
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
-
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -34,27 +32,34 @@ import (
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.ListAuditLogCmd,
+		cmd.UpdateCmd,
 		&cobra.Command{
-			Use:   "destinations",
-			Short: "List auditlog destinations",
+			Use:   "auditlog",
+			Short: "Update an auditlog",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				auditlogID     string
+				name           string
+				description    string
+				isDefault      bool
 				organizationID string
 			}{}
-			f.StringVar(&cargs.auditlogID, "auditlog-id", "", "Identifier of the auditlog to list the destinations for")
+			f.StringVarP(&cargs.auditlogID, "auditlog-id", "i", "", "Identifier of the auditlog to update.")
+			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
+			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				id, argsUsed := cmd.ReqOption("auditlog-id", cargs.auditlogID, args, 0)
+				auditLogID, argsUsed := cmd.ReqOption("auditlog-id", cargs.auditlogID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -62,12 +67,36 @@ func init() {
 				auditc := audit.NewAuditServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Make the call
-				item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
+				// Construct the default destination
+				item := selection.MustSelectAuditLog(ctx, log, auditLogID, cargs.organizationID, auditc)
 
-				// Show item
+				f := c.Flags()
+				hasChanges := false
+				if f.Changed("name") {
+					item.Name = cargs.name
+					hasChanges = true
+				}
+				if f.Changed("description") {
+					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("default") {
+					item.IsDefault = cargs.isDefault
+					hasChanges = true
+				}
+				if !hasChanges {
+					fmt.Println("No changes")
+					return
+				}
+
+				result, err := auditc.UpdateAuditLog(ctx, item)
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to update auditlog.")
+				}
+
+				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogDestinationList(item.GetDestinations(), cmd.RootArgs.Format))
+				fmt.Println(format.AuditLog(result, cmd.RootArgs.Format))
 			}
 		},
 	)

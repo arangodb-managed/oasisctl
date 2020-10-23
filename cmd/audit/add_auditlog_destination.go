@@ -117,13 +117,13 @@ func init() {
 				}
 
 				// Get the auditlog
-				auditLog := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
+				item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
 
 				// Add the destination
-				auditLog.Destinations = append(auditLog.GetDestinations(), destination)
+				item.Destinations = append(item.GetDestinations(), destination)
 
 				// Update auditlog with the new destinations.
-				result, err := auditc.UpdateAuditLog(ctx, auditLog)
+				result, err := auditc.UpdateAuditLog(ctx, item)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to add new destination.")
 				}
