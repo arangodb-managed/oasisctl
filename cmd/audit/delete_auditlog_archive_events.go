@@ -68,7 +68,7 @@ func init() {
 				if to != "" {
 					toDate, err = util.ParseTime(to)
 					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to parse to timestamp.")
+						log.Fatal().Err(err).Str("date", to).Msg("Failed to parse to timestamp.")
 					}
 				}
 				// Make the call
