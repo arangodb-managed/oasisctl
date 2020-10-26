@@ -66,7 +66,7 @@ func init() {
 			f.StringVarP(&cargs.destinationDeploymentID, "destination-deployment-id", "d", "", "Destination deployment id to import data into. It can be provided instead of address, username and password.")
 			f.IntVarP(&cargs.maxParallelCollections, "maximum-parallel-collections", "m", 10, "Maximum number of collections being copied in parallel.")
 			f.StringSliceVar(&cargs.includedDatabases, "included-database", []string{}, "A list of database names which should be included. If provided, only these databases will be copied.")
-			f.StringSliceVar(&cargs.excludedDatabases, "exluded-database", []string{}, "A list of database names which should be excluded. Exclusion takes priority over inclusion.")
+			f.StringSliceVar(&cargs.excludedDatabases, "excluded-database", []string{}, "A list of database names which should be excluded. Exclusion takes priority over inclusion.")
 			f.StringSliceVar(&cargs.includedCollections, "included-collection", []string{}, "A list of collection names which should be included. If provided, only these collections will be copied.")
 			f.StringSliceVar(&cargs.excludedCollections, "excluded-collection", []string{}, "A list of collections names which should be excluded. Exclusion takes priority over inclusion.")
 			f.StringSliceVar(&cargs.includedViews, "included-view", []string{}, "A list of view names which should be included. If provided, only these views will be copied.")
