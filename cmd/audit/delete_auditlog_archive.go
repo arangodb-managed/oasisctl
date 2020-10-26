@@ -23,7 +23,8 @@
 package audit
 
 import (
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
+	"fmt"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -31,7 +32,7 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var deleteAuditArchive = cmd.InitCommand(
@@ -64,7 +65,7 @@ var deleteAuditArchive = cmd.InitCommand(
 			}
 
 			// Show result
-			format.DisplaySuccess(cmd.RootArgs.Format)
+			fmt.Println("Deleted auditlog archive!")
 		}
 	},
 )

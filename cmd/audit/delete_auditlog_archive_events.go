@@ -23,7 +23,8 @@
 package audit
 
 import (
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
+	"fmt"
+
 	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -31,7 +32,7 @@ import (
 	audit "github.com/arangodb-managed/apis/audit/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/arangodb-managed/oasisctl/pkg/util"
 )
 
@@ -82,7 +83,7 @@ func init() {
 				}
 
 				// Show result
-				format.DisplaySuccess(cmd.RootArgs.Format)
+				fmt.Println("Deleted auditlog archive events!")
 			}
 		},
 	)

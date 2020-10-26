@@ -39,6 +39,7 @@ func AuditLog(x *audit.AuditLog, opts Options) string {
 	d := []kv{
 		{"id", x.GetId()},
 		{"name", x.GetName()},
+		{"url", x.GetUrl()},
 		{"description", x.GetDescription()},
 		{"default", formatBool(opts, x.GetIsDefault())},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},
@@ -55,6 +56,7 @@ func AuditLogList(list []*audit.AuditLog, opts Options) string {
 		return []kv{
 			{"id", x.GetId()},
 			{"name", x.GetName()},
+			{"url", x.GetUrl()},
 			{"description", x.GetDescription()},
 			{"default", formatBool(opts, x.GetIsDefault())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},

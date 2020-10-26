@@ -42,6 +42,7 @@ func AuditLogArchiveList(list []*audit.AuditLogArchive, opts Options) string {
 func generateKeyValuePairs(x *audit.AuditLogArchive, opts Options) []kv {
 	return []kv{
 		{"id", x.GetId()},
+		{"url", x.GetUrl()},
 		{"auditlog-id", x.GetAuditlogId()},
 		{"deployment-id", x.GetDeploymentId()},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},

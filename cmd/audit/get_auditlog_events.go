@@ -40,7 +40,7 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.GetAuditLogCmd,
+		getAuditLogCmd,
 		&cobra.Command{
 			Use:   "events",
 			Short: "Get auditlog events",
