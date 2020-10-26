@@ -29,6 +29,8 @@ import (
 	flag "github.com/spf13/pflag"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
+	common "github.com/arangodb-managed/apis/common/v1"
+
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
@@ -51,20 +53,16 @@ func init() {
 				organizationID string
 			}{}
 			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
-			f.IntVar(&cargs.index, "index", -1, "Index of the destination to remove.")
+			f.IntVar(&cargs.index, "index", -1, "Index of the destination to remove. Only one delete option can be specified.")
 			f.StringVar(&cargs.auditlogType, "type", "", "Type of the destination to remove. This will remove ALL destinations with that type.")
-			f.StringVar(&cargs.url, "url", "", "An optional URL in case type is set to https-posts.")
-			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
+			f.StringVar(&cargs.url, "url", "", "An optional URL which will be used to delete a single destination instead of all.")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
 				id, argsUsed := cmd.ReqOption("auditlog-id", cargs.id, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
-
-				if cargs.index < 0 {
-					log.Fatal().Msg("Please provide a valid index.")
-				}
 
 				// Connect
 				conn := cmd.MustDialAPI()
@@ -74,10 +72,19 @@ func init() {
 				// Make the call
 				item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
 				destinations := item.GetDestinations()
-				if cargs.index >= len(destinations) {
-					log.Fatal().Msg("The index is larger than the length of destinations.")
+
+				var err error
+				if cargs.index != -1 {
+					destinations, err = deleteByIndex(destinations, cargs.index)
+					if err != nil {
+						log.Fatal().Int("index", cargs.index).Int("length", len(destinations)).Err(err).Msg("Failed to delete destination.")
+					}
+				} else if cargs.auditlogType != "" {
+					destinations, err = deleteByType(destinations, cargs.auditlogType, cargs.url)
+					if err != nil {
+						log.Fatal().Err(err).Str("type", cargs.auditlogType).Str("url", cargs.url).Msg("Failed to delete destination.")
+					}
 				}
-				destinations = append(destinations[:cargs.index], destinations[cargs.index+1:]...)
 				item.Destinations = destinations
 
 				// Update auditlog with the new destinations.
@@ -92,4 +99,32 @@ func init() {
 			}
 		},
 	)
+}
+
+func deleteByIndex(destinations []*audit.AuditLog_Destination, index int) ([]*audit.AuditLog_Destination, error) {
+	if index >= len(destinations) {
+		return nil, common.InvalidArgument("The index is larger than the length of destinations.")
+	}
+	destinations = append(destinations[:index], destinations[index+1:]...)
+	return destinations, nil
+}
+
+func deleteByType(destinations []*audit.AuditLog_Destination, dType string, url string) ([]*audit.AuditLog_Destination, error) {
+	for i := 0; i < len(destinations); i++ {
+		if destinations[i].GetType() == dType {
+			if url != "" {
+				if destinations[i].GetHttpPost().GetUrl() == url {
+					destinations = append(destinations[:i], destinations[i+1:]...)
+					return destinations, nil
+				}
+			} else {
+				destinations = append(destinations[:i], destinations[i+1:]...)
+				i--
+			}
+		}
+	}
+	if url != "" {
+		return nil, common.NotFound("Destination with given URL not found.")
+	}
+	return destinations, nil
 }
