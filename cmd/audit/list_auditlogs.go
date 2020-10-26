@@ -70,7 +70,6 @@ func init() {
 				}
 
 				// Show result
-				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.AuditLogList(result.GetItems(), cmd.RootArgs.Format))
 			}
 		},

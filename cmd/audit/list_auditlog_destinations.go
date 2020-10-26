@@ -65,7 +65,6 @@ func init() {
 				item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
 
 				// Show item
-				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.AuditLogDestinationList(item.GetDestinations(), cmd.RootArgs.Format))
 			}
 		},

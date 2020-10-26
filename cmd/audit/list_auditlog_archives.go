@@ -76,7 +76,6 @@ func init() {
 				}
 
 				// Show result
-				format.DisplaySuccess(cmd.RootArgs.Format)
 				fmt.Println(format.AuditLogArchiveList(result, cmd.RootArgs.Format))
 			}
 		},
