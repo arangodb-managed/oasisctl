@@ -23,7 +23,10 @@
 package audit
 
 import (
+	"context"
 	"fmt"
+
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -43,9 +46,11 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				auditLogID string
+				auditLogID     string
+				organizationID string
 			}{}
 			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
+			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -57,16 +62,22 @@ func init() {
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+				auditLog := selection.MustSelectAuditLog(ctx, log, auditLogId, cargs.organizationID, auditc)
 
 				// Make the call
-				result, err := auditc.ListAuditLogArchives(ctx, &audit.ListAuditLogArchivesRequest{AuditlogId: auditLogId})
-				if err != nil {
-					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to list auditlog archives.")
+				var result []*audit.AuditLogArchive
+				if err := audit.ForEachAuditLogArchive(ctx, func(ctx context.Context, req *audit.ListAuditLogArchivesRequest) (*audit.AuditLogArchiveList, error) {
+					return auditc.ListAuditLogArchives(ctx, req)
+				}, audit.ListAuditLogArchivesRequest{AuditlogId: auditLog.GetId()}, func(ctx context.Context, archive *audit.AuditLogArchive) error {
+					result = append(result, archive)
+					return nil
+				}); err != nil {
+					log.Fatal().Err(err).Str("auditlog-id", auditLog.GetId()).Msg("Failed to list auditlog archives.")
 				}
 
 				// Show result
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Println(format.AuditLogArchiveList(result.GetItems(), cmd.RootArgs.Format))
+				fmt.Println(format.AuditLogArchiveList(result, cmd.RootArgs.Format))
 			}
 		},
 	)

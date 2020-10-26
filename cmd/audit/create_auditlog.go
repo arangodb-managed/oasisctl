@@ -45,17 +45,10 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name                 string
-				description          string
-				organizationID       string
-				isDefault            bool
-				destinationType      string
-				url                  string
-				trustedServerCAPem   string
-				clientCertificatePem string
-				clientKeyPem         string
-				headers              []string
-				excludedTopics       []string
+				name           string
+				description    string
+				organizationID string
+				isDefault      bool
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
 			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")

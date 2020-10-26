@@ -111,7 +111,7 @@ func init() {
 				for {
 					events, err := result.Recv()
 					if err == io.EOF || common.IsCanceled(err) {
-						// Connection closed normally, retry connection
+						// Connection closed normally
 						break
 					}
 					if err != nil {

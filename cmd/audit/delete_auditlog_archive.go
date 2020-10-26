@@ -23,6 +23,7 @@
 package audit
 
 import (
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -55,9 +56,10 @@ var deleteAuditArchive = cmd.InitCommand(
 			conn := cmd.MustDialAPI()
 			auditc := audit.NewAuditServiceClient(conn)
 			ctx := cmd.ContextWithToken()
+			item := selection.MustSelectAuditLogArchive(ctx, log, id, auditc)
 
 			// Make the call
-			if _, err := auditc.DeleteAuditLogArchive(ctx, &common.IDOptions{Id: id}); err != nil {
+			if _, err := auditc.DeleteAuditLogArchive(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 				log.Fatal().Err(err).Msg("Failed to delete audit archive log.")
 			}
 

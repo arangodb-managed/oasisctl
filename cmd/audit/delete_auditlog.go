@@ -31,6 +31,7 @@ import (
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 var deleteAuditLogCmd = cmd.InitCommand(
@@ -41,9 +42,11 @@ var deleteAuditLogCmd = cmd.InitCommand(
 	},
 	func(c *cobra.Command, f *flag.FlagSet) {
 		cargs := &struct {
-			id string
+			id             string
+			organizationID string
 		}{}
 		f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
+		f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 		c.Run = func(c *cobra.Command, args []string) {
 			// Validate arguments
@@ -55,9 +58,10 @@ var deleteAuditLogCmd = cmd.InitCommand(
 			conn := cmd.MustDialAPI()
 			auditc := audit.NewAuditServiceClient(conn)
 			ctx := cmd.ContextWithToken()
+			item := selection.MustSelectAuditLog(ctx, log, id, cargs.organizationID, auditc)
 
 			// Make the call
-			if _, err := auditc.DeleteAuditLog(ctx, &common.IDOptions{Id: id}); err != nil {
+			if _, err := auditc.DeleteAuditLog(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
 				log.Fatal().Err(err).Msg("Failed to delete audit log.")
 			}
 

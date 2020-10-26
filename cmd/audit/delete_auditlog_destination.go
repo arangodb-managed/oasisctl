@@ -46,10 +46,14 @@ func init() {
 				id             string
 				name           string
 				index          int
+				auditlogType   string
+				url            string
 				organizationID string
 			}{}
 			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
 			f.IntVar(&cargs.index, "index", -1, "Index of the destination to remove.")
+			f.StringVar(&cargs.auditlogType, "type", "", "Type of the destination to remove. This will remove ALL destinations with that type.")
+			f.StringVar(&cargs.url, "url", "", "An optional URL in case type is set to https-posts.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {

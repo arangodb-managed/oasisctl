@@ -25,6 +25,8 @@ package audit
 import (
 	"fmt"
 
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -58,9 +60,10 @@ func init() {
 				conn := cmd.MustDialAPI()
 				auditc := audit.NewAuditServiceClient(conn)
 				ctx := cmd.ContextWithToken()
+				item := selection.MustSelectAuditLogArchive(ctx, log, auditLogId, auditc)
 
 				// Make the call
-				result, err := auditc.GetAuditLogArchive(ctx, &common.IDOptions{Id: auditLogId})
+				result, err := auditc.GetAuditLogArchive(ctx, &common.IDOptions{Id: item.GetId()})
 				if err != nil {
 					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to list auditlog archives.")
 				}

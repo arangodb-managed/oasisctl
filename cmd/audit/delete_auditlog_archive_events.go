@@ -23,6 +23,7 @@
 package audit
 
 import (
+	"github.com/arangodb-managed/oasisctl/pkg/selection"
 	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -71,9 +72,10 @@ func init() {
 						log.Fatal().Err(err).Str("date", to).Msg("Failed to parse to timestamp.")
 					}
 				}
+				auditLogArchive := selection.MustSelectAuditLogArchive(ctx, log, id, auditc)
 				// Make the call
 				if _, err := auditc.DeleteAuditLogArchiveEvents(ctx, &audit.DeleteAuditLogArchiveEventsRequest{
-					AuditlogarchiveId: id,
+					AuditlogarchiveId: auditLogArchive.GetId(),
 					To:                toDate,
 				}); err != nil {
 					log.Fatal().Err(err).Msg("Failed to delete audit archive events log.")

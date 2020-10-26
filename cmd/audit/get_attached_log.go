@@ -69,7 +69,7 @@ func init() {
 
 				// Make the call
 				result, err := auditc.GetAuditLogAttachedToProject(ctx, &common.IDOptions{
-					Id: projID,
+					Id: proj.GetId(),
 				})
 				if err != nil {
 					log.Fatal().Err(err).Str("project-id", proj.GetId()).Msg("Failed to get attached audit log.")
