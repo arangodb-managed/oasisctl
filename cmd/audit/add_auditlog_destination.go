@@ -36,11 +36,6 @@ import (
 	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
-const (
-	cloud    = "cloud"
-	httpPost = "https-post"
-)
-
 func init() {
 	cmd.InitCommand(
 		cmd.AddAuditLogCmd,
@@ -84,9 +79,9 @@ func init() {
 				// Construct destination
 				destination := &audit.AuditLog_Destination{}
 				switch cargs.destinationType {
-				case cloud:
-					destination.Type = cloud
-				case httpPost:
+				case audit.DestinationCloud:
+					destination.Type = audit.DestinationCloud
+				case audit.DestinationHTTPSPost:
 					// Construct header values
 					headers := make([]*audit.AuditLog_Header, 0)
 					for _, h := range cargs.headers {
@@ -103,7 +98,7 @@ func init() {
 						})
 					}
 
-					destination.Type = httpPost
+					destination.Type = audit.DestinationHTTPSPost
 					destination.HttpPost = &audit.AuditLog_HttpsPostSettings{
 						Url:                  cargs.url,
 						TrustedServerCaPem:   cargs.trustedServerCAPem,

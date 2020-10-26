@@ -78,7 +78,7 @@ func init() {
 
 				// Construct the default destination
 				destination := &audit.AuditLog_Destination{
-					Type: cloud,
+					Type: audit.DestinationCloud,
 				}
 
 				// Construct request
