@@ -28,7 +28,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 
 	audit "github.com/arangodb-managed/apis/audit/v1"
@@ -101,6 +100,76 @@ Destinations Index | Type
 
 	args = []string{"list", "auditlog", "destinations", "--auditlog-id=" + auditLog.GetId()}
 	compare = `Index | Type
+0     | cloud
+`
+
+	out, err = tests.RunCommand(args)
+	require.NoError(t, err)
+	assert.True(t, tests.CompareOutput(out, []byte(compare)))
+
+	auditLog2, err := auditc.CreateAuditLog(ctx, &audit.AuditLog{
+		Name:           name,
+		Description:    description,
+		OrganizationId: org,
+		Destinations: []*audit.AuditLog_Destination{
+			{
+				Type: audit.DestinationCloud,
+			},
+			{
+				Type: audit.DestinationHTTPSPost,
+				HttpPost: &audit.AuditLog_HttpsPostSettings{
+					Url: "https://google.com/asdf1",
+				},
+			},
+			{
+				Type: audit.DestinationHTTPSPost,
+				HttpPost: &audit.AuditLog_HttpsPostSettings{
+					Url: "https://google.com/asdf2",
+				},
+			},
+			{
+				Type: audit.DestinationHTTPSPost,
+				HttpPost: &audit.AuditLog_HttpsPostSettings{
+					Url: "https://google.com/asdf3",
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	defer func() {
+		if _, err := auditc.DeleteAuditLog(ctx, &common.IDOptions{Id: auditLog2.GetId()}); err != nil {
+			t.Log(err)
+		}
+	}()
+	args = []string{"delete", "auditlog", "destination", "--auditlog-id=" + auditLog2.GetId(), "--type=https-post", "--url=https://google.com/asdf2"}
+	compare = `Success!
+Id           ` + auditLog2.GetId() + `
+Name         ` + auditLog2.GetName() + `
+Url          /Organization/` + org + `/AuditLog/` + auditLog2.GetId() + `
+Description  ` + auditLog2.GetDescription() + `
+Default      -
+Created-At   .*
+Deleted-At   -
+Destinations Index | Type
+0     | cloud
+1     | https-post | https://google.com/asdf1 | 
+2     | https-post | https://google.com/asdf3 |
+`
+
+	out, err = tests.RunCommand(args)
+	require.NoError(t, err)
+	assert.True(t, tests.CompareOutput(out, []byte(compare)))
+
+	args = []string{"delete", "auditlog", "destination", "--auditlog-id=" + auditLog2.GetId(), "--type=https-post"}
+	compare = `Success!
+Id           ` + auditLog2.GetId() + `
+Name         ` + auditLog2.GetName() + `
+Url          /Organization/` + org + `/AuditLog/` + auditLog2.GetId() + `
+Description  ` + auditLog2.GetDescription() + `
+Default      -
+Created-At   .*
+Deleted-At   -
+Destinations Index | Type
 0     | cloud
 `
 
