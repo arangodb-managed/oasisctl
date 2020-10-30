@@ -101,6 +101,7 @@ func init() {
 	)
 }
 
+// deleteByIndex will take an index and remove that destination from the list of destinations.
 func deleteByIndex(destinations []*audit.AuditLog_Destination, index int) ([]*audit.AuditLog_Destination, error) {
 	if index >= len(destinations) {
 		return nil, common.InvalidArgument("The index is larger than the length of destinations.")
@@ -109,6 +110,8 @@ func deleteByIndex(destinations []*audit.AuditLog_Destination, index int) ([]*au
 	return destinations, nil
 }
 
+// deleteByType will take a type and remove all of the destinations which correspond to that type. If a URL is given
+// it will only remove the destination with the matching URL.
 func deleteByType(destinations []*audit.AuditLog_Destination, dType string, url string) ([]*audit.AuditLog_Destination, error) {
 	for i := 0; i < len(destinations); i++ {
 		if destinations[i].GetType() == dType {
