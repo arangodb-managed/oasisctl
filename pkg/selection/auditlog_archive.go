@@ -35,7 +35,7 @@ import (
 func MustSelectAuditLogArchive(ctx context.Context, log zerolog.Logger, id string, auditc audit.AuditServiceClient) *audit.AuditLogArchive {
 	result, err := SelectAuditLogArchive(ctx, log, id, auditc)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to select example dataset")
+		log.Fatal().Err(err).Msg("Failed to select audit log archive")
 	}
 	return result
 }

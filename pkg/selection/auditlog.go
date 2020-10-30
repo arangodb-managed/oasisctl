@@ -35,7 +35,7 @@ import (
 func MustSelectAuditLog(ctx context.Context, log zerolog.Logger, id, orgID string, auditc audit.AuditServiceClient) *audit.AuditLog {
 	result, err := SelectAuditLog(ctx, log, id, orgID, auditc)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to select example dataset")
+		log.Fatal().Err(err).Msg("Failed to select audit log.")
 	}
 	return result
 }
