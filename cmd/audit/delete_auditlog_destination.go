@@ -114,16 +114,17 @@ func deleteByIndex(destinations []*audit.AuditLog_Destination, index int) ([]*au
 // it will only remove the destination with the matching URL.
 func deleteByType(destinations []*audit.AuditLog_Destination, dType string, url string) ([]*audit.AuditLog_Destination, error) {
 	for i := 0; i < len(destinations); i++ {
-		if destinations[i].GetType() == dType {
-			if url == "" {
-				destinations = append(destinations[:i], destinations[i+1:]...)
-				i--
-				continue
-			}
-			if destinations[i].GetHttpPost().GetUrl() == url {
-				destinations = append(destinations[:i], destinations[i+1:]...)
-				return destinations, nil
-			}
+		if destinations[i].GetType() != dType {
+			continue
+		}
+		if url == "" {
+			destinations = append(destinations[:i], destinations[i+1:]...)
+			i--
+			continue
+		}
+		if destinations[i].GetHttpPost().GetUrl() == url {
+			destinations = append(destinations[:i], destinations[i+1:]...)
+			return destinations, nil
 		}
 	}
 	if url != "" {
