@@ -45,13 +45,14 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				deploymentID   string
-				organizationID string
-				projectID      string
-				name           string
-				description    string
-				ipallowlistID  string
-				customImage    string
+				deploymentID    string
+				organizationID  string
+				projectID       string
+				name            string
+				description     string
+				ipallowlistID   string
+				customImage     string
+				cacertificateID string
 
 				version               string
 				model                 string
@@ -83,6 +84,7 @@ func init() {
 			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of dbservers for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
+			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -109,6 +111,12 @@ func init() {
 						item.Servers = &data.Deployment_ServersSpec{}
 					}
 					return item.Servers
+				}
+				ensureCaCertificate := func() *data.Deployment_CertificateSpec {
+					if item.Certificates == nil {
+						item.Certificates = &data.Deployment_CertificateSpec{}
+					}
+					return item.Certificates
 				}
 				// Set changes
 				f := c.Flags()
@@ -167,6 +175,10 @@ func init() {
 				}
 				if f.Changed("custom-image") {
 					item.CustomImage = cargs.customImage
+					hasChanges = true
+				}
+				if f.Changed("cacertificate-id") {
+					ensureCaCertificate().CaCertificateId = cargs.cacertificateID
 					hasChanges = true
 				}
 				if !hasChanges {
