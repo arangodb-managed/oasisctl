@@ -66,11 +66,12 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				proj := selection.MustSelectProject(ctx, log, projID, orgID, rmc)
+				auditLog := selection.MustSelectAuditLog(ctx, log, auditID, orgID, auditc)
 
 				// Make the call
 				if _, err := auditc.AttachProjectToAuditLog(ctx, &audit.AttachProjectToAuditLogRequest{
 					ProjectId:  proj.GetId(),
-					AuditlogId: auditID,
+					AuditlogId: auditLog.GetId(),
 				}); err != nil {
 					log.Fatal().Err(err).Str("project-id", proj.GetId()).Str("auditlog-id", auditID).Msg("Failed to attach to project.")
 				}
