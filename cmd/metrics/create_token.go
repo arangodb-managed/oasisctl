@@ -24,8 +24,10 @@ package metrics
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/dchest/uniuri"
+	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -52,12 +54,14 @@ func init() {
 				organizationID string
 				projectID      string
 				deploymentID   string
+				lifetime       time.Duration
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the token")
 			f.StringVar(&cargs.description, "description", "", "Description of the token")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the token in")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the token in")
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to create the token for")
+			f.DurationVar(&cargs.lifetime, "lifetime", 0, "Lifetime of the token.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -80,10 +84,15 @@ func init() {
 				deployment := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
 				// Create token
+				var lifetime *types.Duration
+				if cargs.lifetime > 0 {
+					lifetime = types.DurationProto(cargs.lifetime)
+				}
 				result, err := metricsc.CreateToken(ctx, &metrics.Token{
 					DeploymentId: deployment.GetId(),
 					Name:         name,
 					Description:  cargs.description,
+					Lifetime:     lifetime,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create metrics token")
