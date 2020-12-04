@@ -33,8 +33,15 @@ var (
 		Short: "Delete resources",
 		Run:   ShowUsage,
 	}
+	// DeleteMetricsCmd is root for various `delete metrics ...` commands
+	DeleteMetricsCmd = &cobra.Command{
+		Use:   "metrics",
+		Short: "Delete metrics resources",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(DeleteCmd)
+	DeleteCmd.AddCommand(DeleteMetricsCmd)
 }
