@@ -23,6 +23,8 @@
 package format
 
 import (
+	"github.com/dustin/go-humanize"
+
 	audit "github.com/arangodb-managed/apis/audit/v1"
 )
 
@@ -47,6 +49,7 @@ func generateKeyValuePairs(x *audit.AuditLogArchive, opts Options) []kv {
 		{"deployment-id", x.GetDeploymentId()},
 		{"created-at", formatTime(opts, x.GetCreatedAt())},
 		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-		{"size-in-bytes-changed-at", formatTime(opts, x.GetSizeInBytesChangedAt(), "-")},
+		{"size-changed-at", formatTime(opts, x.GetSizeInBytesChangedAt(), "-")},
+		{"size", humanize.Bytes(x.GetSizeInBytes())},
 	}
 }
