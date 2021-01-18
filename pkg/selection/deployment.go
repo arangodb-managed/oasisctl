@@ -68,7 +68,6 @@ func SelectDeployment(ctx context.Context, log zerolog.Logger, id, projectID, or
 	result, err := datac.GetDeployment(ctx, &common.IDOptions{Id: id})
 	if err != nil {
 		if common.IsNotFound(err) {
-			log.Debug().Msg("Deployment not found")
 			// Try to lookup deployment by name or URL
 			project, err := SelectProject(ctx, log, projectID, orgID, rmc)
 			if err != nil {
