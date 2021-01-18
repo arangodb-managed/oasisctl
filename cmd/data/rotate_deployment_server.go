@@ -42,12 +42,12 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				serverID       string
+				serverIDs      []string
 				deploymentID   string
 				organizationID string
 				projectID      string
 			}{}
-			f.StringVarP(&cargs.serverID, "server-id", "s", cmd.DefaultServer(), "Identifier of the deployment server")
+			f.StringSliceVarP(&cargs.serverIDs, "server-id", "s", cmd.SplitByComma(cmd.DefaultServer()), "Identifier of the deployment server")
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
@@ -56,8 +56,11 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
-				serverID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, argsUsed)
+				serverIDs, argsUsed := cmd.OptOptionSlice("server-id", cargs.serverIDs, args, argsUsed)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
+				if len(serverIDs) == 0 {
+					log.Fatal().Msg("Missing server ID(s)")
+				}
 
 				// Connect
 				conn := cmd.MustDialAPI()
@@ -65,14 +68,21 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Request server rotation
-				if _, err := datac.RotateDeploymentServer(ctx, &data.RotateDeploymentServerRequest{
-					DeploymentId: deploymentID,
-					ServerId:     serverID,
-				}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to rotate server.")
+				errors := 0
+				for _, serverID := range serverIDs {
+					if _, err := datac.RotateDeploymentServer(ctx, &data.RotateDeploymentServerRequest{
+						DeploymentId: deploymentID,
+						ServerId:     serverID,
+					}); err != nil {
+						errors++
+						log.Error().Err(err).Msg("Failed to rotate server.")
+					} else {
+						fmt.Printf("Server rotation has been requested for server '%s'.\n", serverID)
+					}
 				}
-
-				fmt.Println("Server rotation has been requested.")
+				if errors > 0 {
+					log.Fatal().Msg("One or more server rotation requests failed.")
+				}
 			}
 		},
 	)

@@ -58,6 +58,7 @@ func init() {
 				log := cmd.CLILog
 				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
+				log.Info().Msgf("Got deployment id %s", deploymentID)
 
 				// Connect
 				conn := cmd.MustDialAPI()

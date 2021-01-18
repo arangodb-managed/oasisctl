@@ -198,7 +198,7 @@ func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 			CLILog.Fatal().Err(err).Msg("Failed to call compatibility checker.")
 		}
 		if !resp.GetIsCompatible() {
-			CLILog.Fatal().Str("current_version", currentVersion.String()).Msg("This tool is not compatible with the current API. Please upgrade.")
+			CLILog.Warn().Str("current_version", currentVersion.String()).Msg("This tool is not compatible with the current API. Please upgrade.")
 		}
 	}
 	return conn
@@ -236,6 +236,18 @@ func OptOption(key, value string, args []string, argIndex int) (string, int) {
 		return args[argIndex], argIndex + 1
 	}
 	return "", 0
+}
+
+// OptOptionSlice returns given slice value if not empty.
+// Returns: option-value, number-of-args-used(0|argIndex+1)
+func OptOptionSlice(key string, value []string, args []string, argIndex int) ([]string, int) {
+	if len(value) > 0 {
+		return value, 0
+	}
+	if len(args) > argIndex {
+		return args[argIndex:], len(args)
+	}
+	return nil, 0
 }
 
 // MustCheckNumberOfArgs compares the number of arguments with the expected
