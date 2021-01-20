@@ -23,6 +23,8 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
@@ -70,3 +72,15 @@ func DefaultPluginHandler() string { return envOrDefault("PLUGIN_HANDLER", "") }
 
 // DefaultMetricsToken returns the default value for a metrics token identifier
 func DefaultMetricsToken() string { return envOrDefault("METRICS_TOKEN", "") }
+
+// DefaultServer returns the default value for a deployment server identifier
+func DefaultServer() string { return envOrDefault("SERVER", "") }
+
+// SplitByComma splits the given input around ',', returning an empty
+// slice (nil) if the input is empty.
+func SplitByComma(input string) []string {
+	if input == "" {
+		return nil
+	}
+	return strings.Split(input, ",")
+}

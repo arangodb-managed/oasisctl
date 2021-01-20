@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 // Author Ewout Prangsma
 //
 
-package security
+package data
 
 import (
 	"fmt"
@@ -28,55 +28,61 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	common "github.com/arangodb-managed/apis/common/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-	security "github.com/arangodb-managed/apis/security/v1"
+	data "github.com/arangodb-managed/apis/data/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/selection"
 )
 
 func init() {
 	cmd.InitCommand(
-		cmd.DeleteCmd,
+		cmd.RotateDeploymentCmd,
 		&cobra.Command{
-			Use:        "ipwhitelist",
-			Short:      "Delete an IP whitelist the authenticated user has access to",
-			Deprecated: "Use ipallowlist instead",
-			Hidden:     true,
+			Use:   "server",
+			Short: "Rotate a single server of a deployment",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
+				serverIDs      []string
+				deploymentID   string
 				organizationID string
 				projectID      string
-				ipwhitelistID  string
 			}{}
-			f.StringVarP(&cargs.ipwhitelistID, "ipwhitelist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP whitelist")
+			f.StringSliceVarP(&cargs.serverIDs, "server-id", "s", cmd.SplitByComma(cmd.DefaultServer()), "Identifier of the deployment server")
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				ipwhitelistID, argsUsed := cmd.OptOption("ipwhitelist-id", cargs.ipwhitelistID, args, 0)
+				deploymentID, argsUsed := cmd.OptOption("deployment-id", cargs.deploymentID, args, 0)
+				serverIDs, argsUsed := cmd.OptOptionSlice("server-id", cargs.serverIDs, args, argsUsed)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
+				if len(serverIDs) == 0 {
+					log.Fatal().Msg("Missing server ID(s)")
+				}
 
 				// Connect
 				conn := cmd.MustDialAPI()
-				securityc := security.NewSecurityServiceClient(conn)
-				rmc := rm.NewResourceManagerServiceClient(conn)
+				datac := data.NewDataServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
-				// Fetch IP whitelist
-				item := selection.MustSelectIPWhitelist(ctx, log, ipwhitelistID, cargs.projectID, cargs.organizationID, securityc, rmc)
-
-				// Delete IP whitelist
-				if _, err := securityc.DeleteIPWhitelist(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete IP whitelist")
+				// Request server rotation
+				errors := 0
+				for _, serverID := range serverIDs {
+					if _, err := datac.RotateDeploymentServer(ctx, &data.RotateDeploymentServerRequest{
+						DeploymentId: deploymentID,
+						ServerId:     serverID,
+					}); err != nil {
+						errors++
+						log.Error().Err(err).Msg("Failed to rotate server.")
+					} else {
+						fmt.Printf("Server rotation has been requested for server '%s'.\n", serverID)
+					}
 				}
-
-				// Show result
-				fmt.Println("Deleted IP whitelist!")
+				if errors > 0 {
+					log.Fatal().Msg("One or more server rotation requests failed.")
+				}
 			}
 		},
 	)
