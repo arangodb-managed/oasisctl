@@ -48,13 +48,13 @@ func init() {
 				auditLogArchiveID string
 				to                string
 			}{}
-			f.StringVarP(&cargs.auditLogArchiveID, "auditlog-archive-events-id", "i", "", "Identifier of the auditlog archive events to delete.")
+			f.StringVarP(&cargs.auditLogArchiveID, "auditlog-archive-id", "i", "", "Identifier of the auditlog archive to delete events from.")
 			f.StringVar(&cargs.to, "to", "", "Remove events created before this timestamp.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog
-				id, argsUsed := cmd.ReqOption("auditlog-archive-events-id", cargs.auditLogArchiveID, args, 0)
+				id, argsUsed := cmd.ReqOption("auditlog-archive-id", cargs.auditLogArchiveID, args, 0)
 				to, argsUsed := cmd.OptOption("to", cargs.to, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
