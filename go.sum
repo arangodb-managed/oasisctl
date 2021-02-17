@@ -12,6 +12,8 @@ github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 h1:TEBmxO80TM04L
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1/go.mod h1:SLqhdZcd+dF3TEVL2RMoob5bBP5R1P1qkox+HtCBgGI=
 github.com/arangodb-managed/apis v0.57.0 h1:27D6NfuhV9EgVc+P28lF0c/YR1wAtdAw3CD0H8mZYbo=
 github.com/arangodb-managed/apis v0.57.0/go.mod h1:dSEV+DTPdZNH06qVqFWA+F0OcaL2ePGEo+odyMaU72Y=
+github.com/arangodb-managed/apis v0.57.1-0.20210217085900-a7da183d0959 h1:4aoPRH614jRYlJ9LvS8ft8+0/vpl5XnUjSrkY48EUTU=
+github.com/arangodb-managed/apis v0.57.1-0.20210217085900-a7da183d0959/go.mod h1:dSEV+DTPdZNH06qVqFWA+F0OcaL2ePGEo+odyMaU72Y=
 github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22 h1:AO6iKTfLb3ij5D6cZ3ueHrQbNh8u/QEHbIace8JzDkI=
 github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
