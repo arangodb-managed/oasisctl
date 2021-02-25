@@ -42,7 +42,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"description", x.GetDescription()},
 		{"region", x.GetRegionId()},
 		{"version", x.GetVersion()},
-		{"ipallowlist", x.GetIpallowlistId()},
+		{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 		{"url", x.GetUrl()},
 		{"paused", formatBool(opts, x.GetIsPaused())},
 		{"locked", formatBool(opts, x.GetLocked())},
@@ -53,6 +53,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"bootstrapped", formatBool(opts, x.GetStatus().GetBootstrapped())},
 		{"created", formatBool(opts, x.GetStatus().GetCreated())},
 		{"upgrading", formatBool(opts, x.GetStatus().GetUpgrading())},
+		{"upgrades", getDeploymentUpgradeInfo(x)},
 
 		{"coordinators", x.GetServers().GetCoordinators()},
 		{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
@@ -66,7 +67,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 
 		{"model", x.Model.Model},
 		{"is-clone", x.GetIsClone()},
-		{"clone-backup-id", x.GetCloneBackupId()},
+		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
@@ -90,7 +91,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"description", x.GetDescription()},
 			{"region", x.GetRegionId()},
 			{"version", x.GetVersion()},
-			{"ipallowlist", x.GetIpallowlistId()},
+			{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 			{"url", x.GetUrl()},
 			{"paused", formatBool(opts, x.GetIsPaused())},
 			{"locked", formatBool(opts, x.GetLocked())},
@@ -105,4 +106,14 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 		}
 		return d
 	}, false)
+}
+
+func getDeploymentUpgradeInfo(x *data.Deployment) string {
+	if rb := x.GetReplaceVersionBy(); rb != nil {
+		return fmt.Sprintf("Upgrade to %s pending because %s", rb.GetVersion(), rb.GetReason())
+	}
+	if ur := x.GetUpgradeRecommendation(); ur != nil {
+		return fmt.Sprintf("Upgrade to %s recommended because %s", ur.GetVersion(), ur.GetReason())
+	}
+	return "-"
 }
