@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Gergely Brautigam
+// Author Robert Stam
 //
 
 package audit
@@ -62,7 +63,7 @@ func init() {
 			f.StringVar(&cargs.clientCertificatePem, "destination-https-client-certificate-pem", "", "PEM encoded public key of the client certificate.")
 			f.StringVar(&cargs.clientKeyPem, "destination-https-client-key-pem", "", "PEM encoded private key of the client certificate.")
 			f.StringSliceVar(&cargs.headers, "destination-https-headers", nil, "A key=value formatted list of headers for the request. Repeating headers are allowed.")
-			f.StringSliceVar(&cargs.excludedTopics, "destination-https-excluded-topics", nil, "Do not send audit events with these topics to this destination.")
+			f.StringSliceVar(&cargs.excludedTopics, "destination-excluded-topics", nil, "Do not send audit events with these topics to this destination.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -77,7 +78,9 @@ func init() {
 				ctx := cmd.ContextWithToken()
 
 				// Construct destination
-				destination := &audit.AuditLog_Destination{}
+				destination := &audit.AuditLog_Destination{
+					ExcludedTopics: cargs.excludedTopics,
+				}
 				switch cargs.destinationType {
 				case audit.DestinationCloud:
 					destination.Type = audit.DestinationCloud
@@ -105,7 +108,6 @@ func init() {
 						ClientCertificatePem: cargs.clientCertificatePem,
 						ClientKeyPem:         cargs.clientKeyPem,
 						Headers:              headers,
-						ExcludedTopics:       cargs.excludedTopics,
 					}
 				default:
 					log.Fatal().Str("type", cargs.destinationType).Msg(`Invalid destination type. Can be one of "cloud" or "https-post"`)

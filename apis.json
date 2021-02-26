@@ -8,5 +8,5 @@
   "platform/v1": "1.0.0",
   "replication/v1": "1.0.1",
   "resourcemanager/v1": "1.2.0",
-  "security/v1": "2.0.0"
+  "security/v1": "2.1.0"
 }

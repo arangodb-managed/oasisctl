@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
 // Author Gergely Brautigam
+// Author Robert Stam
 //
 
 package format
@@ -73,6 +74,7 @@ func AuditLogDestinationList(list []*audit.AuditLog_Destination, opts Options) s
 		formattedList := []kv{
 			{"index", i},
 			{"type", x.GetType()},
+			{"excluded-topics", strings.Join(x.GetExcludedTopics(), ",")},
 		}
 		if x.GetType() == httpsPost {
 			formattedList = append(formattedList, []kv{
