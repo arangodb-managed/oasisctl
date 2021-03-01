@@ -33,8 +33,15 @@ var (
 		Short: "Revoke keys & tokens",
 		Run:   ShowUsage,
 	}
+	// RevokeMetricsCmd is root for various `revoke metrics ...` commands
+	RevokeMetricsCmd = &cobra.Command{
+		Use:   "metrics",
+		Short: "Revoke keys & tokens",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(RevokeCmd)
+	RevokeCmd.AddCommand(RevokeMetricsCmd)
 }

@@ -70,6 +70,9 @@ func DefaultURL() string { return envOrDefault("URL", "") }
 // DefaultPluginHandler returns the default value for a URL
 func DefaultPluginHandler() string { return envOrDefault("PLUGIN_HANDLER", "") }
 
+// DefaultMetricsToken returns the default value for a metrics token identifier
+func DefaultMetricsToken() string { return envOrDefault("METRICS_TOKEN", "") }
+
 // DefaultServer returns the default value for a deployment server identifier
 func DefaultServer() string { return envOrDefault("SERVER", "") }
 

@@ -33,8 +33,15 @@ var (
 		Short: "Get information",
 		Run:   ShowUsage,
 	}
+	// GetMetricsCmd is root for various `get metrics ...` commands
+	GetMetricsCmd = &cobra.Command{
+		Use:   "metrics",
+		Short: "Get metrics information",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(GetCmd)
+	GetCmd.AddCommand(GetMetricsCmd)
 }

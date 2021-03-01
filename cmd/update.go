@@ -33,8 +33,15 @@ var (
 		Short: "Update resources",
 		Run:   ShowUsage,
 	}
+	// UpdateMetricsCmd is root for various `update metrics ...` commands
+	UpdateMetricsCmd = &cobra.Command{
+		Use:   "metrics",
+		Short: "Update metrics resources",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(UpdateCmd)
+	UpdateCmd.AddCommand(UpdateMetricsCmd)
 }

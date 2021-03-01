@@ -9,6 +9,7 @@ require (
 	github.com/arangodb-managed/apis v0.58.0
 	github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22
 	github.com/coreos/go-semver v0.3.0
+	github.com/dchest/uniuri v0.0.0-20160212164326-8902c56451e9
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gizak/termui/v3 v3.1.0
 	github.com/gogo/protobuf v1.3.0

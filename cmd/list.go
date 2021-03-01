@@ -33,8 +33,15 @@ var (
 		Short: "List resources",
 		Run:   ShowUsage,
 	}
+	// ListMetricsCmd is root for various `list metrics ...` commands
+	ListMetricsCmd = &cobra.Command{
+		Use:   "metrics",
+		Short: "List metrics resources",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(ListCmd)
+	ListCmd.AddCommand(ListMetricsCmd)
 }
