@@ -154,3 +154,11 @@ func formatDuration(opts Options, x *types.Duration, nilValue ...string) string 
 	d, _ := types.DurationFromProto(x)
 	return d.String()
 }
+
+// formatOptionalString returns the given string or "-" when input is empty.
+func formatOptionalString(value string) string {
+	if value == "" {
+		return "-"
+	}
+	return value
+}

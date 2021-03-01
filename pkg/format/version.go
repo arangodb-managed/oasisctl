@@ -23,6 +23,8 @@
 package format
 
 import (
+	"fmt"
+
 	data "github.com/arangodb-managed/apis/data/v1"
 )
 
@@ -30,6 +32,8 @@ import (
 func Version(x *data.Version, opts Options) string {
 	return formatObject(opts,
 		kv{"version", x.GetVersion()},
+		kv{"upgrade pending", getReplacedBy(x)},
+		kv{"upgrade recommendation", getUpgradeRecommendation(x)},
 	)
 }
 
@@ -38,8 +42,26 @@ func VersionList(list []*data.Version, defaultVersion *data.Version, opts Option
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
-			kv{"version", x.GetVersion()},
-			kv{"default", formatBool(opts, x.GetVersion() == defaultVersion.GetVersion())},
+			{"version", x.GetVersion()},
+			{"default", formatBool(opts, x.GetVersion() == defaultVersion.GetVersion())},
+			{"upgrade pending", getReplacedBy(x)},
+			{"upgrade recommendation", getUpgradeRecommendation(x)},
 		}
 	}, true)
+}
+
+func getReplacedBy(x *data.Version) string {
+	rb := x.GetReplaceBy()
+	if rb != nil {
+		return fmt.Sprintf("To %s because %s", rb.GetVersion(), rb.GetReason())
+	}
+	return "-"
+}
+
+func getUpgradeRecommendation(x *data.Version) string {
+	ur := x.GetUpgradeRecommendation()
+	if ur != nil {
+		return fmt.Sprintf("To %s because %s", ur.GetVersion(), ur.GetReason())
+	}
+	return "-"
 }
