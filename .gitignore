@@ -2,3 +2,6 @@ bin
 assets
 .oasis-tools
 
+#IDE's
+.idea
+

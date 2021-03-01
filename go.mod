@@ -6,7 +6,7 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.59.1-0.20210225074932-c629580c9d0b
+	github.com/arangodb-managed/apis v0.61.0
 	github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22
 	github.com/coreos/go-semver v0.3.0
 	github.com/dustin/go-humanize v1.0.0
