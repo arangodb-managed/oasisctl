@@ -72,6 +72,8 @@ func init() {
 
 				f := c.Flags()
 				hasChanges := false
+				changeDefault := false
+				newDefaultAuditLogID := ""
 				if f.Changed("name") {
 					item.Name = cargs.name
 					hasChanges = true
@@ -81,17 +83,35 @@ func init() {
 					hasChanges = true
 				}
 				if f.Changed("default") {
-					item.IsDefault = cargs.isDefault
-					hasChanges = true
+					if item.GetIsDefault() != cargs.isDefault {
+						changeDefault = true
+						hasChanges = true
+						if cargs.isDefault {
+							newDefaultAuditLogID = item.GetId()
+						} else {
+							newDefaultAuditLogID = ""
+						}
+					}
 				}
 				if !hasChanges {
 					fmt.Println("No changes")
 					return
 				}
 
+				// Update audit log
 				result, err := auditc.UpdateAuditLog(ctx, item)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to update auditlog.")
+				}
+
+				// Update default audit log (if requested)
+				if changeDefault {
+					if _, err := auditc.SetDefaultAuditLog(ctx, &audit.SetDefaultAuditLogRequest{
+						OrganizationId: item.GetOrganizationId(),
+						AuditlogId:     newDefaultAuditLogID,
+					}); err != nil {
+						log.Fatal().Err(err).Msg("Failed to change default audit log.")
+					}
 				}
 
 				// Show result
