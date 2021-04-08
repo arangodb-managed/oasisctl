@@ -79,7 +79,6 @@ func init() {
 					Name:           name,
 					Description:    cargs.description,
 					OrganizationId: org.GetId(),
-					IsDefault:      cargs.isDefault,
 					Destinations:   []*audit.AuditLog_Destination{destination},
 				}
 
@@ -87,6 +86,16 @@ func init() {
 				result, err := auditc.CreateAuditLog(ctx, req)
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create audit log.")
+				}
+
+				// Set default (if requested)
+				if cargs.isDefault {
+					if _, err := auditc.SetDefaultAuditLog(ctx, &audit.SetDefaultAuditLogRequest{
+						OrganizationId: result.GetOrganizationId(),
+						AuditlogId:     result.GetId(),
+					}); err != nil {
+						log.Fatal().Err(err).Msg("Failed to mark audit log as default.")
+					}
 				}
 
 				// Show result
