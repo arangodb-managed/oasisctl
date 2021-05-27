@@ -52,11 +52,13 @@ func init() {
 				projectID      string
 				organizationID string
 				providerID     string
+				model          string
 			}{}
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVar(&cargs.providerID, "provider-id", cmd.DefaultProvider(), "Identifier of the provider")
+			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Identifier of the model")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -82,6 +84,7 @@ func init() {
 				list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
 					ProjectId: project.GetId(),
 					RegionId:  region.GetId(),
+					Model:     cargs.model,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to list node sizes")
