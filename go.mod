@@ -6,7 +6,7 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.63.0
+	github.com/arangodb-managed/apis v0.65.0
 	github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22
 	github.com/coreos/go-semver v0.3.0
 	github.com/dchest/uniuri v0.0.0-20160212164326-8902c56451e9
@@ -29,11 +29,11 @@ require (
 
 replace github.com/coreos/prometheus-operator => github.com/coreos/prometheus-operator v0.37.0
 
-replace github.com/hashicorp/vault/api => github.com/hashicorp/vault/api v1.0.5-0.20200709165743-f98572ac11c9
+replace github.com/hashicorp/vault/api => github.com/hashicorp/vault/api v1.0.5-0.20201006192546-7a875e245472
 
-replace github.com/hashicorp/vault/sdk => github.com/hashicorp/vault/sdk v0.1.14-0.20200817171456-98de5540eb15
+replace github.com/hashicorp/vault/sdk => github.com/hashicorp/vault/sdk v0.1.14-0.20201110183819-7ce0bd969199
 
-replace github.com/hashicorp/vault => github.com/hashicorp/vault v1.5.3
+replace github.com/hashicorp/vault => github.com/hashicorp/vault v1.6.0
 
 replace github.com/kamilsk/retry => github.com/kamilsk/retry/v3 v3.4.2
 
@@ -75,13 +75,13 @@ replace sigs.k8s.io/controller-runtime => sigs.k8s.io/controller-runtime v0.8.3
 
 replace sourcegraph.com/sourcegraph/go-diff => github.com/sourcegraph/go-diff v0.5.0
 
-replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20210316152507-78e2c63b7fcb
+replace github.com/arangodb/kube-arangodb => github.com/arangodb/kube-arangodb v0.0.0-20210414140129-e66e59938ad5
 
 replace github.com/Azure/go-autorest => github.com/Azure/go-autorest v14.2.0+incompatible
 
 replace github.com/coreos/go-systemd => github.com/coreos/go-systemd v0.0.0-20190620071333-e64a0ec8b42a
 
-replace golang.org/x/sys => golang.org/x/sys v0.0.0-20191204072324-ce4227a45e2e
+replace golang.org/x/sys => golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6
 
 replace github.com/cilium/cilium => github.com/cilium/cilium v1.9.5
 
@@ -115,8 +115,10 @@ replace github.com/nats-io/nats.go => github.com/nats-io/nats.go v1.10.0
 
 replace github.com/nats-io/stan.go => github.com/nats-io/stan.go v0.8.3
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.46.0
+replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.47.1
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/client => github.com/prometheus-operator/prometheus-operator/pkg/client v0.46.0
+replace github.com/prometheus-operator/prometheus-operator/pkg/client => github.com/prometheus-operator/prometheus-operator/pkg/client v0.47.1
 
-replace github.com/prometheus-operator/prometheus-operator => github.com/prometheus-operator/prometheus-operator v0.46.0
+replace github.com/prometheus-operator/prometheus-operator => github.com/prometheus-operator/prometheus-operator v0.47.1
+
+replace go.uber.org/multierr => go.uber.org/multierr v1.6.1-0.20201027220001-0eb6eb5383b9

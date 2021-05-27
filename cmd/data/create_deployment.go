@@ -120,6 +120,15 @@ func init() {
 						DbserverMemorySize:    cargs.dbserverMemorySize,
 						DbserverDiskSize:      cargs.dbserverDiskSize,
 					}
+				} else if cargs.model == data.ModelDeveloper {
+					cargs.nodeCount = 1
+					servers = &data.Deployment_ServersSpec{
+						Coordinators:          0,
+						CoordinatorMemorySize: 0,
+						Dbservers:             1,
+						DbserverMemorySize:    cargs.dbserverMemorySize,
+						DbserverDiskSize:      cargs.dbserverDiskSize,
+					}
 				}
 
 				if len(cargs.nodeSizeID) < 1 && cargs.model != data.ModelFlexible {
@@ -127,6 +136,7 @@ func init() {
 					list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
 						ProjectId: cargs.projectID,
 						RegionId:  cargs.regionID,
+						Model:     cargs.model,
 					})
 					if err != nil {
 						log.Fatal().Err(err).Msg("Failed to fetch node size list.")
