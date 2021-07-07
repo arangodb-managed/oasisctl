@@ -59,6 +59,7 @@ func init() {
 				// Validate arguments
 				log := cmd.CLILog
 				backupID, argsUsed := cmd.OptOption("backup-id", cargs.backupID, args, 0)
+				regionID, argsUsed := cmd.OptOption("region-id", cargs.regionID, args, argsUsed)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -68,6 +69,7 @@ func init() {
 
 				req := &replication.CloneDeploymentFromBackupRequest{
 					BackupId: backupID,
+					RegionId: regionID,
 				}
 				if cargs.acceptTAndC {
 					rmc := rm.NewResourceManagerServiceClient(conn)
