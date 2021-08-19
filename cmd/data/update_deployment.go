@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ func init() {
 				ipallowlistID   string
 				customImage     string
 				cacertificateID string
+				disableFoxxAuth bool
 
 				version               string
 				model                 string
@@ -85,6 +86,7 @@ func init() {
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
+			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -179,6 +181,10 @@ func init() {
 				}
 				if f.Changed("cacertificate-id") {
 					ensureCaCertificate().CaCertificateId = cargs.cacertificateID
+					hasChanges = true
+				}
+				if f.Changed("disable-foxx-authentication") {
+					item.DisableFoxxAuthentication = cargs.disableFoxxAuth
 					hasChanges = true
 				}
 				if !hasChanges {

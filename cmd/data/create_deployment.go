@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ func init() {
 				dbserverDiskSize      int32
 				acceptTAndC           bool
 				customImage           string
+				disableFoxxAuth       bool
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -89,6 +90,7 @@ func init() {
 			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of dbservers for flexible deployments (GB)")
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
+			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -170,6 +172,7 @@ func init() {
 						NodeCount:    cargs.nodeCount,
 						NodeDiskSize: cargs.nodeDiskSize,
 					},
+					DisableFoxxAuthentication: cargs.disableFoxxAuth,
 				}
 
 				if cargs.acceptTAndC {
