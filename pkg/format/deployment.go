@@ -78,6 +78,8 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 	if x.GetCustomImage() != "" {
 		d = append(d, kv{"custom-image", x.GetCustomImage()})
 	}
+	d = append(d, kv{"foxx-authentication", formatFoxxAuthentication(x)})
+
 	return formatObject(opts, d...)
 }
 
@@ -116,4 +118,11 @@ func getDeploymentUpgradeInfo(x *data.Deployment) string {
 		return fmt.Sprintf("Upgrade to %s recommended because %s", ur.GetVersion(), ur.GetReason())
 	}
 	return "-"
+}
+
+func formatFoxxAuthentication(x *data.Deployment) string {
+	if x.GetDisableFoxxAuthentication() {
+		return "disabled"
+	}
+	return "enabled"
 }
