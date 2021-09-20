@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,17 +46,19 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name           string
-				description    string
-				organizationID string
-				projectID      string
-				cidrRanges     []string
+				name                    string
+				description             string
+				organizationID          string
+				projectID               string
+				cidrRanges              []string
+				remoteInspectionAllowed bool
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the IP allowlist")
 			f.StringVar(&cargs.description, "description", "", "Description of the IP allowlist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the IP allowlist in")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the IP allowlist in")
 			f.StringSliceVar(&cargs.cidrRanges, "cidr-range", nil, "List of CIDR ranges from which deployments are accessible")
+			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Oasis platform are allowed")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -77,10 +79,11 @@ func init() {
 				// Create IP allowlist
 				sort.Strings(cargs.cidrRanges)
 				result, err := securityc.CreateIPAllowlist(ctx, &security.IPAllowlist{
-					ProjectId:   project.GetId(),
-					Name:        name,
-					Description: description,
-					CidrRanges:  cargs.cidrRanges,
+					ProjectId:               project.GetId(),
+					Name:                    name,
+					Description:             description,
+					CidrRanges:              cargs.cidrRanges,
+					RemoteInspectionAllowed: cargs.remoteInspectionAllowed,
 				})
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to create IP allowlist")
