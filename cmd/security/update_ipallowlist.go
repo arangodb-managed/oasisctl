@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,13 +46,14 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				ipallowlistID    string
-				organizationID   string
-				projectID        string
-				name             string
-				description      string
-				addCidrRanges    []string
-				removeCidrRanges []string
+				ipallowlistID           string
+				organizationID          string
+				projectID               string
+				name                    string
+				description             string
+				addCidrRanges           []string
+				removeCidrRanges        []string
+				remoteInspectionAllowed bool
 			}{}
 			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -61,6 +62,7 @@ func init() {
 			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
 			f.StringSliceVar(&cargs.addCidrRanges, "add-cidr-range", nil, "List of CIDR ranges to add to the IP allowlist")
 			f.StringSliceVar(&cargs.removeCidrRanges, "remove-cidr-range", nil, "List of CIDR ranges to remove from the IP allowlist")
+			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Oasis platform are allowed")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -107,6 +109,10 @@ func init() {
 							hasChanges = true
 						}
 					}
+				}
+				if f.Changed("remote-inspection-allowed") {
+					item.RemoteInspectionAllowed = cargs.remoteInspectionAllowed
+					hasChanges = true
 				}
 				if !hasChanges {
 					fmt.Println("No changes")

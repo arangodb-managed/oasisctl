@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ func IPAllowlist(x *security.IPAllowlist, opts Options) string {
 		kv{"name", x.GetName()},
 		kv{"description", x.GetDescription()},
 		kv{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
+		kv{"remote-inspection-allowed", formatBool(opts, x.GetRemoteInspectionAllowed())},
 		kv{"url", x.GetUrl()},
 		kv{"locked", formatBool(opts, x.GetLocked())},
 		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
@@ -50,6 +51,7 @@ func IPAllowlistList(list []*security.IPAllowlist, opts Options) string {
 			{"name", x.GetName()},
 			{"description", x.GetDescription()},
 			{"cidr-ranges", strings.Join(x.GetCidrRanges(), ", ")},
+			{"remote-inspection-allowed", formatBool(opts, x.GetRemoteInspectionAllowed())},
 			{"url", x.GetUrl()},
 			{"locked", formatBool(opts, x.GetLocked())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
