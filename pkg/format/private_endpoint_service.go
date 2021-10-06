@@ -40,6 +40,8 @@ func PrivateEndpointService(x *nw.PrivateEndpointService, opts Options) string {
 		kv{"ready", formatBool(opts, x.GetStatus().GetReady())},
 		kv{"needs-attention", formatBool(opts, x.GetStatus().GetNeedsAttention())},
 		kv{"message", formatOptionalString(x.GetStatus().GetMessage())},
+		kv{"azure-alias", formatOptionalString(x.GetStatus().GetAks().GetAlias())},
+		kv{"azure-private-endpoints", len(x.GetStatus().GetAks().GetPrivateEndpointConnections())},
 		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
 		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 	)
