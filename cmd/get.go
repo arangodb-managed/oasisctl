@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,9 +39,16 @@ var (
 		Short: "Get metrics information",
 		Run:   ShowUsage,
 	}
+	// GetPrivateCmd is root for various `get private ...` commands
+	GetPrivateCmd = &cobra.Command{
+		Use:   "private",
+		Short: "Get private information",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(GetCmd)
 	GetCmd.AddCommand(GetMetricsCmd)
+	GetCmd.AddCommand(GetPrivateCmd)
 }
