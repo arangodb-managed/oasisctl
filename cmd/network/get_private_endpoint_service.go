@@ -80,11 +80,15 @@ func init() {
 
 				// Fetch private endpoint service
 				item, err := nwc.GetPrivateEndpointServiceByDeploymentID(ctx, &common.IDOptions{Id: depl.GetId()})
-				if err != nil {
+				if common.IsNotFound(err) {
+					// No Private Endpoint Service found for this deployment
+					fmt.Println("No private endpoint service found for this deployment.")
+				} else if err != nil {
 					log.Fatal().Err(err).Msg("Failed to get private endpoint service")
+				} else {
+					// Show result
+					fmt.Println(format.PrivateEndpointService(item, cmd.RootArgs.Format))
 				}
-				// Show result
-				fmt.Println(format.PrivateEndpointService(item, cmd.RootArgs.Format))
 			}
 
 		},
