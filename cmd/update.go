@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,9 +39,16 @@ var (
 		Short: "Update metrics resources",
 		Run:   ShowUsage,
 	}
+	// UpdatePrivateCmd is root for various `update private ...` commands
+	UpdatePrivateCmd = &cobra.Command{
+		Use:   "private",
+		Short: "Update private resources",
+		Run:   ShowUsage,
+	}
 )
 
 func init() {
 	RootCmd.AddCommand(UpdateCmd)
 	UpdateCmd.AddCommand(UpdateMetricsCmd)
+	UpdateCmd.AddCommand(UpdatePrivateCmd)
 }

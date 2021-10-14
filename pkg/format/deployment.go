@@ -63,6 +63,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 
 		{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
 		{"endpoint-url", x.GetStatus().GetEndpoint()},
+		{"private-endpoint", formatBool(opts, x.GetPrivateEndpoint())},
 		{"root-password", pwd(creds)},
 
 		{"model", x.Model.Model},
