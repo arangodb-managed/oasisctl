@@ -24,6 +24,7 @@ package format
 
 import (
 	"fmt"
+	"strings"
 
 	data "github.com/arangodb-managed/apis/data/v1"
 )
@@ -81,6 +82,9 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 	}
 	d = append(d, kv{"foxx-authentication", formatFoxxAuthentication(x)})
 
+	if settings := x.GetNotificationSettings(); settings != nil {
+		d = append(d, kv{"notification-email-addresses", strings.Join(settings.GetEmailAddresses(), ", ")})
+	}
 	return formatObject(opts, d...)
 }
 

@@ -47,26 +47,27 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				name                  string
-				description           string
-				organizationID        string
-				projectID             string
-				regionID              string
-				cacertificateID       string
-				ipallowlistID         string
-				version               string
-				model                 string
-				nodeSizeID            string
-				nodeCount             int32
-				nodeDiskSize          int32
-				coordinators          int32
-				coordinatorMemorySize int32
-				dbservers             int32
-				dbserverMemorySize    int32
-				dbserverDiskSize      int32
-				acceptTAndC           bool
-				customImage           string
-				disableFoxxAuth       bool
+				name                       string
+				description                string
+				organizationID             string
+				projectID                  string
+				regionID                   string
+				cacertificateID            string
+				ipallowlistID              string
+				version                    string
+				model                      string
+				nodeSizeID                 string
+				nodeCount                  int32
+				nodeDiskSize               int32
+				coordinators               int32
+				coordinatorMemorySize      int32
+				dbservers                  int32
+				dbserverMemorySize         int32
+				dbserverDiskSize           int32
+				acceptTAndC                bool
+				customImage                string
+				disableFoxxAuth            bool
+				notificationEmailAddresses []string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -91,6 +92,7 @@ func init() {
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
+			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -155,6 +157,14 @@ func init() {
 					}
 				}
 
+				var notificationSettings *data.Deployment_NotificationSettings
+				// set notification settings
+				if len(cargs.notificationEmailAddresses) > 0 {
+					notificationSettings = &data.Deployment_NotificationSettings{
+						EmailAddresses: cargs.notificationEmailAddresses,
+					}
+				}
+
 				req := &data.Deployment{
 					ProjectId:   project.GetId(),
 					Name:        name,
@@ -173,6 +183,7 @@ func init() {
 						NodeDiskSize: cargs.nodeDiskSize,
 					},
 					DisableFoxxAuthentication: cargs.disableFoxxAuth,
+					NotificationSettings:      notificationSettings,
 				}
 
 				if cargs.acceptTAndC {
