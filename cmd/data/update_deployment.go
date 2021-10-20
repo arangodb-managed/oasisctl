@@ -24,6 +24,7 @@ package data
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -55,16 +56,17 @@ func init() {
 				cacertificateID string
 				disableFoxxAuth bool
 
-				version               string
-				model                 string
-				nodeSizeID            string
-				nodeCount             int32
-				nodeDiskSize          int32
-				coordinators          int32
-				coordinatorMemorySize int32
-				dbservers             int32
-				dbserverMemorySize    int32
-				dbserverDiskSize      int32
+				version                    string
+				model                      string
+				nodeSizeID                 string
+				nodeCount                  int32
+				nodeDiskSize               int32
+				coordinators               int32
+				coordinatorMemorySize      int32
+				dbservers                  int32
+				dbserverMemorySize         int32
+				dbserverDiskSize           int32
+				notificationEmailAddresses []string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -87,6 +89,7 @@ func init() {
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
+			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -185,6 +188,20 @@ func init() {
 				}
 				if f.Changed("disable-foxx-authentication") {
 					item.DisableFoxxAuthentication = cargs.disableFoxxAuth
+					hasChanges = true
+				}
+				if f.Changed("notification-email-address") {
+					var addresses []string
+					// Filter out empty values, so that it's possible to zero
+					// NotificationSettings.EmailAddresses by passing --notification-email-address=""
+					for _, address := range cargs.notificationEmailAddresses {
+						if address := strings.TrimSpace(address); address != "" {
+							addresses = append(addresses, address)
+						}
+					}
+					item.NotificationSettings = &data.Deployment_NotificationSettings{
+						EmailAddresses: addresses,
+					}
 					hasChanges = true
 				}
 				if !hasChanges {
