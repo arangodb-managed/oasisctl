@@ -42,7 +42,8 @@ var (
 		Run:   cmd.ShowUsage,
 	}
 
-	// getOrganizationAuthenticationProvidersCmd fetches an organization invite that the user has access to
+	// getOrganizationAuthenticationProvidersCmd fetches authentication providers that
+	// are allowed for an organization
 	getOrganizationAuthenticationProvidersCmd = &cobra.Command{
 		Use:   "providers",
 		Short: "Get which authentication providers are allowed for accessing a specific organization",

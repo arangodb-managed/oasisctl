@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	// updateOrganizationAuthenticationProvidersCmd updates an organization that the user has access to
+	// updateOrganizationAuthenticationProvidersCmd is base for "update organization authentication ..." commands
 	updateOrganizationAuthenticationCmd = &cobra.Command{
 		Use:   "authentication",
 		Short: "Update authentication settings for an organization",
