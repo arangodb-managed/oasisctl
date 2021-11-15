@@ -41,7 +41,8 @@ var (
 		Short: "Update authentication settings for an organization",
 		Run:   cmd.ShowUsage,
 	}
-	// updateOrganizationAuthenticationProvidersCmd updates an organization that the user has access to
+	// updateOrganizationAuthenticationProvidersCmd updates the allowed authentication providers
+	// for an organization that the user has access to
 	updateOrganizationAuthenticationProvidersCmd = &cobra.Command{
 		Use:   "providers",
 		Short: "Update allowed authentication providers for an organization the authenticated user has access to",
