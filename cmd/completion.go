@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,15 +35,31 @@ var (
 		Short: "Generates bash completion scripts",
 		Long: `To load completion run
 	
-. <(oasisctl completion)
+. <(oasisctl completion [bash|fish|powershell|zsh])
 	
 To configure your bash shell to load completions for each session add to your bashrc
 	
 # ~/.bashrc or ~/.profile
-. <(oasisctl completion)
+. <(oasisctl completion bash)
 `,
+		ValidArgs: []string{"", "bash", "fish", "powershell", "zsh"},
 		Run: func(cmd *cobra.Command, args []string) {
-			RootCmd.GenBashCompletion(os.Stdout)
+			shell := "bash"
+			if len(args) > 0 {
+				shell = args[0]
+			}
+			switch shell {
+			case "bash":
+				RootCmd.GenBashCompletion(os.Stdout)
+			case "fish":
+				RootCmd.GenFishCompletion(os.Stdout, true)
+			case "zsh":
+				RootCmd.GenZshCompletion(os.Stdout)
+			case "powershell":
+				RootCmd.GenPowerShellCompletion(os.Stdout)
+			default:
+				CLILog.Fatal().Str("shell", shell).Msg("Unknown shell")
+			}
 		},
 	}
 )
