@@ -85,6 +85,11 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 	if settings := x.GetNotificationSettings(); settings != nil {
 		d = append(d, kv{"notification-email-addresses", strings.Join(settings.GetEmailAddresses(), ", ")})
 	}
+	if x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize() > 0 {
+		d = append(d,
+			kv{"maximum-dbserver-disk-size", fmt.Sprintf("%d%s", x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize(), "GB")},
+		)
+	}
 	return formatObject(opts, d...)
 }
 

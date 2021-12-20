@@ -59,6 +59,7 @@ func init() {
 				nodeSizeID                 string
 				nodeCount                  int32
 				nodeDiskSize               int32
+				maxNodeDiskSize            int32
 				coordinators               int32
 				coordinatorMemorySize      int32
 				dbservers                  int32
@@ -84,6 +85,7 @@ func init() {
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
 			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
+			f.Int32Var(&cargs.maxNodeDiskSize, "max-node-disk-size", 0, "Set maximum disk size for nodes for autoscaler (GB)")
 			f.Int32Var(&cargs.coordinators, "coordinators", 3, "Set number of coordinators for flexible deployments")
 			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of coordinators for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
@@ -135,26 +137,36 @@ func init() {
 					}
 				}
 
+				// Fetch node sizes
+				nodeSizes, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
+					ProjectId: cargs.projectID,
+					RegionId:  cargs.regionID,
+					Model:     cargs.model,
+				})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to fetch node size list.")
+				}
 				if len(cargs.nodeSizeID) < 1 && cargs.model != data.ModelFlexible {
-					// Fetch node sizes
-					list, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
-						ProjectId: cargs.projectID,
-						RegionId:  cargs.regionID,
-						Model:     cargs.model,
-					})
-					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to fetch node size list.")
-					}
-					if len(list.Items) < 1 {
+					if len(nodeSizes.Items) < 1 {
 						log.Fatal().Msg("No available node sizes found.")
 					}
-					sort.SliceStable(list.Items, func(i, j int) bool {
-						return list.Items[i].MemorySize < list.Items[j].MemorySize
+					sort.SliceStable(nodeSizes.Items, func(i, j int) bool {
+						return nodeSizes.Items[i].MemorySize < nodeSizes.Items[j].MemorySize
 					})
-					cargs.nodeSizeID = list.Items[0].Id
+					cargs.nodeSizeID = nodeSizes.Items[0].Id
 					if cargs.nodeDiskSize == 0 {
-						cargs.nodeDiskSize = list.Items[0].MinDiskSize
+						cargs.nodeDiskSize = nodeSizes.Items[0].MinDiskSize
 					}
+				}
+				var nodeSize *data.NodeSize
+				for _, item := range nodeSizes.Items {
+					if item.Id == cargs.nodeSizeID {
+						nodeSize = item
+						break
+					}
+				}
+				if nodeSize == nil {
+					log.Fatal().Msg("Can't find selected node size.")
 				}
 
 				var notificationSettings *data.Deployment_NotificationSettings
@@ -162,6 +174,21 @@ func init() {
 				if len(cargs.notificationEmailAddresses) > 0 {
 					notificationSettings = &data.Deployment_NotificationSettings{
 						EmailAddresses: cargs.notificationEmailAddresses,
+					}
+				}
+				if !c.Flags().Changed("max-node-disk-size") {
+					cargs.maxNodeDiskSize = cargs.nodeDiskSize * 2
+				}
+
+				// clamp maxNodeDiskSize to maximum allowed disk size of the node
+				if cargs.maxNodeDiskSize > nodeSize.MaxDiskSize {
+					cargs.maxNodeDiskSize = nodeSize.MaxDiskSize
+				}
+
+				var diskAutoSizeSettings *data.Deployment_DiskAutoSizeSettings
+				if cargs.maxNodeDiskSize > 0 {
+					diskAutoSizeSettings = &data.Deployment_DiskAutoSizeSettings{
+						MaximumNodeDiskSize: cargs.maxNodeDiskSize,
 					}
 				}
 
@@ -184,6 +211,7 @@ func init() {
 					},
 					DisableFoxxAuthentication: cargs.disableFoxxAuth,
 					NotificationSettings:      notificationSettings,
+					DiskAutoSizeSettings:      diskAutoSizeSettings,
 				}
 
 				if cargs.acceptTAndC {
