@@ -17,9 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-// Author Marcin Swiderski
-//
 
 package format
 

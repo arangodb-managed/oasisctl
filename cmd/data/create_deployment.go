@@ -17,9 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-// Author Marcin Swiderski
-//
 
 package data
 
@@ -171,23 +168,16 @@ func init() {
 				}
 
 				var notificationSettings *data.Deployment_NotificationSettings
-				// set notification settings
+				// Set notification settings
 				if len(cargs.notificationEmailAddresses) > 0 {
 					notificationSettings = &data.Deployment_NotificationSettings{
 						EmailAddresses: cargs.notificationEmailAddresses,
 					}
 				}
-				if !c.Flags().Changed("max-node-disk-size") {
-					cargs.maxNodeDiskSize = cargs.nodeDiskSize * 2
-				}
 
-				// clamp maxNodeDiskSize to maximum allowed disk size of the node
-				if cargs.maxNodeDiskSize > nodeSize.GetMaxDiskSize() {
-					cargs.maxNodeDiskSize = nodeSize.GetMaxDiskSize()
-				}
-
+				// Set DiskAutoSizeSettings.
 				var diskAutoSizeSettings *data.Deployment_DiskAutoSizeSettings
-				if cargs.maxNodeDiskSize > 0 {
+				if c.Flags().Changed("max-node-disk-size") {
 					diskAutoSizeSettings = &data.Deployment_DiskAutoSizeSettings{
 						MaximumNodeDiskSize: cargs.maxNodeDiskSize,
 					}
