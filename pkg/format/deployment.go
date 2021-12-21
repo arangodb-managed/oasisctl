@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Ewout Prangsma
 //
 
 package format
@@ -84,6 +82,11 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 
 	if settings := x.GetNotificationSettings(); settings != nil {
 		d = append(d, kv{"notification-email-addresses", strings.Join(settings.GetEmailAddresses(), ", ")})
+	}
+	if x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize() > 0 {
+		d = append(d,
+			kv{"maximum-dbserver-disk-size", fmt.Sprintf("%d%s", x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize(), "GB")},
+		)
 	}
 	return formatObject(opts, d...)
 }

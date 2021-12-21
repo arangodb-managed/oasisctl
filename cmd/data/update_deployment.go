@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package data
 
@@ -61,6 +59,7 @@ func init() {
 				nodeSizeID                 string
 				nodeCount                  int32
 				nodeDiskSize               int32
+				maxNodeDiskSize            int32
 				coordinators               int32
 				coordinatorMemorySize      int32
 				dbservers                  int32
@@ -81,6 +80,7 @@ func init() {
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
 			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
+			f.Int32Var(&cargs.maxNodeDiskSize, "max-node-disk-size", 0, "Set maximum disk size for nodes for autoscaler (GB)")
 			f.Int32Var(&cargs.coordinators, "coordinators", 3, "Set number of coordinators for flexible deployments")
 			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of coordinators for flexible deployments (GB)")
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of dbservers for flexible deployments")
@@ -123,6 +123,12 @@ func init() {
 					}
 					return item.Certificates
 				}
+				ensureDiskAutosizeSettings := func() *data.Deployment_DiskAutoSizeSettings {
+					if item.DiskAutoSizeSettings == nil {
+						item.DiskAutoSizeSettings = &data.Deployment_DiskAutoSizeSettings{}
+					}
+					return item.DiskAutoSizeSettings
+				}
 				// Set changes
 				f := c.Flags()
 				hasChanges := false
@@ -156,6 +162,10 @@ func init() {
 				}
 				if f.Changed("node-disk-size") {
 					ensureModel().NodeDiskSize = cargs.nodeDiskSize
+					hasChanges = true
+				}
+				if f.Changed("max-node-disk-size") {
+					ensureDiskAutosizeSettings().MaximumNodeDiskSize = cargs.maxNodeDiskSize
 					hasChanges = true
 				}
 				if f.Changed("coordinators") {
