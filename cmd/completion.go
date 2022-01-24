@@ -34,13 +34,13 @@ var (
 		Use:   "completion",
 		Short: "Generates bash completion scripts",
 		Long: `To load completion run
-	
-. <(oasisctl completion [bash|fish|powershell|zsh])
-	
+
+    . <(oasisctl completion [bash|fish|powershell|zsh])
+
 To configure your bash shell to load completions for each session add to your bashrc
-	
-# ~/.bashrc or ~/.profile
-. <(oasisctl completion bash)
+
+    # ~/.bashrc or ~/.profile
+    . <(oasisctl completion bash)
 `,
 		ValidArgs: []string{"", "bash", "fish", "powershell", "zsh"},
 		Run: func(cmd *cobra.Command, args []string) {
