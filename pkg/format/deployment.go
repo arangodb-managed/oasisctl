@@ -40,7 +40,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"name", x.GetName()},
 		{"description", x.GetDescription()},
 		{"region", x.GetRegionId()},
-		{"version", x.GetVersion()},
+		{"version", formatVersion(x)},
 		{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 		{"url", x.GetUrl()},
 		{"paused", formatBool(opts, x.GetIsPaused())},
@@ -100,7 +100,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"name", x.GetName()},
 			{"description", x.GetDescription()},
 			{"region", x.GetRegionId()},
-			{"version", x.GetVersion()},
+			{"version", formatVersion(x)},
 			{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 			{"url", x.GetUrl()},
 			{"paused", formatBool(opts, x.GetIsPaused())},
@@ -126,6 +126,14 @@ func getDeploymentUpgradeInfo(x *data.Deployment) string {
 		return fmt.Sprintf("Upgrade to %s recommended because %s", ur.GetVersion(), ur.GetReason())
 	}
 	return "-"
+}
+
+func formatVersion(x *data.Deployment) string {
+	v := x.GetVersion()
+	if x.GetVersionIsEndOfLife() {
+		return fmt.Sprintf("%s (End Of Life)", v)
+	}
+	return v
 }
 
 func formatFoxxAuthentication(x *data.Deployment) string {
