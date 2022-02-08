@@ -68,6 +68,9 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"model", x.Model.Model},
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
+
+		{"disk-performance-id", x.GetDiskPerformanceId()},
+		{"disk-performance-locked", formatBool(opts, x.GetDiskPerformanceLocked())},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
