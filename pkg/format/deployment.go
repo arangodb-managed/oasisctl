@@ -69,7 +69,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
 
-		{"disk-performance-id", x.GetDiskPerformanceId()},
+		{"disk-performance-id", formatOptionalString(x.GetDiskPerformanceId())},
 		{"disk-performance-locked", formatBool(opts, x.GetDiskPerformanceLocked())},
 	}
 	if x.Model.Model != data.ModelFlexible {
