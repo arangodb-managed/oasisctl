@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Ewout Prangsma
 //
 
 package format
@@ -34,6 +32,7 @@ func Version(x *data.Version, opts Options) string {
 		kv{"version", x.GetVersion()},
 		kv{"upgrade pending", getReplacedBy(x)},
 		kv{"upgrade recommendation", getUpgradeRecommendation(x)},
+		kv{"end of life", formatBool(opts, x.GetIsEndOfLife())},
 	)
 }
 
@@ -46,6 +45,7 @@ func VersionList(list []*data.Version, defaultVersion *data.Version, opts Option
 			{"default", formatBool(opts, x.GetVersion() == defaultVersion.GetVersion())},
 			{"upgrade pending", getReplacedBy(x)},
 			{"upgrade recommendation", getUpgradeRecommendation(x)},
+			{"end of life", formatBool(opts, x.GetIsEndOfLife())},
 		}
 	}, true)
 }

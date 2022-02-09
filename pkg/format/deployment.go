@@ -40,7 +40,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"name", x.GetName()},
 		{"description", x.GetDescription()},
 		{"region", x.GetRegionId()},
-		{"version", x.GetVersion()},
+		{"version", formatVersion(x)},
 		{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 		{"url", x.GetUrl()},
 		{"paused", formatBool(opts, x.GetIsPaused())},
@@ -68,6 +68,9 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"model", x.Model.Model},
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
+
+		{"disk-performance-id", formatOptionalString(x.GetDiskPerformanceId())},
+		{"disk-performance-locked", formatBool(opts, x.GetDiskPerformanceLocked())},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
@@ -100,7 +103,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"name", x.GetName()},
 			{"description", x.GetDescription()},
 			{"region", x.GetRegionId()},
-			{"version", x.GetVersion()},
+			{"version", formatVersion(x)},
 			{"ipallowlist", formatOptionalString(x.GetIpallowlistId())},
 			{"url", x.GetUrl()},
 			{"paused", formatBool(opts, x.GetIsPaused())},
@@ -126,6 +129,14 @@ func getDeploymentUpgradeInfo(x *data.Deployment) string {
 		return fmt.Sprintf("Upgrade to %s recommended because %s", ur.GetVersion(), ur.GetReason())
 	}
 	return "-"
+}
+
+func formatVersion(x *data.Deployment) string {
+	v := x.GetVersion()
+	if x.GetVersionIsEndOfLife() {
+		return fmt.Sprintf("%s (End Of Life)", v)
+	}
+	return v
 }
 
 func formatFoxxAuthentication(x *data.Deployment) string {

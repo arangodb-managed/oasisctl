@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ func init() {
 				customImage                string
 				disableFoxxAuth            bool
 				notificationEmailAddresses []string
+				diskPerformanceID          string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -93,6 +94,7 @@ func init() {
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
 			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
+			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -203,6 +205,7 @@ func init() {
 					DisableFoxxAuthentication: cargs.disableFoxxAuth,
 					NotificationSettings:      notificationSettings,
 					DiskAutoSizeSettings:      diskAutoSizeSettings,
+					DiskPerformanceId:         cargs.diskPerformanceID,
 				}
 
 				if cargs.acceptTAndC {
