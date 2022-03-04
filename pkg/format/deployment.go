@@ -64,6 +64,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"endpoint-url", x.GetStatus().GetEndpoint()},
 		{"private-endpoint", formatBool(opts, x.GetPrivateEndpoint())},
 		{"root-password", pwd(creds)},
+		{"scheduled root-password rotation", formatScheduledRootPassRotation(x)},
 
 		{"model", x.Model.Model},
 		{"is-clone", x.GetIsClone()},
@@ -144,4 +145,11 @@ func formatFoxxAuthentication(x *data.Deployment) string {
 		return "disabled"
 	}
 	return "enabled"
+}
+
+func formatScheduledRootPassRotation(x *data.Deployment) string {
+	if x.GetIsScheduledRootPasswordRotationEnabled() {
+		return "enabled"
+	}
+	return "disabled"
 }
