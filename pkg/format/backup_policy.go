@@ -65,6 +65,9 @@ func backupPolicyToKeyValueList(x *backup.BackupPolicy, opts Options) []kv {
 		data = append(data, kv{
 			"schedule-every-interval-hours",
 			x.GetSchedule().GetHourlySchedule().GetScheduleEveryIntervalHours(),
+		}, kv{
+			"minutes-offset",
+			x.GetSchedule().GetHourlySchedule().GetMinutesOffset(),
 		})
 	case daily:
 		dailySchedule := []kv{
