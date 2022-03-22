@@ -29,7 +29,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	replication "github.com/arangodb-managed/apis/replication/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	resourcemanager "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
@@ -70,14 +70,21 @@ func init() {
 				ctx := cmd.ContextWithToken()
 				repl := replication.NewReplicationServiceClient(conn)
 
+				rmc := resourcemanager.NewResourceManagerServiceClient(conn)
+
+				org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+				if projectID != "" {
+					proj := selection.MustSelectProject(ctx, log, projectID, org.GetId(), rmc)
+					projectID = proj.GetId()
+				}
+
 				req := &replication.CloneDeploymentFromBackupRequest{
 					BackupId:  backupID,
 					RegionId:  regionID,
 					ProjectId: projectID,
 				}
 				if cargs.acceptTAndC {
-					rmc := rm.NewResourceManagerServiceClient(conn)
-					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", org.GetId(), rmc)
 					req.AcceptedTermsAndConditionsId = tandc.GetId()
 				}
 
