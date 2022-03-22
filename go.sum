@@ -10,8 +10,8 @@ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRF
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 h1:TEBmxO80TM04L8IuMWk77SGL1HomBmKTdzdJLLWznxI=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1/go.mod h1:SLqhdZcd+dF3TEVL2RMoob5bBP5R1P1qkox+HtCBgGI=
-github.com/arangodb-managed/apis v0.73.9 h1:u4dMt4FxB0CCL6s8Ly0xD9vmDz4Om1RBhIaRAdK0ODs=
-github.com/arangodb-managed/apis v0.73.9/go.mod h1:dSEV+DTPdZNH06qVqFWA+F0OcaL2ePGEo+odyMaU72Y=
+github.com/arangodb-managed/apis v0.73.12-0.20220322115520-d429add5e7ca h1:Djvsfh8vAREwZCgqxgnyb8L6bvw1CsKX/um4uOqfCTY=
+github.com/arangodb-managed/apis v0.73.12-0.20220322115520-d429add5e7ca/go.mod h1:dSEV+DTPdZNH06qVqFWA+F0OcaL2ePGEo+odyMaU72Y=
 github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22 h1:AO6iKTfLb3ij5D6cZ3ueHrQbNh8u/QEHbIace8JzDkI=
 github.com/arangodb-managed/arangocopy v0.0.0-20200728084932-9e3a6c61cf22/go.mod h1:Yv//aCZvU4/H0giMMNP+tEP9HCJZ8HzfmsH1Am36RLs=
 github.com/arangodb/go-driver v0.0.0-20200529120925-bf58c3c102b4 h1:wtMkIS/neOMpJUjFhIjLx1cN026s4t79KF0hLVMSANs=
