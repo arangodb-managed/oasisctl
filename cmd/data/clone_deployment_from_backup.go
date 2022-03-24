@@ -29,7 +29,7 @@ import (
 	flag "github.com/spf13/pflag"
 
 	replication "github.com/arangodb-managed/apis/replication/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
+	resourcemanager "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
@@ -47,12 +47,14 @@ func init() {
 			cargs := &struct {
 				backupID       string
 				organizationID string
+				projectID      string
 				regionID       string
 				acceptTAndC    bool
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "b", "", "Clone a deployment from a backup using the backup's ID.")
 			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optionally defined region in which the new deployment should be created in.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the clone in")
+			f.StringVarP(&cargs.projectID, "project-id", "p", "", "An optional identifier of the project to create the clone in")
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -60,6 +62,7 @@ func init() {
 				log := cmd.CLILog
 				backupID, argsUsed := cmd.OptOption("backup-id", cargs.backupID, args, 0)
 				regionID, argsUsed := cmd.OptOption("region-id", cargs.regionID, args, argsUsed)
+				projectID, argsUsed := cmd.OptOption("project-id", cargs.projectID, args, argsUsed)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				// Connect
@@ -67,13 +70,21 @@ func init() {
 				ctx := cmd.ContextWithToken()
 				repl := replication.NewReplicationServiceClient(conn)
 
+				rmc := resourcemanager.NewResourceManagerServiceClient(conn)
+
+				org := selection.MustSelectOrganization(ctx, log, cargs.organizationID, rmc)
+				if projectID != "" {
+					proj := selection.MustSelectProject(ctx, log, projectID, org.GetId(), rmc)
+					projectID = proj.GetId()
+				}
+
 				req := &replication.CloneDeploymentFromBackupRequest{
-					BackupId: backupID,
-					RegionId: regionID,
+					BackupId:  backupID,
+					RegionId:  regionID,
+					ProjectId: projectID,
 				}
 				if cargs.acceptTAndC {
-					rmc := rm.NewResourceManagerServiceClient(conn)
-					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", cargs.organizationID, rmc)
+					tandc := selection.MustSelectTermsAndConditions(ctx, log, "", org.GetId(), rmc)
 					req.AcceptedTermsAndConditionsId = tandc.GetId()
 				}
 
