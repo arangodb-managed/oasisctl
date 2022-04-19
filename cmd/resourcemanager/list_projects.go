@@ -23,6 +23,7 @@
 package rm
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -68,12 +69,17 @@ func listProjectsCmdRun(c *cobra.Command, args []string) {
 	// Fetch organization
 	org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
-	// Fetch projects in organization
-	list, err := rmc.ListProjects(ctx, &common.ListOptions{ContextId: org.GetId()})
-	if err != nil {
+	// Fetch projects in organizationo
+	var projects []*rm.Project
+	if err := rm.ForEachProject(ctx, func(ctx context.Context, req *common.ListOptions) (*rm.ProjectList, error) {
+		return rmc.ListProjects(ctx, req)
+	}, &common.ListOptions{ContextId: org.GetId()}, func(ctx context.Context, project *rm.Project) error {
+		projects = append(projects, project)
+		return nil
+	}); err != nil {
 		log.Fatal().Err(err).Msg("Failed to list projects")
 	}
 
 	// Show result
-	fmt.Println(format.ProjectList(list.Items, cmd.RootArgs.Format))
+	fmt.Println(format.ProjectList(projects, cmd.RootArgs.Format))
 }
