@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package format
 
 import (
+	"fmt"
 	"strings"
 
 	nw "github.com/arangodb-managed/apis/network/v1"
@@ -30,19 +29,37 @@ import (
 
 // PrivateEndpointService returns a single private endpoint service formatted for humans.
 func PrivateEndpointService(x *nw.PrivateEndpointService, opts Options) string {
-	return formatObject(opts,
-		kv{"id", x.GetId()},
-		kv{"name", x.GetName()},
-		kv{"description", x.GetDescription()},
-		kv{"url", x.GetUrl()},
-		kv{"alt-dns-names", formatOptionalString(strings.Join(x.GetAlternateDnsNames(), ", "))},
-		kv{"client-subscription-ids", formatOptionalString(strings.Join(x.GetAks().GetClientSubscriptionIds(), ", "))},
-		kv{"ready", formatBool(opts, x.GetStatus().GetReady())},
-		kv{"needs-attention", formatBool(opts, x.GetStatus().GetNeedsAttention())},
-		kv{"message", formatOptionalString(x.GetStatus().GetMessage())},
-		kv{"azure-alias", formatOptionalString(x.GetStatus().GetAks().GetAlias())},
-		kv{"azure-private-endpoints", len(x.GetStatus().GetAks().GetPrivateEndpointConnections())},
-		kv{"created-at", formatTime(opts, x.GetCreatedAt())},
-		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
-	)
+	obj := []kv{
+		{"id", x.GetId()},
+		{"name", x.GetName()},
+		{"description", x.GetDescription()},
+		{"url", x.GetUrl()},
+		{"alt-dns-names", formatOptionalString(strings.Join(x.GetAlternateDnsNames(), ", "))},
+
+		{"ready", formatBool(opts, x.GetStatus().GetReady())},
+		{"needs-attention", formatBool(opts, x.GetStatus().GetNeedsAttention())},
+		{"message", formatOptionalString(x.GetStatus().GetMessage())},
+
+		{"created-at", formatTime(opts, x.GetCreatedAt())},
+		{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
+	}
+	// AKS settings (if any)
+	if aks := x.GetAks(); aks != nil {
+		obj = append(obj,
+			kv{"client-subscription-ids", formatOptionalString(strings.Join(aks.GetClientSubscriptionIds(), ", "))},
+			kv{"azure-alias", formatOptionalString(x.GetStatus().GetAks().GetAlias())},
+			kv{"azure-private-endpoints", len(x.GetStatus().GetAks().GetPrivateEndpointConnections())})
+	}
+	// AWS settings (if any)
+	if aws := x.GetAws(); aws != nil {
+		for _, p := range aws.GetAwsPrincipals() {
+			obj = append(obj,
+				kv{"aws-principals", fmt.Sprintf("AccountID=%s (Roles=%s; Users=%s)", p.GetAccountId(), strings.Join(p.GetRoleNames(), ", "), strings.Join(p.GetUserNames(), ", "))})
+		}
+		obj = append(obj,
+			kv{"aws-service-name", formatOptionalString(x.GetStatus().GetAws().GetServiceName())},
+			kv{"aws-availability-zones", formatOptionalString(strings.Join(x.GetStatus().GetAws().GetAvailabilityZones(), ", "))},
+			kv{"aws-private-endpoints", len(x.GetStatus().GetAws().GetPrivateEndpointConnections())})
+	}
+	return formatObject(opts, obj...)
 }

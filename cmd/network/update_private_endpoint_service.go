@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package network
 
@@ -31,6 +29,7 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
 	network "github.com/arangodb-managed/apis/network/v1"
+	platform "github.com/arangodb-managed/apis/platform/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
 
 	"github.com/arangodb-managed/oasisctl/cmd"
@@ -60,6 +59,7 @@ func init() {
 				description             string
 				alternateDNSNames       []string
 				azClientSubscriptionIDs []string
+				awsPrincipals           []string
 			}{}
 			f.StringVarP(&cargs.deplID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment that the private endpoint service is connected to")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -68,6 +68,7 @@ func init() {
 			f.StringVar(&cargs.description, "description", "", "Description of the private endpoint service")
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
+			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals (currently only AccountID is supported) from which a Private Endpoint can be created")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -80,10 +81,17 @@ func init() {
 				datac := data.NewDataServiceClient(conn)
 				nwc := network.NewNetworkServiceClient(conn)
 				rmc := rm.NewResourceManagerServiceClient(conn)
+				platformc := platform.NewPlatformServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
 				// Fetch deployment
 				depl := selection.MustSelectDeployment(ctx, log, deplID, cargs.projectID, cargs.organizationID, datac, rmc)
+
+				// Fetch region
+				region, err := platformc.GetRegion(ctx, &common.IDOptions{Id: depl.GetRegionId()})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to get region for deployment")
+				}
 
 				// Fetch existing private endpoint service
 				item, err := nwc.GetPrivateEndpointServiceByDeploymentID(ctx, &common.IDOptions{Id: depl.GetId()})
@@ -106,12 +114,23 @@ func init() {
 					item.AlternateDnsNames = cargs.alternateDNSNames
 					hasChanges = true
 				}
-				if f.Changed("azure-client-subscription-id") {
-					if item.Aks == nil {
-						item.Aks = &network.PrivateEndpointService_Aks{}
+				switch region.GetProviderId() {
+				case "aks":
+					if f.Changed("azure-client-subscription-id") {
+						if item.Aks == nil {
+							item.Aks = &network.PrivateEndpointService_Aks{}
+						}
+						item.Aks.ClientSubscriptionIds = cargs.azClientSubscriptionIDs
+						hasChanges = true
 					}
-					item.Aks.ClientSubscriptionIds = cargs.azClientSubscriptionIDs
-					hasChanges = true
+				case "aws":
+					if f.Changed("aws-principal") {
+						if item.Aws == nil {
+							item.Aws = &network.PrivateEndpointService_Aws{}
+						}
+						item.Aws.AwsPrincipals = getAwsPrincipals(cargs.awsPrincipals)
+						hasChanges = true
+					}
 				}
 
 				if !hasChanges {
