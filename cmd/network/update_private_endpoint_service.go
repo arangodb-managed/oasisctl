@@ -68,7 +68,7 @@ func init() {
 			f.StringVar(&cargs.description, "description", "", "Description of the private endpoint service")
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
-			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals (currently only AccountID is supported) from which a Private Endpoint can be created")
+			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -128,7 +128,11 @@ func init() {
 						if item.Aws == nil {
 							item.Aws = &network.PrivateEndpointService_Aws{}
 						}
-						item.Aws.AwsPrincipals = getAwsPrincipals(cargs.awsPrincipals)
+						p, err := getAwsPrincipals(cargs.awsPrincipals)
+						if err != nil {
+							log.Fatal().Err(err).Msg("Failed to parse AWS principals")
+						}
+						item.Aws.AwsPrincipals = p
 						hasChanges = true
 					}
 				}

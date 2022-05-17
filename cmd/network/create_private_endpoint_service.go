@@ -22,6 +22,7 @@ package network
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -69,7 +70,7 @@ func init() {
 			f.StringVar(&cargs.description, "description", "", "Description of the private endpoint service")
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
-			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals (currently only AccountID is supported) from which a Private Endpoint can be created")
+			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -113,8 +114,12 @@ func init() {
 						ClientSubscriptionIds: cargs.azClientSubscriptionIDs,
 					}
 				case "aws":
+					p, err := getAwsPrincipals(cargs.awsPrincipals)
+					if err != nil {
+						log.Fatal().Err(err).Msg("Failed to parse AWS principals")
+					}
 					pes.Aws = &network.PrivateEndpointService_Aws{
-						AwsPrincipals: getAwsPrincipals(cargs.awsPrincipals),
+						AwsPrincipals: p,
 					}
 				}
 
@@ -132,12 +137,70 @@ func init() {
 }
 
 // getAwsPrincipals get the AWS principals out of a string slice
-func getAwsPrincipals(source []string) []*network.PrivateEndpointService_AwsPrincipals {
-	var principals []*network.PrivateEndpointService_AwsPrincipals
-	for _, p := range source {
-		principals = append(principals, &network.PrivateEndpointService_AwsPrincipals{
-			AccountId: p,
-		})
+// with format: <AccountID>[/Role/<RoleName>|/User/<UserName>]
+func getAwsPrincipals(source []string) ([]*network.PrivateEndpointService_AwsPrincipals, error) {
+	principals := make(map[string]*network.PrivateEndpointService_AwsPrincipals)
+	for _, s := range source {
+		p, err := parseAwsPrincipal(s)
+		if err != nil {
+			return nil, err
+		}
+		principal, found := principals[p.AccountID]
+		if !found {
+			principal = &network.PrivateEndpointService_AwsPrincipals{
+				AccountId: p.AccountID,
+			}
+			principals[p.AccountID] = principal
+		}
+		if p.RoleName != "" {
+			principal.RoleNames = append(principal.RoleNames, p.RoleName)
+		}
+		if p.UserName != "" {
+			principal.UserNames = append(principal.UserNames, p.UserName)
+		}
 	}
-	return principals
+	// Convert map into slice
+	var result []*network.PrivateEndpointService_AwsPrincipals
+	for _, p := range principals {
+		result = append(result, p)
+	}
+	return result, nil
+}
+
+type parsedAwsPrincipal struct {
+	// Required account ID (12 digits)
+	AccountID string
+	// Optional role name
+	RoleName string
+	// Optional user name
+	UserName string
+}
+
+// parseAwsPrincipal convert a string into strong typed object.
+// input in format: <AccountID>[/Role/<RoleName>|/User/<UserName>]
+func parseAwsPrincipal(input string) (parsedAwsPrincipal, error) {
+	input = strings.TrimSpace(input)
+	splitted := strings.Split(input, "/")
+	if len(splitted) == 1 {
+		return parsedAwsPrincipal{
+			AccountID: splitted[0],
+		}, nil
+	}
+	if len(splitted) != 3 {
+		return parsedAwsPrincipal{}, fmt.Errorf("cannot parse AWS principal: %s", input)
+	}
+	switch splitted[1] {
+	case "Role":
+		return parsedAwsPrincipal{
+			AccountID: splitted[0],
+			RoleName:  splitted[2],
+		}, nil
+	case "User":
+		return parsedAwsPrincipal{
+			AccountID: splitted[0],
+			UserName:  splitted[2],
+		}, nil
+	default:
+		return parsedAwsPrincipal{}, fmt.Errorf("cannot parse AWS principal: %s (unknown subtype)", input)
+	}
 }
