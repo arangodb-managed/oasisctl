@@ -61,5 +61,12 @@ func PrivateEndpointService(x *nw.PrivateEndpointService, opts Options) string {
 			kv{"aws-availability-zones", formatOptionalString(strings.Join(x.GetStatus().GetAws().GetAvailabilityZones(), ", "))},
 			kv{"aws-private-endpoints", len(x.GetStatus().GetAws().GetPrivateEndpointConnections())})
 	}
+	// GCP settings (if any)
+	if gcp := x.GetGcp(); gcp != nil {
+		obj = append(obj,
+			kv{"google-projects", formatOptionalString(strings.Join(gcp.GetProjects(), ", "))},
+			kv{"google-service-attachment", formatOptionalString(x.GetStatus().GetGcp().GetServiceAttachment())},
+			kv{"google-private-endpoints", len(x.GetStatus().GetGcp().GetPrivateEndpointConnections())})
+	}
 	return formatObject(opts, obj...)
 }

@@ -60,6 +60,7 @@ func init() {
 				alternateDNSNames       []string
 				azClientSubscriptionIDs []string
 				awsPrincipals           []string
+				gcpProjects             []string
 			}{}
 			f.StringVarP(&cargs.deplID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment that the private endpoint service is connected to")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -69,6 +70,7 @@ func init() {
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
 			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
+			f.StringSliceVar(&cargs.gcpProjects, "google-project", nil, "List of Google projects from which a Private Endpoint can be created")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -133,6 +135,14 @@ func init() {
 							log.Fatal().Err(err).Msg("Failed to parse AWS principals")
 						}
 						item.Aws.AwsPrincipals = p
+						hasChanges = true
+					}
+				case "gcp":
+					if f.Changed("google-project") {
+						if item.Gcp == nil {
+							item.Gcp = &network.PrivateEndpointService_Gcp{}
+						}
+						item.Gcp.Projects = cargs.gcpProjects
 						hasChanges = true
 					}
 				}
