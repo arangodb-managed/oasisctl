@@ -72,7 +72,7 @@ func init() {
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
 			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
-			f.StringSliceVar(&cargs.gcpProjects, "google-project", nil, "List of Google projects from which a Private Endpoint can be created")
+			f.StringSliceVar(&cargs.gcpProjects, "gcp-project", nil, "List of GCP projects from which a Private Endpoint can be created")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

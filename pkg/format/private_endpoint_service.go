@@ -64,9 +64,9 @@ func PrivateEndpointService(x *nw.PrivateEndpointService, opts Options) string {
 	// GCP settings (if any)
 	if gcp := x.GetGcp(); gcp != nil {
 		obj = append(obj,
-			kv{"google-projects", formatOptionalString(strings.Join(gcp.GetProjects(), ", "))},
-			kv{"google-service-attachment", formatOptionalString(x.GetStatus().GetGcp().GetServiceAttachment())},
-			kv{"google-private-endpoints", len(x.GetStatus().GetGcp().GetPrivateEndpointConnections())})
+			kv{"gcp-projects", formatOptionalString(strings.Join(gcp.GetProjects(), ", "))},
+			kv{"gcp-service-attachment", formatOptionalString(x.GetStatus().GetGcp().GetServiceAttachment())},
+			kv{"gcp-private-endpoints", len(x.GetStatus().GetGcp().GetPrivateEndpointConnections())})
 	}
 	return formatObject(opts, obj...)
 }
