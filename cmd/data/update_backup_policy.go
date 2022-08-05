@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Gergely Brautigam
 //
 
 package data
@@ -73,9 +71,10 @@ func init() {
 					minutes  int32
 					timezone string
 				}
-				retentionPeriod int
-				upload          bool
-				locked          bool
+				retentionPeriod     int
+				upload              bool
+				locked              bool
+				additionalRegionIDs []string
 			}{}
 			f.StringVarP(&cargs.id, "backup-policy-id", "d", "", "Identifier of the backup policy")
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -98,6 +97,7 @@ func init() {
 			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-59)")
 			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time-zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
 			f.Int32Var(&cargs.monthlySchedule.dayOfMonth, "day-of-the-month", 1, "Run the backup on the specified day of the month (1-31)")
+			f.StringSliceVar(&cargs.additionalRegionIDs, "additional-region-ids", nil, "Add backup to the specified addition regions")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -237,6 +237,10 @@ func init() {
 				}
 				if f.Changed("minutes-offset") {
 					item.Schedule.HourlySchedule.MinutesOffset = cargs.hourlySchedule.minutesOffset
+					hasChanges = true
+				}
+				if f.Changed("additional-region-ids") {
+					item.AdditionalRegionIds = cargs.additionalRegionIDs
 					hasChanges = true
 				}
 
