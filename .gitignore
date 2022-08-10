@@ -5,3 +5,4 @@ assets
 #IDE's
 .idea
 
+.vscode/*.log
