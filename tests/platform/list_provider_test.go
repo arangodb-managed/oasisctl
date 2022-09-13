@@ -39,7 +39,7 @@ func TestListProvider(t *testing.T) {
 	compare := `Id  | Name
 aks | Microsoft Azure
 aws | Amazon Web Services
-gcp | Google Compute Platform
+gcp | Google Cloud Platform
 $`
 	out, err := tests.RunCommand(args)
 	require.NoError(t, err)
