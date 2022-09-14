@@ -1,5 +1,5 @@
 {
-  "backup/v1": "1.2.2",
+  "backup/v1": "1.2.3",
   "crypto/v1": "1.3.1",
   "data/v1": "2.6.0",
   "example/v1": "1.2.1",
@@ -7,6 +7,6 @@
   "monitoring/v1": "1.3.0",
   "platform/v1": "1.0.0",
   "replication/v1": "1.0.2",
-  "resourcemanager/v1": "1.4.1",
+  "resourcemanager/v1": "1.4.2",
   "security/v1": "2.1.1"
 }
