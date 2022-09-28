@@ -25,7 +25,6 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	common "github.com/arangodb-managed/apis/common/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
 	notebook "github.com/arangodb-managed/apis/notebook/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
@@ -39,23 +38,19 @@ func init() {
 	cmd.InitCommand(
 		cmd.ListCmd,
 		&cobra.Command{
-			Use:   "notebooks",
-			Short: "List notebooks",
+			Use:   "notebookmodels",
+			Short: "List notebook models",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				OrganizationID string
 				ProjectID      string
 				DeploymetnID   string
-				Name           string
-				Description    string
-				DiskSize       int32
-				NotebookModel  string
 			}{}
 
-			f.StringVarP(&cargs.OrganizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization that has notebooks")
-			f.StringVarP(&cargs.ProjectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project that has notebooks")
-			f.StringVarP(&cargs.DeploymetnID, "deployment-id", "d", "", "Identifier of the deployment that the notebooks run next to")
+			f.StringVarP(&cargs.OrganizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization that deployment is in")
+			f.StringVarP(&cargs.ProjectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project that deployment is in")
+			f.StringVarP(&cargs.DeploymetnID, "deployment-id", "d", "", "Identifier of the deployment that the notebook has to run next to")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				log := cmd.CLILog
@@ -71,28 +66,13 @@ func init() {
 
 				selection.MustSelectDeployment(ctx, log, deploymentID, cargs.ProjectID, cargs.OrganizationID, datac, rmc)
 
-				options := &common.ListOptions{
-					Page:     0,
-					PageSize: 20,
+				list, err := notebookc.ListNotebookModels(ctx, &notebook.ListNotebookModelsRequest{
+					DeploymentId: deploymentID,
+				})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to list notebook models")
 				}
-				var result []*notebook.Notebook
-				for {
-					list, err := notebookc.ListNotebooks(ctx, &notebook.ListNotebooksRequest{
-						DeploymentId: deploymentID,
-						Options:      options,
-					})
-					if err != nil {
-						log.Fatal().Err(err).Msg("Failed to list notebooks")
-					}
-					result = append(result, list.GetItems()...)
-
-					if len(list.GetItems()) < int(options.PageSize) {
-						break
-					} else {
-						options.Page += 1
-					}
-				}
-				fmt.Println(format.NotebookList(result, cmd.RootArgs.Format))
+				fmt.Println(format.NotebookModelList(list.GetItems(), cmd.RootArgs.Format))
 			}
 		},
 	)

@@ -67,3 +67,18 @@ func NotebookModel(x *notebook.NotebookModel, opts Options) string {
 		kv{"memory", fmt.Sprintf("%dGiB", x.GetMemory())},
 	)
 }
+
+// NotebookModelList returns a single NotebookModel formatted for humans.
+func NotebookModelList(list []*notebook.NotebookModel, opts Options) string {
+	return formatList(opts, list, func(i int) []kv {
+		x := list[i]
+		return []kv{
+			{"id", x.GetId()},
+			{"name", x.GetName()},
+			{"cpu", fmt.Sprintf("%.2f", x.GetCpu())},
+			{"memory", fmt.Sprintf("%0.2dGiB", x.GetMemory())},
+			{"minimum-disk-size", fmt.Sprintf("%0.2d GiB", x.GetMinDiskSize())},
+			{"maximum-disk-size", fmt.Sprintf("%0.2d GiB", x.GetMaxDiskSize())},
+		}
+	}, false)
+}
