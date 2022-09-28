@@ -37,7 +37,7 @@ func init() {
 		cmd.PauseCmd,
 		&cobra.Command{
 			Use:   "notebook",
-			Short: "Pause notebook",
+			Short: "Pause a notebook",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {

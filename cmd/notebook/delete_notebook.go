@@ -34,16 +34,14 @@ import (
 
 func init() {
 	cmd.InitCommand(
-		cmd.GetCmd,
+		cmd.DeleteCmd,
 		&cobra.Command{
 			Use:   "notebook",
-			Short: "Get a notebook",
+			Short: "Delete a notebook",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				OrganizationID string
-				ProjectID      string
-				ID             string
+				ID string
 			}{}
 
 			f.StringVarP(&cargs.ID, "notebook-id", "n", "", "Identifier of the notebook")
@@ -58,11 +56,17 @@ func init() {
 				notebookc := notebook.NewNotebookServiceClient(conn)
 				ctx := cmd.ContextWithToken()
 
+				_, err := notebookc.DeleteNotebook(ctx, &common.IDOptions{
+					Id: id,
+				})
+				if err != nil {
+					log.Fatal().Err(err).Msg("Failed to delete a notebook")
+				}
 				notebook, err := notebookc.GetNotebook(ctx, &common.IDOptions{
 					Id: id,
 				})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to get notebook")
+					log.Fatal().Err(err).Msg("Failed to get a notebook")
 				}
 
 				fmt.Println(format.Notebook(notebook, cmd.RootArgs.Format))
