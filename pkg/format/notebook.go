@@ -52,6 +52,7 @@ func NotebookList(list []*notebook.Notebook, opts Options) string {
 			{"description", x.GetDescription()},
 			{"url", x.GetUrl()},
 			{"endpoint", x.GetStatus().GetEndpoint()},
+			{"phase", x.GetStatus().GetPhase()},
 			{"paused", formatBool(opts, x.GetIsPaused())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 		}

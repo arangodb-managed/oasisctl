@@ -41,9 +41,7 @@ func init() {
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
-				OrganizationID string
-				ProjectID      string
-				ID             string
+				ID string
 			}{}
 
 			f.StringVarP(&cargs.ID, "notebook-id", "n", "", "Identifier of the notebook")

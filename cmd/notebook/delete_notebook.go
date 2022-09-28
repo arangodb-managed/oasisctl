@@ -28,7 +28,6 @@ import (
 	common "github.com/arangodb-managed/apis/common/v1"
 	notebook "github.com/arangodb-managed/apis/notebook/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
-	"github.com/arangodb-managed/oasisctl/pkg/format"
 	"github.com/spf13/cobra"
 )
 
@@ -62,14 +61,7 @@ func init() {
 				if err != nil {
 					log.Fatal().Err(err).Msg("Failed to delete a notebook")
 				}
-				notebook, err := notebookc.GetNotebook(ctx, &common.IDOptions{
-					Id: id,
-				})
-				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to get a notebook")
-				}
-
-				fmt.Println(format.Notebook(notebook, cmd.RootArgs.Format))
+				fmt.Println("Notebook successfully deleted")
 			}
 		},
 	)

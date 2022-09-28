@@ -46,21 +46,17 @@ func init() {
 			cargs := &struct {
 				OrganizationID string
 				ProjectID      string
-				DeploymetnID   string
-				Name           string
-				Description    string
-				DiskSize       int32
-				NotebookModel  string
+				DeploymentID   string
 			}{}
 
 			f.StringVarP(&cargs.OrganizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization that has notebooks")
 			f.StringVarP(&cargs.ProjectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project that has notebooks")
-			f.StringVarP(&cargs.DeploymetnID, "deployment-id", "d", "", "Identifier of the deployment that the notebooks run next to")
+			f.StringVarP(&cargs.DeploymentID, "deployment-id", "d", "", "Identifier of the deployment that the notebooks run next to")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				log := cmd.CLILog
 
-				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.DeploymetnID, args, 0)
+				deploymentID, argsUsed := cmd.ReqOption("deployment-id", cargs.DeploymentID, args, 0)
 				cmd.MustCheckNumberOfArgs(args, argsUsed)
 
 				conn := cmd.MustDialAPI()

@@ -52,13 +52,13 @@ func init() {
 				NotebookModel  string
 			}{}
 
-			f.StringVarP(&cargs.OrganizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the deployment in")
-			f.StringVarP(&cargs.ProjectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the deployment in")
+			f.StringVarP(&cargs.OrganizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the notebook in")
+			f.StringVarP(&cargs.ProjectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the notebook in")
 			f.StringVarP(&cargs.DeploymetnID, "deployment-id", "d", "", "Identifier of the deployment that the notebook has to run next to")
 			f.StringVarP(&cargs.NotebookModel, "notebook-model", "m", "", "Identifier of the notebook model that the notebook has to use")
 			f.StringVarP(&cargs.Name, "name", "n", "", "Name of the notebook")
 			f.StringVarP(&cargs.Description, "description", "", "", "Description of the notebook")
-			f.Int32VarP(&cargs.DiskSize, "disk-size", "s", 0, "Disk size that has to be attached to given notebook")
+			f.Int32VarP(&cargs.DiskSize, "disk-size", "s", 0, "Disk size in GiB that has to be attached to given notebook")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				log := cmd.CLILog
@@ -89,7 +89,7 @@ func init() {
 					log.Fatal().Err(err).Msg("Failed to create notebook")
 				}
 				format.DisplaySuccess(cmd.RootArgs.Format)
-				fmt.Printf("%#v\n", created)
+				fmt.Println(format.Notebook(created, cmd.RootArgs.Format))
 			}
 		},
 	)
