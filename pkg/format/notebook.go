@@ -65,7 +65,7 @@ func NotebookModel(x *notebook.NotebookModel, opts Options) string {
 		kv{"id", x.GetId()},
 		kv{"name", x.GetName()},
 		kv{"cpu", fmt.Sprintf("%0.2f", x.GetCpu())},
-		kv{"memory", fmt.Sprintf("%dGiB", x.GetMemory())},
+		kv{"memory", fmt.Sprintf("%d GiB", x.GetMemory())},
 	)
 }
 
@@ -77,9 +77,9 @@ func NotebookModelList(list []*notebook.NotebookModel, opts Options) string {
 			{"id", x.GetId()},
 			{"name", x.GetName()},
 			{"cpu", fmt.Sprintf("%.2f", x.GetCpu())},
-			{"memory", fmt.Sprintf("%0.2dGiB", x.GetMemory())},
-			{"minimum-disk-size", fmt.Sprintf("%0.2d GiB", x.GetMinDiskSize())},
-			{"maximum-disk-size", fmt.Sprintf("%0.2d GiB", x.GetMaxDiskSize())},
+			{"memory", fmt.Sprintf("%d GiB", x.GetMemory())},
+			{"minimum-disk-size", fmt.Sprintf("%d GiB", x.GetMinDiskSize())},
+			{"maximum-disk-size", fmt.Sprintf("%d GiB", x.GetMaxDiskSize())},
 		}
 	}, false)
 }
