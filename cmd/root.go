@@ -43,6 +43,7 @@ import (
 	example "github.com/arangodb-managed/apis/example/v1"
 	iam "github.com/arangodb-managed/apis/iam/v1"
 	mon "github.com/arangodb-managed/apis/monitoring/v1"
+	notebook "github.com/arangodb-managed/apis/notebook/v1"
 	platform "github.com/arangodb-managed/apis/platform/v1"
 	replication "github.com/arangodb-managed/apis/replication/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
@@ -135,6 +136,7 @@ func collectCurrentAPIVersions() []*tools.APIVersionPair {
 		convertToAPIVersionPair(replication.APIID, replication.APIMajorVersion, replication.APIMinorVersion, replication.APIPatchVersion),
 		convertToAPIVersionPair(rm.APIID, rm.APIMajorVersion, rm.APIMinorVersion, rm.APIPatchVersion),
 		convertToAPIVersionPair(security.APIID, security.APIMajorVersion, security.APIMinorVersion, security.APIPatchVersion),
+		convertToAPIVersionPair(notebook.APIID, notebook.APIMajorVersion, notebook.APIMinorVersion, notebook.APIPatchVersion),
 	}
 	return resp
 }
