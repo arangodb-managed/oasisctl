@@ -72,8 +72,6 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 
 		{"disk-performance-id", formatOptionalString(x.GetDiskPerformanceId())},
 		{"disk-performance-locked", formatBool(opts, x.GetDiskPerformanceLocked())},
-
-		{"deployment-profile-id", formatOptionalString(x.GetDeploymentProfileId())},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
