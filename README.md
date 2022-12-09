@@ -37,7 +37,7 @@ oasisctl -h
 
 ## Authentication
 
-Oasisctl uses an authentication token to authenticate with the ArangoGraph Insights Platform (formerly called Oasis) platform.
+Oasisctl uses an authentication token to authenticate with the ArangoGraph Insights Platform (formerly called Oasis).
 
 To get such an authentication token, create an [API key](https://cloud.arangodb.com/dashboard/user/api-keys) and run:
 
