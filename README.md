@@ -1,6 +1,6 @@
 # Oasisctl
 
-<img src="https://cloud.arangodb.com/assets/logos/arangograph-logo-auth.svg" alt="drawing" width="400"/>
+<img src="https://cloud.arangodb.com/assets/logos/arangograph-logo-auth.svg" alt="ArangoGraph Insights Platform" width="400"/>
 
 Commandline utility for accessing ArangoGraph Insights Platform (formerly called Oasis).
 
