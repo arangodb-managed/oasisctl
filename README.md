@@ -4,7 +4,7 @@
 
 Commandline utility for accessing ArangoGraph Insights Platform (formerly called Oasis).
 
-This utility is used to access ArangoGraph Insights Platform (formerly called Oasis) resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
+This utility is used to access ArangoGraph Insights Platform resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
 It is often used in scripts.
 
 ## Maintainers
@@ -37,7 +37,7 @@ oasisctl -h
 
 ## Authentication
 
-Oasisctl uses an authentication token to authenticate with the ArangoGraph Insights Platform (formerly called Oasis).
+Oasisctl uses an authentication token to authenticate with the ArangoGraph Insights Platform.
 
 To get such an authentication token, create an [API key](https://cloud.arangodb.com/dashboard/user/api-keys) and run:
 
