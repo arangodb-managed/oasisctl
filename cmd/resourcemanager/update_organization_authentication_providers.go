@@ -52,6 +52,7 @@ var (
 		organizationID         string
 		enableGithub           bool
 		enableGoogle           bool
+		enableMicrosoft        bool
 		enableUsernamePassword bool
 	}
 )
@@ -63,6 +64,7 @@ func init() {
 	f.StringVarP(&updateOrganizationAuthenticationProvidersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGithub, "enable-github", false, "If set, allow access from user accounts authentication through Github")
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGoogle, "enable-google", false, "If set, allow access from user accounts authentication through Google")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableMicrosoft, "enable-microsoft", false, "If set, allow access from user accounts authentication through Microsoft")
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableUsernamePassword, "enable-username-password", false, "If set, allow access from user accounts authentication through username-password")
 }
 
@@ -90,6 +92,10 @@ func updateOrganizationAuthenticationProvidersCmdRun(c *cobra.Command, args []st
 	}
 	if f.Changed("enable-google") {
 		item.GetAuthenticationProviders().EnableGoogle = cargs.enableGoogle
+		hasChanges = true
+	}
+	if f.Changed("enable-microsoft") {
+		item.GetAuthenticationProviders().EnableMicrosoft = cargs.enableMicrosoft
 		hasChanges = true
 	}
 	if f.Changed("enable-username-password") {
