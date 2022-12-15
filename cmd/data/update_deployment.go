@@ -220,6 +220,9 @@ func init() {
 					item.DiskPerformanceId = cargs.diskPerformanceID
 					hasChanges = true
 				}
+				if f.Changed("deployment-profile-id") {
+					log.Fatal().Msg("deployment profile id cannot be changed")
+				}
 				if !hasChanges {
 					fmt.Println("No changes")
 				} else {

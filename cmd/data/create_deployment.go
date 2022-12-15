@@ -68,6 +68,7 @@ func init() {
 				disableFoxxAuth            bool
 				notificationEmailAddresses []string
 				diskPerformanceID          string
+				deploymentProfileID        string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -95,6 +96,7 @@ func init() {
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
 			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
+			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -206,6 +208,7 @@ func init() {
 					NotificationSettings:      notificationSettings,
 					DiskAutoSizeSettings:      diskAutoSizeSettings,
 					DiskPerformanceId:         cargs.diskPerformanceID,
+					DeploymentProfileId:       cargs.deploymentProfileID,
 				}
 
 				if cargs.acceptTAndC {
