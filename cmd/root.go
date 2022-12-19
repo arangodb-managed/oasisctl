@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Ewout Prangsma
 //
 
 package cmd
@@ -57,8 +55,8 @@ var (
 	// RootCmd is the root (and only) command of this service
 	RootCmd = &cobra.Command{
 		Use:              "oasisctl",
-		Short:            "ArangoDB Oasis",
-		Long:             "ArangoDB Oasis. The Managed Cloud for ArangoDB",
+		Short:            "ArangoGraph Insights Platform",
+		Long:             "ArangoGraph Insights Platform (formerly called Oasis): The Managed Cloud for ArangoDB",
 		Run:              ShowUsage,
 		PersistentPreRun: rootCmdPersistentPreRun,
 	}
