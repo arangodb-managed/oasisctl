@@ -51,7 +51,7 @@ func init() {
 			}{}
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Identifier of the node size")
-			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "The disk size of dbservers (GB)")
+			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "The disk size of DB-Servers (GB)")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVar(&cargs.providerID, "provider-id", cmd.DefaultProvider(), "Identifier of the provider")
 
