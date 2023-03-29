@@ -23,8 +23,8 @@
 package data
 
 import (
+	"context"
 	"fmt"
-
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -81,14 +81,19 @@ var listBackupsCmd = cmd.InitCommand(
 				}
 			}
 
-			// Fetch backups
-			list, err := backupc.ListBackups(ctx, &req)
-			if err != nil {
+			// Fetch all backups
+			var backups []*backup.Backup
+			if err := backup.ForEachBackup(ctx, func(ctx context.Context, req *backup.ListBackupsRequest) (*backup.BackupList, error) {
+				return backupc.ListBackups(ctx, req)
+			}, req, func(ctx context.Context, backup *backup.Backup) error {
+				backups = append(backups, backup)
+				return nil
+			}); err != nil {
 				log.Fatal().Err(err).Msg("Failed to list backups")
 			}
 
 			// Show result
-			fmt.Println(format.BackupList(list.Items, cmd.RootArgs.Format))
+			fmt.Println(format.BackupList(backups, cmd.RootArgs.Format))
 		}
 	},
 )
