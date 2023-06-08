@@ -43,9 +43,9 @@ func TestUpdateCidrRanges(t *testing.T) {
 				"203.0.113.0/24": {},
 				"10.0.0.0/8":     {},
 			},
-			addCidrRanges:      []string{"172.16.0.0/16", "88.11.0.0/16"},
+			addCidrRanges:      []string{"172.16.0.0/16", `"88.11.0.0/16 #test"`},
 			removeCidrRanges:   []string{},
-			expectedCidrRanges: []string{"203.0.113.0/24", "10.0.0.0/8", "172.16.0.0/16", "88.11.0.0/16"},
+			expectedCidrRanges: []string{"203.0.113.0/24", "10.0.0.0/8", "172.16.0.0/16", `"88.11.0.0/16 #test"`},
 		},
 		{
 			name:               "Remove CIDR range",
