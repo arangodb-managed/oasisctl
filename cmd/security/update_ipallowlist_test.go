@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,24 +38,24 @@ func TestUpdateCidrRanges(t *testing.T) {
 	}{
 		{
 			name:               "Add CIDR range and ensure order remains the same",
-			existingCidrRanges: []string{"192.168.0.0/24", "10.0.0.0/8"},
+			existingCidrRanges: []string{"203.0.113.0/24", "10.0.0.0/8"},
 			cidrRanges: map[string]struct{}{
 				"192.168.0.0/24": {},
 				"10.0.0.0/8":     {},
 			},
-			addCidrRanges:      []string{"172.16.0.0/16", "192.4.0.0/24"},
+			addCidrRanges:      []string{"172.16.0.0/16", "88.11.0.0/16"},
 			removeCidrRanges:   []string{},
-			expectedCidrRanges: []string{"192.168.0.0/24", "10.0.0.0/8", "172.16.0.0/16", "192.4.0.0/24"},
+			expectedCidrRanges: []string{"203.0.113.0/24", "10.0.0.0/8", "172.16.0.0/16", "88.11.0.0/16"},
 		},
 		{
 			name:               "Remove CIDR range",
-			existingCidrRanges: []string{"192.168.0.0/24", "10.0.0.0/8"},
+			existingCidrRanges: []string{"88.11.0.0/16", "10.0.0.0/8"},
 			cidrRanges: map[string]struct{}{
-				"192.168.0.0/24": {},
+				"88.11.0.0/16": {},
 			},
 			addCidrRanges:      []string{},
 			removeCidrRanges:   []string{"10.0.0.0/8"},
-			expectedCidrRanges: []string{"192.168.0.0/24"},
+			expectedCidrRanges: []string{"88.11.0.0/16"},
 		},
 	}
 
