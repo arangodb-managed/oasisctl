@@ -24,8 +24,6 @@ package security
 
 import (
 	"fmt"
-	"sort"
-
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -77,7 +75,6 @@ func init() {
 				project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
 				// Create IP allowlist
-				sort.Strings(cargs.cidrRanges)
 				result, err := securityc.CreateIPAllowlist(ctx, &security.IPAllowlist{
 					ProjectId:               project.GetId(),
 					Name:                    name,

@@ -24,7 +24,6 @@ package security
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -91,9 +90,12 @@ func init() {
 					hasChanges = true
 				}
 				cidrRanges := make(map[string]struct{})
-				for _, x := range item.GetCidrRanges() {
+				existingCidrRanges := item.GetCidrRanges()
+
+				for _, x := range existingCidrRanges {
 					cidrRanges[x] = struct{}{}
 				}
+
 				if len(cargs.addCidrRanges) > 0 {
 					for _, x := range cargs.addCidrRanges {
 						if _, found := cidrRanges[x]; !found {
@@ -117,12 +119,12 @@ func init() {
 				if !hasChanges {
 					fmt.Println("No changes")
 				} else {
-					// Rebuild CidrRanges list
-					item.CidrRanges = make([]string, 0, len(cidrRanges))
-					sort.Strings(item.CidrRanges)
-					for x := range cidrRanges {
-						item.CidrRanges = append(item.CidrRanges, x)
-					}
+					// Rebuild CIDR ranges list
+					UpdateCidrRanges(existingCidrRanges, cidrRanges, &UpdateCidrRangeOptions{
+						AddedCidrRanges:   cargs.addCidrRanges,
+						RemovedCidrRanges: cargs.removeCidrRanges,
+					}, item)
+
 					// Update IP allowlist
 					updated, err := securityc.UpdateIPAllowlist(ctx, item)
 					if err != nil {
@@ -136,4 +138,37 @@ func init() {
 			}
 		},
 	)
+}
+
+// Update options for CIDR ranges
+type UpdateCidrRangeOptions struct {
+	AddedCidrRanges   []string
+	RemovedCidrRanges []string
+}
+
+// UpdateCidrRanges updates the CIDR ranges to be added to the existing list without messing up the order of existing ones previously added
+func UpdateCidrRanges(existingCidrRanges []string, cidrRanges map[string]struct{}, opts *UpdateCidrRangeOptions, item *security.IPAllowlist) {
+	updatedCidrRanges := make([]string, 0, len(existingCidrRanges))
+	for _, x := range existingCidrRanges {
+		if _, found := cidrRanges[x]; found {
+			updatedCidrRanges = append(updatedCidrRanges, x)
+		}
+	}
+
+	if len(opts.AddedCidrRanges) > 0 {
+		item.CidrRanges = append(updatedCidrRanges, opts.AddedCidrRanges...)
+	} else {
+		item.CidrRanges = updatedCidrRanges
+	}
+
+	if len(opts.RemovedCidrRanges) > 0 {
+		updatedCidrRanges = make([]string, 0, len(item.CidrRanges))
+		for _, x := range item.CidrRanges {
+			if _, found := cidrRanges[x]; found {
+				updatedCidrRanges = append(updatedCidrRanges, x)
+			}
+		}
+
+		item.CidrRanges = updatedCidrRanges
+	}
 }
