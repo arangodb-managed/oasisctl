@@ -40,7 +40,7 @@ func TestUpdateCidrRanges(t *testing.T) {
 			name:               "Add CIDR range and ensure order remains the same",
 			existingCidrRanges: []string{"203.0.113.0/24", "10.0.0.0/8"},
 			cidrRanges: map[string]struct{}{
-				"192.168.0.0/24": {},
+				"203.0.113.0/24": {},
 				"10.0.0.0/8":     {},
 			},
 			addCidrRanges:      []string{"172.16.0.0/16", "88.11.0.0/16"},
