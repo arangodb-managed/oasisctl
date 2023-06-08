@@ -120,29 +120,10 @@ func init() {
 					fmt.Println("No changes")
 				} else {
 					// Rebuild CIDR ranges list
-					updatedCidrRanges := make([]string, 0, len(existingCidrRanges))
-					for _, x := range existingCidrRanges {
-						if _, found := cidrRanges[x]; found {
-							updatedCidrRanges = append(updatedCidrRanges, x)
-						}
-					}
-
-					if len(cargs.addCidrRanges) > 0 {
-						item.CidrRanges = append(updatedCidrRanges, cargs.addCidrRanges...)
-					} else {
-						item.CidrRanges = updatedCidrRanges
-					}
-
-					if len(cargs.removeCidrRanges) > 0 {
-						updatedCidrRanges = make([]string, 0, len(item.CidrRanges))
-						for _, x := range item.CidrRanges {
-							if _, found := cidrRanges[x]; found {
-								updatedCidrRanges = append(updatedCidrRanges, x)
-							}
-						}
-
-						item.CidrRanges = updatedCidrRanges
-					}
+					UpdateCidrRanges(existingCidrRanges, cidrRanges, &UpdateCidrRangeOptions{
+						AddedCidrRanges:   cargs.addCidrRanges,
+						RemovedCidrRanges: cargs.removeCidrRanges,
+					}, item)
 
 					// Update IP allowlist
 					updated, err := securityc.UpdateIPAllowlist(ctx, item)
@@ -157,4 +138,37 @@ func init() {
 			}
 		},
 	)
+}
+
+// Update options for CIDR ranges
+type UpdateCidrRangeOptions struct {
+	AddedCidrRanges   []string
+	RemovedCidrRanges []string
+}
+
+// UpdateCidrRanges updates the CIDR ranges to be added to the existing list without messing up the order of existing ones previously added
+func UpdateCidrRanges(existingCidrRanges []string, cidrRanges map[string]struct{}, opts *UpdateCidrRangeOptions, item *security.IPAllowlist) {
+	updatedCidrRanges := make([]string, 0, len(existingCidrRanges))
+	for _, x := range existingCidrRanges {
+		if _, found := cidrRanges[x]; found {
+			updatedCidrRanges = append(updatedCidrRanges, x)
+		}
+	}
+
+	if len(opts.AddedCidrRanges) > 0 {
+		item.CidrRanges = append(updatedCidrRanges, opts.AddedCidrRanges...)
+	} else {
+		item.CidrRanges = updatedCidrRanges
+	}
+
+	if len(opts.RemovedCidrRanges) > 0 {
+		updatedCidrRanges = make([]string, 0, len(item.CidrRanges))
+		for _, x := range item.CidrRanges {
+			if _, found := cidrRanges[x]; found {
+				updatedCidrRanges = append(updatedCidrRanges, x)
+			}
+		}
+
+		item.CidrRanges = updatedCidrRanges
+	}
 }
