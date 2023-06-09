@@ -67,7 +67,7 @@ func init() {
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGoogle, "enable-google", false, "If set, allow access from user accounts authentication through Google")
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableMicrosoft, "enable-microsoft", false, "If set, allow access from user accounts authentication through Microsoft")
 	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableUsernamePassword, "enable-username-password", false, "If set, allow access from user accounts authentication through username-password")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableSso, "enable-sso", false, "If set, allow access from user accounts authentication through sso")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableSso, "enable-sso", false, "If set, allow access from user accounts authentication through single sign on (sso)")
 }
 
 func updateOrganizationAuthenticationProvidersCmdRun(c *cobra.Command, args []string) {
