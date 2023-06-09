@@ -34,5 +34,6 @@ func AuthenticationProviders(x *rm.AuthenticationProviders, opts Options) string
 		kv{"enable-google", formatBool(opts, x.GetEnableGoogle())},
 		kv{"enable-microsoft", formatBool(opts, x.GetEnableMicrosoft())},
 		kv{"enable-username-password", formatBool(opts, x.GetEnableUsernamePassword())},
+		kv{"enable-sso", formatBool(opts, x.GetEnableSso())},
 	)
 }
