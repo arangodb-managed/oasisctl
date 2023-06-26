@@ -69,6 +69,7 @@ func init() {
 				notificationEmailAddresses []string
 				diskPerformanceID          string
 				deploymentProfileID        string
+				isPlatformAuthEnabled      bool
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -97,6 +98,7 @@ func init() {
 			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
+			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -204,11 +206,12 @@ func init() {
 						NodeCount:    cargs.nodeCount,
 						NodeDiskSize: cargs.nodeDiskSize,
 					},
-					DisableFoxxAuthentication: cargs.disableFoxxAuth,
-					NotificationSettings:      notificationSettings,
-					DiskAutoSizeSettings:      diskAutoSizeSettings,
-					DiskPerformanceId:         cargs.diskPerformanceID,
-					DeploymentProfileId:       cargs.deploymentProfileID,
+					DisableFoxxAuthentication:       cargs.disableFoxxAuth,
+					NotificationSettings:            notificationSettings,
+					DiskAutoSizeSettings:            diskAutoSizeSettings,
+					DiskPerformanceId:               cargs.diskPerformanceID,
+					DeploymentProfileId:             cargs.deploymentProfileID,
+					IsPlatformAuthenticationEnabled: cargs.isPlatformAuthEnabled,
 				}
 
 				if cargs.acceptTAndC {
