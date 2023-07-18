@@ -40,6 +40,7 @@ func init() {
 		&cobra.Command{
 			Use:   "download",
 			Short: "Download a backup",
+			Long:  "Download a backup from the cloud storage to the local deployment disks, so it can be restored.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
