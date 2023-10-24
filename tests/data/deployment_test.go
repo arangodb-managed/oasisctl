@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Gergely Brautigam
-//
-// +build e2e
+//go:build e2e
 
 package data
 
@@ -74,10 +72,10 @@ Bootstrapped            -
 Created                 -
 Upgrading               -
 Coordinators            3
-Coordinator-Memory-Size 1GB
+Coordinator-Memory-Size 1GiB
 Dbservers               3
-Dbserver-Memory-Size    3GB
-Dbserver-Disk-Size      10GB
+Dbserver-Memory-Size    3GiB
+Dbserver-Disk-Size      10GiB
 Bootstrapped-At         -
 Endpoint-Url            
 Root-Password           \*\*\* use \'--show-root-password\' to expose \*\*\*
@@ -85,7 +83,7 @@ Model                   oneshard
 Is-Clone                false
 Clone-Backup-Id         
 Node-Count              3
-Node-Disk-Size          10GB
+Node-Disk-Size          10GiB
 Node-Size-Id            c4-a4
 `
 	out, err := tests.RunCommand(args)
@@ -118,10 +116,10 @@ Bootstrapped            -
 Created                 -
 Upgrading               -
 Coordinators            3
-Coordinator-Memory-Size 1GB
+Coordinator-Memory-Size 1GiB
 Dbservers               3
-Dbserver-Memory-Size    3GB
-Dbserver-Disk-Size      10GB
+Dbserver-Memory-Size    3GiB
+Dbserver-Disk-Size      10GiB
 Bootstrapped-At         -
 Endpoint-Url            .*
 Root-Password           \*\*\* use \'--show-root-password\' to expose \*\*\*
@@ -129,7 +127,7 @@ Model                   oneshard
 Is-Clone                false
 Clone-Backup-Id         
 Node-Count              3
-Node-Disk-Size          10GB
+Node-Disk-Size          10GiB
 Node-Size-Id            c4-a4
 `
 		out, err := tests.RunCommand(args)
@@ -140,7 +138,7 @@ Node-Size-Id            c4-a4
 	t.Run("list deployments", func(tt *testing.T) {
 		args := []string{"list", "deployments", "--project-id=" + proj}
 		compare := `Id\s+| Name\s+| Description\s+| Region\s+| Version | Ipallowlist | Url\s+| Paused | Created-At\s+| Model\s+| Node-Count | Node-Disk-Size | Node-Size-Id(\s.*)*` +
-			deplId + ` | ` + deplName + ` |\s+| ` + region + ` | ` + version.GetVersion() + `\s+|\s+| .* | -\s+| .* | oneshard | 3\s+| 10GB\s+| c4-a4
+			deplId + ` | ` + deplName + ` |\s+| ` + region + ` | ` + version.GetVersion() + `\s+|\s+| .* | -\s+| .* | oneshard | 3\s+| 10GiB\s+| c4-a4
 `
 		out, err := tests.RunCommand(args)
 		assert.NoError(tt, err)
@@ -166,10 +164,10 @@ Bootstrapped            -
 Created                 -
 Upgrading               -
 Coordinators            3
-Coordinator-Memory-Size 1GB
+Coordinator-Memory-Size 1GiB
 Dbservers               3
-Dbserver-Memory-Size    3GB
-Dbserver-Disk-Size      10GB
+Dbserver-Memory-Size    3GiB
+Dbserver-Disk-Size      10GiB
 Bootstrapped-At         -
 Endpoint-Url            .*
 Root-Password           \*\*\* use \'--show-root-password\' to expose \*\*\*
@@ -177,7 +175,7 @@ Model                   oneshard
 Is-Clone                false
 Clone-Backup-Id         
 Node-Count              3
-Node-Disk-Size          10GB
+Node-Disk-Size          10GiB
 Node-Size-Id            c4-a4
 `
 		out, err := tests.RunCommand(args)

@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,10 +55,10 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"upgrades", getDeploymentUpgradeInfo(x)},
 
 		{"coordinators", x.GetServers().GetCoordinators()},
-		{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GB")},
+		{"coordinator-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetCoordinatorMemorySize(), "GiB")},
 		{"dbservers", x.GetServers().GetDbservers()},
-		{"dbserver-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverMemorySize(), "GB")},
-		{"dbserver-disk-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverDiskSize(), "GB")},
+		{"dbserver-memory-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverMemorySize(), "GiB")},
+		{"dbserver-disk-size", fmt.Sprintf("%d%s", x.GetServers().GetDbserverDiskSize(), "GiB")},
 
 		{"bootstrapped-at", formatTime(opts, x.GetStatus().GetBootstrappedAt(), "-")},
 		{"endpoint-url", x.GetStatus().GetEndpoint()},
@@ -77,7 +77,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
 			kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
-			kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+			kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GiB")},
 			kv{"node-size-id", x.Model.NodeSizeId})
 	}
 	if x.GetCustomImage() != "" {
@@ -90,14 +90,14 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 	}
 	if x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize() > 0 {
 		d = append(d,
-			kv{"maximum-dbserver-disk-size", fmt.Sprintf("%d%s", x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize(), "GB")},
+			kv{"maximum-dbserver-disk-size", fmt.Sprintf("%d%s", x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize(), "GiB")},
 		)
 	}
 	if minServerCount := x.GetServers().GetMinimumDbserversCount(); minServerCount > 0 {
 		d = append(d, kv{"minimum-dbservers-count", fmt.Sprintf("%d", minServerCount)})
 	}
 	if minDiskSize := x.GetServers().GetMinimumDbserverDiskSize(); minDiskSize > 0 {
-		d = append(d, kv{"minimum-dbservers-disk-size", fmt.Sprintf("%d%s", minDiskSize, "GB")})
+		d = append(d, kv{"minimum-dbservers-disk-size", fmt.Sprintf("%d%s", minDiskSize, "GiB")})
 	}
 	return formatObject(opts, d...)
 }
@@ -122,7 +122,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 		if x.Model.Model != data.ModelFlexible {
 			d = append(d,
 				kv{"node-count", fmt.Sprintf("%d", x.Model.NodeCount)},
-				kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GB")},
+				kv{"node-disk-size", fmt.Sprintf("%d%s", x.Model.NodeDiskSize, "GiB")},
 				kv{"node-size-id", x.Model.NodeSizeId})
 		}
 		return d

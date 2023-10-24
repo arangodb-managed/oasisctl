@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Gergely Brautigam
-// Author Ewout Prangsma
 //
 
 package format
@@ -37,10 +34,10 @@ func NodeSizeList(list []*data.NodeSize, cpuList []*data.CPUSize, opts Options) 
 		return []kv{
 			{"id", x.GetId()},
 			{"name", x.GetName()},
-			{"max-disk-size", fmt.Sprintf("%d%s", x.GetMaxDiskSize(), "GB")},
-			{"min-disk-size", fmt.Sprintf("%d%s", x.GetMinDiskSize(), "GB")},
+			{"max-disk-size", fmt.Sprintf("%d%s", x.GetMaxDiskSize(), "GiB")},
+			{"min-disk-size", fmt.Sprintf("%d%s", x.GetMinDiskSize(), "GiB")},
 			{"allowed-disk-sizes", formatAllowedDiskSizes(x.GetDiskSizes())},
-			{"memory-size", fmt.Sprintf("%d%s", x.GetMemorySize(), "GB")},
+			{"memory-size", fmt.Sprintf("%d%s", x.GetMemorySize(), "GiB")},
 			{"cpu-size", formatCPUSize(x.GetCpuSize(), cpuList)},
 		}
 	}, true)
@@ -52,7 +49,7 @@ func formatAllowedDiskSizes(list []int32) string {
 	}
 	result := make([]string, 0, len(list))
 	for _, x := range list {
-		result = append(result, fmt.Sprintf("%d%s", x, "GB"))
+		result = append(result, fmt.Sprintf("%d%s", x, "GiB"))
 	}
 	return strings.Join(result, ", ")
 }
