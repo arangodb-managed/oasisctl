@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,13 +81,13 @@ func init() {
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
-			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GB)")
-			f.Int32Var(&cargs.maxNodeDiskSize, "max-node-disk-size", 0, "Set maximum disk size for nodes for autoscaler (GB)")
+			f.Int32Var(&cargs.nodeDiskSize, "node-disk-size", 0, "Set disk size for nodes (GiB)")
+			f.Int32Var(&cargs.maxNodeDiskSize, "max-node-disk-size", 0, "Set maximum disk size for nodes for autoscaler (GiB)")
 			f.Int32Var(&cargs.coordinators, "coordinators", 3, "Set number of Coordinators for flexible deployments")
-			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of Coordinators for flexible deployments (GB)")
+			f.Int32Var(&cargs.coordinatorMemorySize, "coordinator-memory-size", 4, "Set memory size of Coordinators for flexible deployments (GiB)")
 			f.Int32Var(&cargs.dbservers, "dbservers", 3, "Set number of DB-Servers for flexible deployments")
-			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of DB-Servers for flexible deployments (GB)")
-			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of DB-Servers for flexible deployments (GB)")
+			f.Int32Var(&cargs.dbserverMemorySize, "dbserver-memory-size", 4, "Set memory size of DB-Servers for flexible deployments (GiB)")
+			f.Int32Var(&cargs.dbserverDiskSize, "dbserver-disk-size", 32, "Set disk size of DB-Servers for flexible deployments (GiB)")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")

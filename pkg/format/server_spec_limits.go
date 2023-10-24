@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package format
 
@@ -33,10 +31,10 @@ import (
 func ServersSpecLimits(x *data.ServersSpecLimits, opts Options) string {
 	return formatObject(opts,
 		kv{"coordinators", serversSpecLimitsLimits(x.GetCoordinators(), "")},
-		kv{"coordinator-memory-size", serversSpecLimitsLimits(x.GetCoordinatorMemorySize(), "GB")},
+		kv{"coordinator-memory-size", serversSpecLimitsLimits(x.GetCoordinatorMemorySize(), "GiB")},
 		kv{"dbservers", serversSpecLimitsLimits(x.GetDbservers(), "")},
-		kv{"dbserver-memory-size", serversSpecLimitsLimits(x.GetDbserverMemorySize(), "GB")},
-		kv{"dbserver-disk-size", serversSpecLimitsLimits(x.GetDbserverDiskSize(), "GB")},
+		kv{"dbserver-memory-size", serversSpecLimitsLimits(x.GetDbserverMemorySize(), "GiB")},
+		kv{"dbserver-disk-size", serversSpecLimitsLimits(x.GetDbserverDiskSize(), "GiB")},
 	)
 }
 
