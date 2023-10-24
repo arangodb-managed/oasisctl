@@ -93,6 +93,12 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 			kv{"maximum-dbserver-disk-size", fmt.Sprintf("%d%s", x.GetDiskAutoSizeSettings().GetMaximumNodeDiskSize(), "GB")},
 		)
 	}
+	if minServerCount := x.GetServers().GetMinimumDbserversCount(); minServerCount > 0 {
+		d = append(d, kv{"minimum-dbservers-count", fmt.Sprintf("%d", minServerCount)})
+	}
+	if minDiskSize := x.GetServers().GetMinimumDbserverDiskSize(); minDiskSize > 0 {
+		d = append(d, kv{"minimum-dbservers-disk-size", fmt.Sprintf("%d%s", minDiskSize, "GB")})
+	}
 	return formatObject(opts, d...)
 }
 
