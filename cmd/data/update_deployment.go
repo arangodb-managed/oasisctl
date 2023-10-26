@@ -68,6 +68,7 @@ func init() {
 				notificationEmailAddresses []string
 				diskPerformanceID          string
 				isPlatformAuthEnabled      bool
+				dropVSTSupport             bool
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -94,6 +95,7 @@ func init() {
 			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
+			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -224,6 +226,10 @@ func init() {
 				}
 				if f.Changed("is-platform-authentication-enabled") {
 					item.IsPlatformAuthenticationEnabled = cargs.isPlatformAuthEnabled
+					hasChanges = true
+				}
+				if f.Changed("drop-vst-support") {
+					item.DropVstSupport = cargs.dropVSTSupport
 					hasChanges = true
 				}
 				if f.Changed("deployment-profile-id") {

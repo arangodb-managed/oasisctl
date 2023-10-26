@@ -73,6 +73,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"disk-performance-id", formatOptionalString(x.GetDiskPerformanceId())},
 		{"disk-performance-locked", formatBool(opts, x.GetDiskPerformanceLocked())},
 		{"is-platform-authentication-enabled", formatBool(opts, x.GetIsPlatformAuthenticationEnabled())},
+		{"vst-support", formatBool(opts, !x.GetDropVstSupport())},
 	}
 	if x.Model.Model != data.ModelFlexible {
 		d = append(d,
