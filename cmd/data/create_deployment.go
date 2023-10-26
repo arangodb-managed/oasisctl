@@ -70,6 +70,7 @@ func init() {
 				diskPerformanceID          string
 				deploymentProfileID        string
 				isPlatformAuthEnabled      bool
+				dropVSTSupport             bool
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -99,6 +100,7 @@ func init() {
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
+			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -212,6 +214,7 @@ func init() {
 					DiskPerformanceId:               cargs.diskPerformanceID,
 					DeploymentProfileId:             cargs.deploymentProfileID,
 					IsPlatformAuthenticationEnabled: cargs.isPlatformAuthEnabled,
+					DropVstSupport:                  cargs.dropVSTSupport,
 				}
 
 				if cargs.acceptTAndC {
