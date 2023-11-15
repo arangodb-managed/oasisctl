@@ -36,6 +36,7 @@ import (
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	"github.com/arangodb-managed/apis/common/auth"
 	common "github.com/arangodb-managed/apis/common/v1"
+	commonGrpc "github.com/arangodb-managed/apis/common/v1/grpc"
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	data "github.com/arangodb-managed/apis/data/v1"
 	example "github.com/arangodb-managed/apis/example/v1"
@@ -209,7 +210,12 @@ func ContextWithToken() context.Context {
 	if RootArgs.Token == "" {
 		CLILog.Fatal().Msg("--token missing")
 	}
-	return auth.WithAccessToken(context.Background(), RootArgs.Token)
+	// Context with access token
+	ctx := auth.WithAccessToken(context.Background(), RootArgs.Token)
+	// Add the User Agent as well
+	ua := commonGrpc.CreateUserAgent(RootCmd.Use, currentVersion.String())
+	ctx = commonGrpc.WithUserAgent(ctx, ua)
+	return ctx
 }
 
 // ReqOption returns given value if not empty.
