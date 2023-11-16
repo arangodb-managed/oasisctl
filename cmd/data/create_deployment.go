@@ -82,7 +82,7 @@ func init() {
 			f.StringVarP(&cargs.ipallowlistID, "ipallowlist-id", "i", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
 			f.StringVar(&cargs.ipallowlistID, "ipwhitelist-id", cmd.DefaultIPAllowlist(), "Identifier of the IP allowlist to use for the deployment")
 			f.MarkDeprecated("ipwhitelist-id", "Use ipallowlist-id instead")
-			f.StringVar(&cargs.version, "version", "", "Version of ArangoDB to use for the deployment")
+			f.StringVar(&cargs.version, "version", "default", "Version of ArangoDB to use for the deployment")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Set model of the deployment")
 			f.StringVar(&cargs.nodeSizeID, "node-size-id", "", "Set the node size to use for this deployment")
 			f.Int32Var(&cargs.nodeCount, "node-count", 3, "Set the number of desired nodes")
@@ -145,7 +145,7 @@ func init() {
 
 				// Fetch node sizes
 				nodeSizes, err := datac.ListNodeSizes(ctx, &data.NodeSizesRequest{
-					ProjectId: cargs.projectID,
+					ProjectId: project.GetId(),
 					RegionId:  cargs.regionID,
 					Model:     cargs.model,
 				})
