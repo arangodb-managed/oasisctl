@@ -68,7 +68,7 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the private endpoint service")
 			f.StringVar(&cargs.description, "description", "", "Description of the private endpoint service")
-			f.BoolVar(&cargs.enablePrivateDNS, "enable-private-dns", false, "Enable private DNS")
+			f.BoolVar(&cargs.enablePrivateDNS, "enable-private-dns", false, "Enable private DNS (applicable for AWS only)")
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
 			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
