@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2021-2022 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ func PrivateEndpointService(x *nw.PrivateEndpointService, opts Options) string {
 		{"name", x.GetName()},
 		{"description", x.GetDescription()},
 		{"url", x.GetUrl()},
+		{"enable-private-dns", formatBool(opts, x.GetEnablePrivateDns())},
 		{"alt-dns-names", formatOptionalString(strings.Join(x.GetAlternateDnsNames(), ", "))},
 
 		{"ready", formatBool(opts, x.GetStatus().GetReady())},

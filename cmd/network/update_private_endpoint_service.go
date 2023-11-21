@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2021-2022 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021-2023 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ func init() {
 				projectID               string
 				name                    string
 				description             string
+				enablePrivateDNS        bool
 				alternateDNSNames       []string
 				azClientSubscriptionIDs []string
 				awsPrincipals           []string
@@ -67,6 +68,7 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the private endpoint service")
 			f.StringVar(&cargs.description, "description", "", "Description of the private endpoint service")
+			f.BoolVar(&cargs.enablePrivateDNS, "enable-private-dns", false, "Enable private DNS")
 			f.StringSliceVar(&cargs.alternateDNSNames, "alternate-dns-name", nil, "DNS names used for the deployment in the private network")
 			f.StringSliceVar(&cargs.azClientSubscriptionIDs, "azure-client-subscription-id", nil, "List of Azure subscription IDs from which a Private Endpoint can be created")
 			f.StringSliceVar(&cargs.awsPrincipals, "aws-principal", nil, "List of AWS Principals from which a Private Endpoint can be created (Format: <AccountID>[/Role/<RoleName>|/User/<UserName>])")
@@ -110,6 +112,10 @@ func init() {
 				}
 				if f.Changed("description") {
 					item.Description = cargs.description
+					hasChanges = true
+				}
+				if f.Changed("enable-private-dns") {
+					item.EnablePrivateDns = cargs.enablePrivateDNS
 					hasChanges = true
 				}
 				if f.Changed("alternate-dns-name") {
