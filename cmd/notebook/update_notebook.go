@@ -83,7 +83,7 @@ func init() {
 					notebook.Model.NotebookModelId = cargs.NotebookModel
 					hasChanges = true
 				}
-				if f.Changed("DiskSize") {
+				if f.Changed("disk-size") {
 					notebook.Model.DiskSize = cargs.DiskSize
 					hasChanges = true
 				}
