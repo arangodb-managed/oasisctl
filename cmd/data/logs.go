@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package data
 
 import (
 	"fmt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 
-	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -94,8 +92,8 @@ func init() {
 					if err != nil {
 						log.Fatal().Err(err).Msg("Failed to parse start time")
 					}
-					req.StartAt, err = types.TimestampProto(t)
-					if err != nil {
+					req.StartAt = timestamppb.New(t)
+					if err := req.StartAt.CheckValid(); err != nil {
 						log.Fatal().Err(err).Msg("Failed to encode start time")
 					}
 				}
@@ -104,8 +102,8 @@ func init() {
 					if err != nil {
 						log.Fatal().Err(err).Msg("Failed to parse end time")
 					}
-					req.EndAt, err = types.TimestampProto(t)
-					if err != nil {
+					req.EndAt = timestamppb.New(t)
+					if err := req.EndAt.CheckValid(); err != nil {
 						log.Fatal().Err(err).Msg("Failed to encode end time")
 					}
 				}

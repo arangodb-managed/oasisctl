@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2021 ArangoDB GmbH, Cologne, Germany
+// Copyright 2021-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package metrics
 
@@ -27,9 +25,9 @@ import (
 	"time"
 
 	"github.com/dchest/uniuri"
-	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	data "github.com/arangodb-managed/apis/data/v1"
 	metrics "github.com/arangodb-managed/apis/metrics/v1"
@@ -84,9 +82,9 @@ func init() {
 				deployment := selection.MustSelectDeployment(ctx, log, deploymentID, cargs.projectID, cargs.organizationID, datac, rmc)
 
 				// Create token
-				var lifetime *types.Duration
+				var lifetime *durationpb.Duration
 				if cargs.lifetime > 0 {
-					lifetime = types.DurationProto(cargs.lifetime)
+					lifetime = durationpb.New(cargs.lifetime)
 				}
 				result, err := metricsc.CreateToken(ctx, &metrics.Token{
 					DeploymentId: deployment.GetId(),

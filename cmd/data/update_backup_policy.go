@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
 
@@ -164,7 +164,7 @@ func init() {
 				}
 				if f.Changed("retention-period") {
 					t := time.Duration(cargs.retentionPeriod) * time.Hour
-					item.RetentionPeriod = types.DurationProto(t)
+					item.RetentionPeriod = durationpb.New(t)
 					hasChanges = true
 				}
 

@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,15 +17,12 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package iam
 
 import (
 	"fmt"
 
-	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -71,7 +68,7 @@ func init() {
 					log.Fatal().Err(err).Msg("Failed to renew API key token")
 				}
 
-				actualTTL, err := types.DurationFromProto(resp.GetTimeToLive())
+				actualTTL := resp.GetTimeToLive().AsDuration()
 				// Show result
 				fmt.Printf("Renewed API key token! (ttl=%s)\n", actualTTL)
 			}

@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package util
 
@@ -26,7 +24,7 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // ParseTimeFromNow parse a timestamp or duration before now.
@@ -43,13 +41,13 @@ func ParseTimeFromNow(value string) (time.Time, error) {
 
 // ParseTime parses a given date string in RFC3339 to a proto timestamp.
 // Usually used by from / to settings.
-func ParseTime(date string) (*types.Timestamp, error) {
+func ParseTime(date string) (*timestamppb.Timestamp, error) {
 	d, err := time.Parse(time.RFC3339, date)
 	if err != nil {
 		return nil, err
 	}
-	stamp, err := types.TimestampProto(d)
-	if err != nil {
+	stamp := timestamppb.New(d)
+	if err := stamp.CheckValid(); err != nil {
 		return nil, err
 	}
 	return stamp, nil

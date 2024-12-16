@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package format
 
@@ -30,8 +28,10 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	"github.com/dustin/go-humanize"
-	"github.com/gogo/protobuf/types"
 	"github.com/ryanuber/columnize"
 )
 
@@ -129,14 +129,14 @@ func formatList(opts Options, list interface{}, getData func(int) []kv, noSort b
 }
 
 // formatTime returns a human readable version of the given timestamp.
-func formatTime(opts Options, x *types.Timestamp, nilValue ...string) string {
+func formatTime(opts Options, x *timestamppb.Timestamp, nilValue ...string) string {
 	if x == nil {
 		if len(nilValue) > 0 {
 			return nilValue[0]
 		}
 		return ""
 	}
-	t, _ := types.TimestampFromProto(x)
+	t := x.AsTime()
 	if opts.Format == formatJSON {
 		return t.Format(time.RFC3339)
 	}
@@ -144,14 +144,14 @@ func formatTime(opts Options, x *types.Timestamp, nilValue ...string) string {
 }
 
 // formatDuration returns a human readable version of the given duration.
-func formatDuration(opts Options, x *types.Duration, nilValue ...string) string {
+func formatDuration(opts Options, x *durationpb.Duration, nilValue ...string) string {
 	if x == nil {
 		if len(nilValue) > 0 {
 			return nilValue[0]
 		}
 		return ""
 	}
-	d, _ := types.DurationFromProto(x)
+	d := x.AsDuration()
 	return d.String()
 }
 

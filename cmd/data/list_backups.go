@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 // limitations under the License.
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
-//
-// Author Brautigam Gergely
 //
 
 package data
@@ -85,7 +83,7 @@ var listBackupsCmd = cmd.InitCommand(
 			var backups []*backup.Backup
 			if err := backup.ForEachBackup(ctx, func(ctx context.Context, req *backup.ListBackupsRequest) (*backup.BackupList, error) {
 				return backupc.ListBackups(ctx, req)
-			}, req, func(ctx context.Context, backup *backup.Backup) error {
+			}, &req, func(ctx context.Context, backup *backup.Backup) error {
 				backups = append(backups, backup)
 				return nil
 			}); err != nil {
