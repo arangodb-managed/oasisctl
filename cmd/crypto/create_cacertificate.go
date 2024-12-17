@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Ewout Prangsma
-//
 
 package crypto
 
@@ -26,9 +24,9 @@ import (
 	"fmt"
 	"time"
 
-	types "github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	crypto "github.com/arangodb-managed/apis/crypto/v1"
 	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
@@ -76,9 +74,9 @@ func init() {
 				project := selection.MustSelectProject(ctx, log, cargs.projectID, cargs.organizationID, rmc)
 
 				// Create ca certificate
-				var lifetime *types.Duration
+				var lifetime *durationpb.Duration
 				if cargs.lifetime > 0 {
-					lifetime = types.DurationProto(cargs.lifetime)
+					lifetime = durationpb.New(cargs.lifetime)
 				}
 				result, err := cryptoc.CreateCACertificate(ctx, &crypto.CACertificate{
 					ProjectId:   project.GetId(),

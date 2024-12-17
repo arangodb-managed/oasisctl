@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@
 //
 // Copyright holder is ArangoDB GmbH, Cologne, Germany
 //
-// Author Gergely Brautigam
-//
 
 package data
 
 import (
 	"fmt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -78,8 +76,8 @@ var createBackupCmd = cmd.InitCommand(
 				b.Upload = true
 				if cargs.autoDeletedAt != 0 {
 					t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
-					tp, err := types.TimestampProto(t)
-					if err != nil {
+					tp := timestamppb.New(t)
+					if err := tp.CheckValid(); err != nil {
 						log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
 					}
 					b.AutoDeletedAt = tp
@@ -89,8 +87,8 @@ var createBackupCmd = cmd.InitCommand(
 					cargs.autoDeletedAt = 6
 				}
 				t := time.Now().Add(time.Duration(cargs.autoDeletedAt) * time.Hour)
-				tp, err := types.TimestampProto(t)
-				if err != nil {
+				tp := timestamppb.New(t)
+				if err := tp.CheckValid(); err != nil {
 					log.Fatal().Err(err).Msg("Failed to convert from time to proto time")
 				}
 				b.AutoDeletedAt = tp

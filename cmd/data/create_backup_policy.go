@@ -1,7 +1,7 @@
 //
 // DISCLAIMER
 //
-// Copyright 2020-2022 ArangoDB GmbH, Cologne, Germany
+// Copyright 2020-2024 ArangoDB GmbH, Cologne, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+	"google.golang.org/protobuf/types/known/durationpb"
 
 	backup "github.com/arangodb-managed/apis/backup/v1"
 	"github.com/arangodb-managed/oasisctl/cmd"
@@ -166,7 +166,7 @@ func init() {
 				}
 
 				t := time.Duration(cargs.retentionPeriod) * time.Hour
-				b.RetentionPeriod = types.DurationProto(t)
+				b.RetentionPeriod = durationpb.New(t)
 
 				result, err := backupc.CreateBackupPolicy(ctx, b)
 				if err != nil {
