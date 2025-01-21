@@ -39,6 +39,7 @@ func Notebook(x *notebook.Notebook, opts Options) string {
 		kv{"deleted-at", formatTime(opts, x.GetDeletedAt(), "-")},
 		kv{"phase", x.GetStatus().GetPhase()},
 		kv{"endpoint", x.GetStatus().GetEndpoint()},
+		kv{"disk-size", fmt.Sprintf("%d%s", x.GetModel().GetDiskSize(), "GiB")},
 	)
 }
 
@@ -55,6 +56,7 @@ func NotebookList(list []*notebook.Notebook, opts Options) string {
 			{"phase", x.GetStatus().GetPhase()},
 			{"paused", formatBool(opts, x.GetIsPaused())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
+			{"disk-size", fmt.Sprintf("%d%s", x.GetModel().GetDiskSize(), "GiB")},
 		}
 	}, false)
 }
