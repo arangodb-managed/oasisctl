@@ -1,15 +1,14 @@
-# Oasisctl
+# oasisctl
 
-<img src="https://cloud.arangodb.com/assets/logos/arangograph-logo-auth.svg" alt="ArangoGraph Insights Platform" width="400"/>
+Commandline utility for accessing the **Arango Managed Platform (AMP)**,
+formerly called Oasis and ArangoGraph Insights Platform.
 
-Commandline utility for accessing ArangoGraph Insights Platform (formerly called Oasis).
-
-This utility is used to access ArangoGraph Insights Platform resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
+This utility is used to access AMP resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
 It is often used in scripts.
 
 ## Maintainers
 
-This utility is maintained by the team at [ArangoDB](https://www.arangodb.com/).
+This utility is maintained by the team at [Arango.ai](https://arango.ai/).
 
 ## Installation
 
@@ -37,7 +36,7 @@ oasisctl -h
 
 ## Authentication
 
-Oasisctl uses an authentication token to authenticate with the ArangoGraph Insights Platform.
+oasisctl uses an authentication token to authenticate with the Arango Managed Platform.
 
 To get such an authentication token, create an [API key](https://cloud.arangodb.com/dashboard/user/api-keys) and run:
 
@@ -57,4 +56,4 @@ export OASIS_TOKEN=$(oasisctl login --key-id=<your-key-id> --key-secret=<your-ke
 
 ## More information
 
-More information and a getting started guide about Oasisctl is available at [arangodb.com/docs/stable/arangograph](https://www.arangodb.com/docs/stable/arangograph/).
+More information and a getting started guide about oasisctl is available at <https://docs.arango.ai/amp/>.

@@ -39,7 +39,7 @@ func init() {
 		cmd.RootCmd,
 		&cobra.Command{
 			Use:   "import",
-			Short: "Import data from a local database or from another remote database into an Oasis deployment.",
+			Short: "Import data from a local database or from another remote database into an Arango Managed Platform deployment.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {

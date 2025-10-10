@@ -24,6 +24,7 @@ package security
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
@@ -56,7 +57,7 @@ func init() {
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the IP allowlist in")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the IP allowlist in")
 			f.StringSliceVar(&cargs.cidrRanges, "cidr-range", nil, "List of CIDR ranges from which deployments are accessible")
-			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Oasis platform are allowed")
+			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Arango Managed Platform are allowed")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

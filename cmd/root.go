@@ -56,8 +56,8 @@ var (
 	// RootCmd is the root (and only) command of this service
 	RootCmd = &cobra.Command{
 		Use:              "oasisctl",
-		Short:            "ArangoGraph Insights Platform",
-		Long:             "ArangoGraph Insights Platform (formerly called Oasis): The Managed Cloud for ArangoDB",
+		Short:            "Arango Managed Platform (AMP)",
+		Long:             "Arango Managed Platform (AMP), formerly called Oasis and ArangoGraph Insights Platform",
 		Run:              ShowUsage,
 		PersistentPreRun: rootCmdPersistentPreRun,
 	}
@@ -84,8 +84,8 @@ func init() {
 	f := RootCmd.PersistentFlags()
 	// Persistent flags
 	defaultEndpoint := envOrDefault("ENDPOINT", "api.cloud.arangodb.com")
-	f.StringVar(&RootArgs.Token, "token", "", "Token used to authenticate at ArangoDB Oasis")
-	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the ArangoDB Oasis")
+	f.StringVar(&RootArgs.Token, "token", "", "Token used to authenticate at the Arango Managed Platform (AMP)")
+	f.StringVar(&RootArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the Arango Managed Platform (AMP)")
 	f.StringVar(&RootArgs.Format.Format, "format", DefaultFormat(), "Output format (table|json)")
 }
 
@@ -163,7 +163,7 @@ func WithKeepAlive() MustDialOption {
 	}
 }
 
-// MustDialAPI dials the ArangoDB Oasis API
+// MustDialAPI dials the Arango Managed Platform API
 func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 	// default configuration
 	options := mustDialOptions{}
@@ -185,7 +185,7 @@ func MustDialAPI(opts ...MustDialOption) *grpc.ClientConn {
 	}
 	conn, err := grpc.Dial(RootArgs.endpoint+apiPortSuffix, dialOpts...)
 	if err != nil {
-		CLILog.Fatal().Err(err).Msg("Failed to connect to ArangoDB Oasis API")
+		CLILog.Fatal().Err(err).Msg("Failed to connect to Arango Managed Platform API")
 	}
 	// version check
 	if !options.noVersionCheck {
