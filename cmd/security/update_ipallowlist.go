@@ -61,7 +61,7 @@ func init() {
 			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
 			f.StringSliceVar(&cargs.addCidrRanges, "add-cidr-range", nil, "List of CIDR ranges to add to the IP allowlist")
 			f.StringSliceVar(&cargs.removeCidrRanges, "remove-cidr-range", nil, "List of CIDR ranges to remove from the IP allowlist")
-			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Oasis platform are allowed")
+			f.BoolVar(&cargs.remoteInspectionAllowed, "remote-inspection-allowed", false, "If set, remote connectivity checks by the Arango Managed Platform are allowed")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

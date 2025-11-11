@@ -45,7 +45,7 @@ func init() {
 		RootCmd,
 		&cobra.Command{
 			Use:   "login",
-			Short: "Login to ArangoDB Oasis using an API key",
+			Short: "Log in to the Arango Managed Platform (AMP) using an API key",
 			Long: `To authenticate in a script environment, run:
 	
 	export OASIS_TOKEN=$(oasisctl login --key-id=<your-key-id> --key-secret=<your-key-secret>)
