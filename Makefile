@@ -36,12 +36,19 @@ bootstrap:
 	go get github.com/jstemmer/go-junit-report
 
 docker:
+ 	# Make "buildx" the default
+	docker buildx install
+	# Create a parallel multi-platform builder
+	docker buildx inspect multiplatform >/dev/null 2>&1 || docker buildx create --name multiplatform --use
+	docker buildx use multiplatform
 	docker build \
-		--build-arg=GOARCH=amd64 \
+	    --build-arg=GOARCH=amd64 \
+		--platform linux/amd64 \
+		$(DOCKER_FLAGS) \
 		-t $(DOCKERIMAGE) .
 
-docker-push:
-	docker push $(DOCKERIMAGE)
+docker-push: DOCKER_FLAGS := $(DOCKER_FLAGS) --push
+docker-push: docker
 
 publish-oasis-tools:
 	GITHUB_USERNAME=$(CIRCLE_PROJECT_USERNAME) COMMIT=$(COMMIT) VERSION=$(VERSION) ./scripts/publish-oasis-tools.sh
