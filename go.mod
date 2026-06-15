@@ -8,7 +8,7 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.89.7
+	github.com/arangodb-managed/apis v0.89.20
 	github.com/arangodb-managed/arangocopy v0.0.0-20230330143258-9e03ba080b35
 	github.com/coreos/go-semver v0.3.0
 	github.com/dchest/uniuri v0.0.0-20160212164326-8902c56451e9
@@ -178,3 +178,5 @@ replace github.com/golang/protobuf => github.com/golang/protobuf v1.5.4
 replace k8s.io/cri-client => k8s.io/cri-client v0.32.9
 
 replace sigs.k8s.io/structured-merge-diff/v4 => sigs.k8s.io/structured-merge-diff/v4 v4.7.0
+
+replace k8s.io/externaljwt => k8s.io/externaljwt v0.32.9
