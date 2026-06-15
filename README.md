@@ -10,6 +10,10 @@ It is often used in scripts.
 
 This utility is maintained by the team at [Arango.ai](https://arango.ai/).
 
+## Release
+
+When releasing the new version of oasisctl, zutano will fail, you need to update version manually in version.go in secondary PR.
+
 ## Installation
 
 Downloading the [latest released binaries](https://github.com/arangodb-managed/oasisctl/releases),
