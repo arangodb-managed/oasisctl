@@ -1,26 +1,24 @@
 module github.com/arangodb-managed/oasisctl
 
-go 1.22.7
-
-toolchain go1.22.8
+go 1.25.0
 
 replace github.com/golang/lint => golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1
-	github.com/arangodb-managed/apis v0.89.20
+	github.com/arangodb-managed/apis v0.89.24
 	github.com/arangodb-managed/arangocopy v0.0.0-20230330143258-9e03ba080b35
 	github.com/coreos/go-semver v0.3.0
 	github.com/dchest/uniuri v0.0.0-20160212164326-8902c56451e9
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gizak/termui/v3 v3.1.0
-	github.com/rs/zerolog v1.19.0
+	github.com/rs/zerolog v1.21.0
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.10.0
-	google.golang.org/grpc v1.68.0
-	google.golang.org/protobuf v1.35.2
+	github.com/stretchr/testify v1.11.1
+	google.golang.org/grpc v1.79.2
+	google.golang.org/protobuf v1.36.11
 )
 
 require (
@@ -30,7 +28,7 @@ require (
 	github.com/arangodb/go-velocypack v0.0.0-20200318135517-5af53c29c67e // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -39,19 +37,18 @@ require (
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/vbauerster/mpb/v5 v5.2.2 // indirect
-	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/net v0.31.0 // indirect
-	golang.org/x/sync v0.9.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/term v0.26.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
-	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20241113202542-65e8d215514f // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20241113202542-65e8d215514f // indirect
-	gopkg.in/yaml.v2 v2.2.8 // indirect
+	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/term v0.40.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
+	google.golang.org/genproto v0.0.0-20250324211829-b45e905df463 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
@@ -75,7 +72,7 @@ replace github.com/ugorji/go => github.com/ugorji/go v1.2.11
 
 replace google.golang.org/api => google.golang.org/api v0.209.0
 
-replace google.golang.org/grpc => google.golang.org/grpc v1.68.0
+replace google.golang.org/grpc => google.golang.org/grpc v1.81.1
 
 replace k8s.io/api => k8s.io/api v0.32.9
 
@@ -143,11 +140,11 @@ replace github.com/nats-io/nats.go => github.com/nats-io/nats.go v1.40.0
 
 replace github.com/nats-io/stan.go => github.com/nats-io/stan.go v0.10.4
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.72.0
+replace github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.85.0
 
-replace github.com/prometheus-operator/prometheus-operator/pkg/client => github.com/prometheus-operator/prometheus-operator/pkg/client v0.72.0
+replace github.com/prometheus-operator/prometheus-operator/pkg/client => github.com/prometheus-operator/prometheus-operator/pkg/client v0.85.0
 
-replace github.com/prometheus-operator/prometheus-operator => github.com/prometheus-operator/prometheus-operator v0.72.0
+replace github.com/prometheus-operator/prometheus-operator => github.com/prometheus-operator/prometheus-operator v0.85.0
 
 replace go.uber.org/multierr => go.uber.org/multierr v1.11.0
 
@@ -167,7 +164,7 @@ replace k8s.io/dynamic-resource-allocation => k8s.io/dynamic-resource-allocation
 
 replace k8s.io/kms => k8s.io/kms v0.32.9
 
-replace google.golang.org/protobuf => google.golang.org/protobuf v1.35.2
+replace google.golang.org/protobuf => google.golang.org/protobuf v1.36.11
 
 replace k8s.io/endpointslice => k8s.io/endpointslice v0.32.9
 
@@ -180,3 +177,19 @@ replace k8s.io/cri-client => k8s.io/cri-client v0.32.9
 replace sigs.k8s.io/structured-merge-diff/v4 => sigs.k8s.io/structured-merge-diff/v4 v4.7.0
 
 replace k8s.io/externaljwt => k8s.io/externaljwt v0.32.9
+
+replace go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc => go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0
+
+replace go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc => go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.44.0
+
+replace go.opentelemetry.io/otel/exporters/otlp/otlptrace => go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0
+
+replace go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.44.0
+
+replace go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.44.0
+
+replace go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.44.0
+
+replace go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.44.0
+
+replace go.opentelemetry.io/proto/otlp => go.opentelemetry.io/proto/otlp v1.10.0

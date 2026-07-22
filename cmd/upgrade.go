@@ -174,7 +174,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 		rc.Close()
 	}
 	if !binaryFound {
-		return common.Unknown("No binary found for your os/architecture %s/%s", ops, arch)
+		return common.Unknownf("No binary found for your os/architecture %s/%s", ops, arch)
 	}
 	log.Info().Msg("done. Updating binary...")
 
