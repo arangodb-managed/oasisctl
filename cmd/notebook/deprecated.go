@@ -50,6 +50,8 @@ func registerDeprecated(parent *cobra.Command, use, short string) {
 			Use:        use,
 			Short:      short,
 			Deprecated: deprecatedNotebookMsg,
+			// Ignore leftover flags (--notebook-id, etc.) so Run always emits the deprecation error.
+			FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true},
 		},
 		func(c *cobra.Command, _ *flag.FlagSet) {
 			c.Run = func(*cobra.Command, []string) {
