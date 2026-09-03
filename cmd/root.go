@@ -33,21 +33,11 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 
-	backup "github.com/arangodb-managed/apis/backup/v1"
 	"github.com/arangodb-managed/apis/common/auth"
-	common "github.com/arangodb-managed/apis/common/v1"
 	commonGrpc "github.com/arangodb-managed/apis/common/v1/grpc"
-	crypto "github.com/arangodb-managed/apis/crypto/v1"
-	data "github.com/arangodb-managed/apis/data/v1"
-	example "github.com/arangodb-managed/apis/example/v1"
-	iam "github.com/arangodb-managed/apis/iam/v1"
-	mon "github.com/arangodb-managed/apis/monitoring/v1"
-	platform "github.com/arangodb-managed/apis/platform/v1"
-	replication "github.com/arangodb-managed/apis/replication/v1"
-	rm "github.com/arangodb-managed/apis/resourcemanager/v1"
-	security "github.com/arangodb-managed/apis/security/v1"
 	tools "github.com/arangodb-managed/apis/tools/v1"
 
+	"github.com/arangodb-managed/oasisctl/pkg/expectedapis"
 	"github.com/arangodb-managed/oasisctl/pkg/format"
 )
 
@@ -113,29 +103,7 @@ func envOrDefault(envKeySuffix string, defaultValue string) string {
 
 // collectCurrentAPIVersions collects all current api versions and converts them into apiversionpairs.
 func collectCurrentAPIVersions() []*tools.APIVersionPair {
-	convertToAPIVersionPair := func(apiid string, major int, minor int, patch int) *tools.APIVersionPair {
-		return &tools.APIVersionPair{
-			Version: &common.Version{
-				Major: int32(major),
-				Minor: int32(minor),
-				Patch: int32(patch),
-			},
-			ApiId: apiid,
-		}
-	}
-	resp := []*tools.APIVersionPair{
-		convertToAPIVersionPair(backup.APIID, backup.APIMajorVersion, backup.APIMinorVersion, backup.APIPatchVersion),
-		convertToAPIVersionPair(crypto.APIID, crypto.APIMajorVersion, crypto.APIMinorVersion, crypto.APIPatchVersion),
-		convertToAPIVersionPair(data.APIID, data.APIMajorVersion, data.APIMinorVersion, data.APIPatchVersion),
-		convertToAPIVersionPair(example.APIID, example.APIMajorVersion, example.APIMinorVersion, example.APIPatchVersion),
-		convertToAPIVersionPair(iam.APIID, iam.APIMajorVersion, iam.APIMinorVersion, iam.APIPatchVersion),
-		convertToAPIVersionPair(mon.APIID, mon.APIMajorVersion, mon.APIMinorVersion, mon.APIPatchVersion),
-		convertToAPIVersionPair(platform.APIID, platform.APIMajorVersion, platform.APIMinorVersion, platform.APIPatchVersion),
-		convertToAPIVersionPair(replication.APIID, replication.APIMajorVersion, replication.APIMinorVersion, replication.APIPatchVersion),
-		convertToAPIVersionPair(rm.APIID, rm.APIMajorVersion, rm.APIMinorVersion, rm.APIPatchVersion),
-		convertToAPIVersionPair(security.APIID, security.APIMajorVersion, security.APIMinorVersion, security.APIPatchVersion),
-	}
-	return resp
+	return expectedapis.ExpectedAPIVersionPairs()
 }
 
 // mustDialOptions of MustDialAPI
