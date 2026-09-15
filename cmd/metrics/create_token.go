@@ -44,6 +44,17 @@ func init() {
 		&cobra.Command{
 			Use:   "token",
 			Short: "Create a new metrics access token",
+			Long: `Create a new metrics access token for a deployment.
+
+The lifetime of the token is specified with the --lifetime flag, in minutes or
+hours, for example:
+
+    oasisctl create metrics token --lifetime 720h
+
+The maximum lifetime of a metrics token is one year (365 days). Larger values are
+capped at this limit. If you do not specify a lifetime, the server default is
+used.
+`,
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -59,7 +70,7 @@ func init() {
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the token in")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project to create the token in")
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to create the token for")
-			f.DurationVar(&cargs.lifetime, "lifetime", 0, "Lifetime of the token.")
+			f.DurationVar(&cargs.lifetime, "lifetime", 0, "Lifetime of the token in minutes or hours, e.g. 90m or 720h (maximum 8760h = 365 days)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
