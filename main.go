@@ -35,7 +35,6 @@ import (
 	_ "github.com/arangodb-managed/oasisctl/cmd/importdata"
 	_ "github.com/arangodb-managed/oasisctl/cmd/metrics"
 	_ "github.com/arangodb-managed/oasisctl/cmd/network"
-	_ "github.com/arangodb-managed/oasisctl/cmd/notebook"
 	_ "github.com/arangodb-managed/oasisctl/cmd/platform"
 	_ "github.com/arangodb-managed/oasisctl/cmd/resourcemanager"
 	_ "github.com/arangodb-managed/oasisctl/cmd/security"
