@@ -67,6 +67,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"scheduled root-password rotation", formatScheduledRootPassRotation(x)},
 
 		{"model", x.Model.Model},
+		{"flavour", formatFlavour(x)},
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
 
@@ -119,6 +120,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"locked", formatBool(opts, x.GetLocked())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"model", x.Model.Model},
+			{"flavour", formatFlavour(x)},
 		}
 		if x.Model.Model != data.ModelFlexible {
 			d = append(d,
@@ -138,6 +140,14 @@ func getDeploymentUpgradeInfo(x *data.Deployment) string {
 		return fmt.Sprintf("Upgrade to %s recommended because %s", ur.GetVersion(), ur.GetReason())
 	}
 	return "-"
+}
+
+// formatFlavour returns the deployment flavour. An unset flavour means coredb.
+func formatFlavour(x *data.Deployment) string {
+	if b := x.GetArangodbPlatformBundle(); b != "" {
+		return b
+	}
+	return data.ArangoDBPlatformBundleCoreDB
 }
 
 func formatVersion(x *data.Deployment) string {
