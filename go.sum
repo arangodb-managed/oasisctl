@@ -389,8 +389,8 @@ github.com/apache/thrift v0.13.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb
 github.com/apache/thrift v0.17.0/go.mod h1:OLxhMRJxomX+1I/KUw03qoV3mMz16BwaKI+d4fPBx7Q=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 h1:TEBmxO80TM04L8IuMWk77SGL1HomBmKTdzdJLLWznxI=
 github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1/go.mod h1:SLqhdZcd+dF3TEVL2RMoob5bBP5R1P1qkox+HtCBgGI=
-github.com/arangodb-managed/apis v0.89.24 h1:kBR4L5o4qe1lFV+Ggo/Hmsg4Ju8z9nbS0ldJQxuxX5M=
-github.com/arangodb-managed/apis v0.89.24/go.mod h1:NqGYEs2tPU9ZEC+2N1kYR8mvkeA3oQ2FAxgvX6rJLIw=
+github.com/arangodb-managed/apis v0.89.31 h1:DfLok7U+6QGQwn38FokhTyqUYuofJvcQ3UkheOjOxQ0=
+github.com/arangodb-managed/apis v0.89.31/go.mod h1:NqGYEs2tPU9ZEC+2N1kYR8mvkeA3oQ2FAxgvX6rJLIw=
 github.com/arangodb-managed/arangocopy v0.0.0-20230330143258-9e03ba080b35 h1:rNynl8lyzSb6R8UC5Z7NfK48rx0ToIZmlSkuVnAAS/4=
 github.com/arangodb-managed/arangocopy v0.0.0-20230330143258-9e03ba080b35/go.mod h1:1O43dSyNSY5m44JBpCgC2Hexd7uhlFmFCeb1ZuJBCYc=
 github.com/arangodb/go-driver v1.5.2 h1:/gmUh2XbNJKvEMgldlZ465KfKfL8aHlsjen0AF50VgY=

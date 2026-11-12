@@ -71,6 +71,7 @@ func init() {
 				deploymentProfileID        string
 				isPlatformAuthEnabled      bool
 				dropVSTSupport             bool
+				flavour                    string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -101,6 +102,7 @@ func init() {
 			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
+			f.StringVar(&cargs.flavour, "flavour", data.ArangoDBPlatformBundleCoreDB, "Set the flavour of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavours' to see the available flavours.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -215,6 +217,7 @@ func init() {
 					DeploymentProfileId:             cargs.deploymentProfileID,
 					IsPlatformAuthenticationEnabled: cargs.isPlatformAuthEnabled,
 					DropVstSupport:                  cargs.dropVSTSupport,
+					ArangodbPlatformBundle:          cargs.flavour,
 				}
 
 				if cargs.acceptTAndC {
