@@ -22,6 +22,7 @@ package data
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 
 	"github.com/spf13/cobra"
@@ -161,9 +162,15 @@ func init() {
 					sort.SliceStable(nodeSizes.Items, func(i, j int) bool {
 						return nodeSizes.Items[i].MemorySize < nodeSizes.Items[j].MemorySize
 					})
-					cargs.nodeSizeID = nodeSizes.Items[0].Id
+					idx := slices.IndexFunc(nodeSizes.Items, func(x *data.NodeSize) bool {
+						return nodeSizeSupportsFlavour(x, cargs.flavour)
+					})
+					if idx < 0 {
+						log.Fatal().Str("flavour", cargs.flavour).Msg("No available node size supports this flavour.")
+					}
+					cargs.nodeSizeID = nodeSizes.Items[idx].Id
 					if cargs.nodeDiskSize == 0 {
-						cargs.nodeDiskSize = nodeSizes.Items[0].MinDiskSize
+						cargs.nodeDiskSize = nodeSizes.Items[idx].MinDiskSize
 					}
 				}
 				var nodeSize *data.NodeSize
