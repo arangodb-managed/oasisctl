@@ -42,7 +42,7 @@ func init() {
 		cmd.AuditLogGetAttachedCmd,
 		&cobra.Command{
 			Use:   "project",
-			Short: "Get an attached log to a project",
+			Short: "Get the audit log attached to a project",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {

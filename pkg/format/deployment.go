@@ -153,7 +153,7 @@ func formatFlavour(x *data.Deployment) string {
 func formatVersion(x *data.Deployment) string {
 	v := x.GetVersion()
 	if x.GetVersionIsEndOfLife() {
-		return fmt.Sprintf("%s (End Of Life)", v)
+		return fmt.Sprintf("%s (end of life)", v)
 	}
 	return v
 }

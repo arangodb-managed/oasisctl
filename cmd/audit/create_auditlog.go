@@ -41,7 +41,7 @@ func init() {
 		cmd.CreateCmd,
 		&cobra.Command{
 			Use:   "auditlog",
-			Short: "Create an auditlog",
+			Short: "Create an audit log",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -53,7 +53,7 @@ func init() {
 			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
 			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
+			f.BoolVar(&cargs.isDefault, "default", false, "If set, this audit log is the default for the organization.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

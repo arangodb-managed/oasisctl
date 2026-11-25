@@ -32,12 +32,12 @@ var (
 	// completionCmd generates a shell command line completion script
 	completionCmd = &cobra.Command{
 		Use:   "completion",
-		Short: "Generates bash completion scripts",
-		Long: `To load completion run
+		Short: "Generate shell completion scripts",
+		Long: `To load completions, run:
 
     . <(oasisctl completion [bash|fish|powershell|zsh])
 
-To configure your bash shell to load completions for each session add to your bashrc
+To configure your bash shell to load completions for each session, add the following to your .bashrc:
 
     # ~/.bashrc or ~/.profile
     . <(oasisctl completion bash)

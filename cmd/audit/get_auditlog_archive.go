@@ -42,13 +42,13 @@ func init() {
 		getAuditLogCmd,
 		&cobra.Command{
 			Use:   "archive",
-			Short: "Get auditlog archive",
+			Short: "Get audit log archive",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				auditLogID string
 			}{}
-			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
+			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the audit log")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -65,7 +65,7 @@ func init() {
 				// Make the call
 				result, err := auditc.GetAuditLogArchive(ctx, &common.IDOptions{Id: item.GetId()})
 				if err != nil {
-					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to list auditlog archives.")
+					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to get audit log archive.")
 				}
 
 				// Show result

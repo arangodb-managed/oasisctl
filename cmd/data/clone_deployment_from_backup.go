@@ -52,7 +52,7 @@ func init() {
 				acceptTAndC    bool
 			}{}
 			f.StringVarP(&cargs.backupID, "backup-id", "b", "", "Clone a deployment from a backup using the backup's ID.")
-			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optionally defined region in which the new deployment should be created in.")
+			f.StringVarP(&cargs.regionID, "region-id", "r", "", "An optional region in which the new deployment should be created.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization to create the clone in")
 			f.StringVarP(&cargs.projectID, "project-id", "p", "", "An optional identifier of the project to create the clone in")
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")

@@ -63,7 +63,7 @@ func init() {
 					DeploymentId: deploymentID,
 				})
 				if err != nil {
-					log.Fatal().Msg("Rebalancing shards requests failed.")
+					log.Fatal().Msg("Shard rebalancing request failed.")
 				}
 
 				fmt.Printf("Rebalancing shards has been requested for the deployment '%s'.\n", deploymentID)

@@ -28,7 +28,7 @@ var (
 	// BackupListRootCmd is root for various `list backup ...` commands
 	BackupListRootCmd = &cobra.Command{
 		Use:   "backup",
-		Short: "A list command for various backup resources",
+		Short: "List backup policy resources",
 		Run:   ShowUsage,
 	}
 )

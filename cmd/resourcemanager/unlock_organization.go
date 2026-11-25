@@ -68,11 +68,11 @@ func init() {
 				// Update organzation
 				updated, err := rmc.UpdateOrganization(ctx, item)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to unlock organzation")
+					log.Fatal().Err(err).Msg("Failed to unlock organization")
 				}
 
 				// Show result
-				fmt.Println("Unlocked organzation!")
+				fmt.Println("Unlocked organization!")
 				fmt.Println(format.Organization(updated, cmd.RootArgs.Format))
 			}
 		},

@@ -52,8 +52,8 @@ func init() {
 		RootCmd,
 		&cobra.Command{
 			Use:   "upgrade",
-			Short: "Upgrade Oasisctl tool",
-			Long:  "Check the latest, compatible version and upgrade this tool to that.",
+			Short: "Upgrade oasisctl",
+			Long:  "Check the latest, compatible version and upgrade this tool to it.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -105,7 +105,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 	log.Info().Msg("Downloading...")
 	response, err := http.Get(url)
 	if err != nil {
-		log.Debug().Err(err).Str("url", url).Msg("Failed to get the download url.")
+		log.Debug().Err(err).Str("url", url).Msg("Failed to get the download URL.")
 		return err
 	}
 	defer response.Body.Close()
@@ -124,7 +124,7 @@ func upgradeBinary(log zerolog.Logger, url string) error {
 
 	dest, err := ioutil.TempDir("", "unzip")
 	if err != nil {
-		log.Debug().Err(err).Msg("Failed to create temp folder for decrompressing.")
+		log.Debug().Err(err).Msg("Failed to create temp folder for decompressing.")
 		return err
 	}
 

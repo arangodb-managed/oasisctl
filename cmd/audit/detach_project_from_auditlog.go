@@ -40,7 +40,7 @@ func init() {
 		cmd.AuditLogCmd,
 		&cobra.Command{
 			Use:   "detach",
-			Short: "Detach a project from an auditlog",
+			Short: "Detach a project from an audit log",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -67,7 +67,7 @@ func init() {
 
 				// Make the call
 				if _, err := auditc.DetachProjectFromAuditLog(ctx, &common.IDOptions{Id: proj.GetId()}); err != nil {
-					log.Fatal().Err(err).Str("project-id", projID).Msg("Failed to detach to project.")
+					log.Fatal().Err(err).Str("project-id", projID).Msg("Failed to detach from project.")
 				}
 
 				// Show result

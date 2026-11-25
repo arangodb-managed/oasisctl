@@ -30,7 +30,7 @@ var (
 	// ListCmd is root for various `auditlog ...` commands
 	ListAuditLogCmd = &cobra.Command{
 		Use:   "auditlog",
-		Short: "List resources for auditlogs",
+		Short: "List resources for audit logs",
 		Run:   ShowUsage,
 	}
 )

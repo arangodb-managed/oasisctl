@@ -47,7 +47,7 @@ func init() {
 				organizationID string
 				tandcID        string
 			}{}
-			f.StringVarP(&cargs.tandcID, "terms-and-conditions-id", "t", cmd.DefaultTermsAndConditions(), "Identifier of the terms and conditions to accept.")
+			f.StringVarP(&cargs.tandcID, "terms-and-conditions-id", "t", cmd.DefaultTermsAndConditions(), "Identifier of the terms and conditions to get.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

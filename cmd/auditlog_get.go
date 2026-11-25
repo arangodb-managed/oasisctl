@@ -30,7 +30,7 @@ var (
 	// AuditLogGetCmd is root for various `auditlog get...` commands
 	AuditLogGetCmd = &cobra.Command{
 		Use:   "get",
-		Short: "Audit log get resources",
+		Short: "Get audit log resources",
 		Run:   ShowUsage,
 	}
 )

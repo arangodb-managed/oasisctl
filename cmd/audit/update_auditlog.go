@@ -40,7 +40,7 @@ func init() {
 		cmd.UpdateCmd,
 		&cobra.Command{
 			Use:   "auditlog",
-			Short: "Update an auditlog",
+			Short: "Update an audit log",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -50,11 +50,11 @@ func init() {
 				isDefault      bool
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.auditlogID, "auditlog-id", "i", "", "Identifier of the auditlog to update.")
+			f.StringVarP(&cargs.auditlogID, "auditlog-id", "i", "", "Identifier of the audit log to update.")
 			f.StringVar(&cargs.name, "name", "", "Name of the audit log.")
 			f.StringVar(&cargs.description, "description", "", "Description of the audit log.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-			f.BoolVar(&cargs.isDefault, "default", false, "If set, this AuditLog is the default for the organization.")
+			f.BoolVar(&cargs.isDefault, "default", false, "If set, this audit log is the default for the organization.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -101,7 +101,7 @@ func init() {
 				// Update audit log
 				result, err := auditc.UpdateAuditLog(ctx, item)
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to update auditlog.")
+					log.Fatal().Err(err).Msg("Failed to update audit log.")
 				}
 
 				// Update default audit log (if requested)

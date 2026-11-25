@@ -30,7 +30,7 @@ var (
 	// AuditLogGetAttachedCmd is root for various `attached...` commands
 	AuditLogGetAttachedCmd = &cobra.Command{
 		Use:   "attached",
-		Short: "Audit get attached resources",
+		Short: "Get attached audit log resources",
 		Run:   ShowUsage,
 	}
 )

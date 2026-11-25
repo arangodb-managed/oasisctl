@@ -1,9 +1,9 @@
 # oasisctl
 
-Commandline utility for accessing the **Arango Managed Platform (AMP)**,
+Command-line utility for accessing the **Arango Managed Platform (AMP)**,
 formerly called Oasis and ArangoGraph Insights Platform.
 
-This utility is used to access AMP resources (such as projects, deployments, certificates) without the needs for a graphical dashboard.
+This utility is used to access AMP resources (such as projects, deployments, certificates) without the need for a graphical dashboard.
 It is often used in scripts.
 
 ## Maintainers
@@ -12,11 +12,11 @@ This utility is maintained by the team at [Arango.ai](https://arango.ai/).
 
 ## Release
 
-When releasing the new version of oasisctl, zutano will fail, you need to update version manually in version.go in secondary PR.
+When releasing a new version of oasisctl, zutano fails. You need to update the version manually in `version.go` in a secondary PR.
 
 ## Installation
 
-Downloading the [latest released binaries](https://github.com/arangodb-managed/oasisctl/releases),
+Download the [latest released binaries](https://github.com/arangodb-managed/oasisctl/releases),
 extract the zip archive and install the binary for your platform in your preferred location.
 
 Or to build from source, run:

@@ -40,14 +40,14 @@ func init() {
 		cmd.ListAuditLogCmd,
 		&cobra.Command{
 			Use:   "archives",
-			Short: "List auditlog archives",
+			Short: "List audit log archives",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				auditLogID     string
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
+			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the audit log")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -70,7 +70,7 @@ func init() {
 					result = append(result, archive)
 					return nil
 				}); err != nil {
-					log.Fatal().Err(err).Str("auditlog-id", auditLog.GetId()).Msg("Failed to list auditlog archives.")
+					log.Fatal().Err(err).Str("auditlog-id", auditLog.GetId()).Msg("Failed to list audit log archives.")
 				}
 
 				// Show result

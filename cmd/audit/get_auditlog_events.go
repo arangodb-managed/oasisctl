@@ -41,7 +41,7 @@ func init() {
 		getAuditLogCmd,
 		&cobra.Command{
 			Use:   "events",
-			Short: "Get auditlog events",
+			Short: "Get audit log events",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -53,13 +53,13 @@ func init() {
 				includedTopics    []string
 				excludedTopics    []string
 			}{}
-			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
-			f.StringVar(&cargs.auditLogArchiveID, "auditlog-archive-id", "", "If set, include only events from this AuditLogArchive")
+			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the audit log")
+			f.StringVar(&cargs.auditLogArchiveID, "auditlog-archive-id", "", "If set, include only events from this audit log archive")
 			f.IntVar(&cargs.limit, "limit", 0, "Limit the number of audit log events. Defaults to 0, meaning no limit")
 			f.StringVar(&cargs.from, "from", "", "Request events created at or after this timestamp")
 			f.StringVar(&cargs.to, "to", "", "Request events created before this timestamp")
 			f.StringSliceVar(&cargs.includedTopics, "included-topics", nil, "If non-empty, only request events with one of these topics")
-			f.StringSliceVar(&cargs.excludedTopics, "excluded-topics", nil, "If non-empty, leave out events with one of these topics. This takes priority over included")
+			f.StringSliceVar(&cargs.excludedTopics, "excluded-topics", nil, "If non-empty, leave out events with one of these topics. This takes priority over --included-topics")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -103,7 +103,7 @@ func init() {
 					Limit:             int32(cargs.limit),
 				})
 				if err != nil {
-					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to get auditlog events.")
+					log.Fatal().Err(err).Str("auditlog-id", auditLogId).Msg("Failed to get audit log events.")
 				}
 				// We don't display success as the stream could break in between.
 				for {

@@ -38,7 +38,7 @@ var (
 	// listEffectivePermissionsCmd fetches the effective permissions of the user for a given URL.
 	listEffectivePermissionsCmd = &cobra.Command{
 		Use:   "permissions",
-		Short: "List the effective permissions, the authenticated user has for a given URL",
+		Short: "List the effective permissions the authenticated user has for a given URL",
 		Run:   listEffectivePermissionsCmdRun,
 	}
 	listEffectivePermissionsArgs struct {

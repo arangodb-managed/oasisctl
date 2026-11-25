@@ -57,8 +57,8 @@ func init() {
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
-			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
-			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
+			f.StringVar(&cargs.name, "name", "", "Name of the metrics token")
+			f.StringVar(&cargs.description, "description", "", "Description of the metrics token")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

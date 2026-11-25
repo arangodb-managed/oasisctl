@@ -54,8 +54,8 @@ func SelectOrganization(ctx context.Context, log zerolog.Logger, id string, rmc 
 			return nil, err
 		}
 		if len(list.Items) != 1 {
-			log.Debug().Err(err).Msgf("You're member of %d organizations. Please specify one explicitly.", len(list.Items))
-			return nil, fmt.Errorf("You're member of %d organizations. Please specify one explicitly.", len(list.Items))
+			log.Debug().Err(err).Msgf("You're a member of %d organizations. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You're a member of %d organizations. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
 	}

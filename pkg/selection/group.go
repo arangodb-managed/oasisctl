@@ -60,7 +60,7 @@ func SelectGroup(ctx context.Context, log zerolog.Logger, id, orgID string, iamc
 		}
 		if len(list.Items) != 1 {
 			log.Debug().Err(err).Msgf("You have access to %d groups. Please specify one explicitly.", len(list.Items))
-			return nil, fmt.Errorf(" have access to %d groups. Please specify one explicitly.", len(list.Items))
+			return nil, fmt.Errorf("You have access to %d groups. Please specify one explicitly.", len(list.Items))
 		}
 		return list.Items[0], nil
 	}
