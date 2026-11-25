@@ -39,9 +39,8 @@ func init() {
 	cmd.InitCommand(
 		cmd.ListCmd,
 		&cobra.Command{
-			Use:     "flavors",
-			Aliases: []string{"flavours"}, // British spelling, kept for backward compatibility
-			Short:   "List deployment flavors available for an organization",
+			Use:   "flavors",
+			Short: "List deployment flavors available for an organization",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -84,15 +83,4 @@ func init() {
 			}
 		},
 	)
-}
-
-// acceptFlavourFlag makes the given flag set accept the deprecated --flavour flag
-// (British spelling) as an alias for --flavor, without listing it in the help.
-func acceptFlavourFlag(f *flag.FlagSet) {
-	f.SetNormalizeFunc(func(_ *flag.FlagSet, name string) flag.NormalizedName {
-		if name == "flavour" {
-			name = "flavor"
-		}
-		return flag.NormalizedName(name)
-	})
 }

@@ -62,7 +62,6 @@ func init() {
 			f.StringVar(&cargs.providerID, "provider-id", cmd.DefaultProvider(), "Identifier of the provider")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Identifier of the model")
 			f.StringVar(&cargs.flavor, "flavor", "", "Only list node sizes that support this flavor (coredb, datascience, aisuite)")
-			acceptFlavourFlag(f)
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

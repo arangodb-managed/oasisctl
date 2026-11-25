@@ -98,7 +98,6 @@ func init() {
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
 			f.StringVar(&cargs.flavor, "flavor", "", "Set the flavor of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavors' to see the available flavors. Changing it resets the platform charts of the deployment.")
-			acceptFlavourFlag(f)
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
