@@ -67,7 +67,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"scheduled root-password rotation", formatScheduledRootPassRotation(x)},
 
 		{"model", x.Model.Model},
-		{"flavour", formatFlavour(x)},
+		{"flavor", formatFlavour(x)},
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
 
@@ -120,7 +120,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"locked", formatBool(opts, x.GetLocked())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"model", x.Model.Model},
-			{"flavour", formatFlavour(x)},
+			{"flavor", formatFlavour(x)},
 		}
 		if x.Model.Model != data.ModelFlexible {
 			d = append(d,

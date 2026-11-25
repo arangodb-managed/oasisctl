@@ -61,7 +61,7 @@ func init() {
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVar(&cargs.providerID, "provider-id", cmd.DefaultProvider(), "Identifier of the provider")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Identifier of the model")
-			f.StringVar(&cargs.flavour, "flavour", "", "Only list node sizes that support this flavour (coredb, datascience, aisuite)")
+			f.StringVar(&cargs.flavour, "flavor", "", "Only list node sizes that support this flavor (coredb, aisuite = Contextual Data Platform)")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

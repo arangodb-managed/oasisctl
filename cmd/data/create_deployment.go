@@ -103,7 +103,7 @@ func init() {
 			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
-			f.StringVar(&cargs.flavour, "flavour", data.ArangoDBPlatformBundleCoreDB, "Set the flavour of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavours' to see the available flavours.")
+			f.StringVar(&cargs.flavour, "flavor", data.ArangoDBPlatformBundleCoreDB, "Set the flavor of the deployment (coredb, aisuite = Contextual Data Platform). Use 'oasisctl list flavors' to see the available flavors.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -166,7 +166,7 @@ func init() {
 						return nodeSizeSupportsFlavour(x, cargs.flavour)
 					})
 					if idx < 0 {
-						log.Fatal().Str("flavour", cargs.flavour).Msg("No available node size supports this flavour.")
+						log.Fatal().Str("flavor", cargs.flavour).Msg("No available node size supports this flavor.")
 					}
 					cargs.nodeSizeID = nodeSizes.Items[idx].Id
 					if cargs.nodeDiskSize == 0 {
