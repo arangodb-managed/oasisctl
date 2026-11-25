@@ -30,7 +30,7 @@ var (
 	// AddAuditLogCmd is root for various `add auditlog...` commands
 	AddAuditLogCmd = &cobra.Command{
 		Use:   "auditlog",
-		Short: "Add auditlog resources",
+		Short: "Add audit log resources",
 		Run:   ShowUsage,
 	}
 )

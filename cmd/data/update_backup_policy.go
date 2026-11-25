@@ -83,9 +83,9 @@ func init() {
 			f.StringVar(&cargs.scheduleType, "schedule-type", "", "Schedule of the policy (Hourly|Daily|Monthly)")
 			f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded. Set to false explicitly to clear the flag.")
 			f.BoolVar(&cargs.paused, "paused", false, "The policy is paused. Set to false explicitly to clear the flag.")
-			f.IntVar(&cargs.retentionPeriod, "retention-period", 0, "Backups created by this policy will be automatically deleted after the specified retention period. A value of 0 means that backup will never be deleted.")
+			f.IntVar(&cargs.retentionPeriod, "retention-period", 0, "Backups created by this policy will be automatically deleted after the specified retention period. A value of 0 means that backups will never be deleted.")
 			f.Int32Var(&cargs.hourlySchedule.scheduleEveryIntervalHours, "every-interval-hours", 0, "Schedule should run with an interval of the specified hours (1-23)")
-			f.Int32Var(&cargs.hourlySchedule.minutesOffset, "minutes-offset", 0, "Schedule should run with specific minutes offset (0-59)")
+			f.Int32Var(&cargs.hourlySchedule.minutesOffset, "minutes-offset", 0, "Schedule should run with a specific minute offset (0-59)")
 			f.BoolVar(&cargs.dailySchedule.monday, "monday", false, "If set, a backup will be created on Mondays. Set to false explicitly to clear the flag.")
 			f.BoolVar(&cargs.dailySchedule.tuesday, "tuesday", false, "If set, a backup will be created on Tuesdays. Set to false explicitly to clear the flag.")
 			f.BoolVar(&cargs.dailySchedule.wednesday, "wednesday", false, "If set, a backup will be created on Wednesdays. Set to false explicitly to clear the flag.")
@@ -95,9 +95,9 @@ func init() {
 			f.BoolVar(&cargs.dailySchedule.sunday, "sunday", false, "If set, a backup will be created on Sundays. Set to false explicitly to clear the flag.")
 			f.Int32Var(&cargs.timeofday.hours, "hours", 0, "Hours part of the time of day (0-23)")
 			f.Int32Var(&cargs.timeofday.minutes, "minutes", 0, "Minutes part of the time of day (0-59)")
-			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time-zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
+			f.StringVar(&cargs.timeofday.timezone, "time-zone", "UTC", "The time zone this time of day applies to (empty means UTC). Names MUST be exactly as defined in RFC-822.")
 			f.Int32Var(&cargs.monthlySchedule.dayOfMonth, "day-of-the-month", 1, "Run the backup on the specified day of the month (1-31)")
-			f.StringSliceVar(&cargs.additionalRegionIDs, "additional-region-ids", nil, "Add backup to the specified addition regions")
+			f.StringSliceVar(&cargs.additionalRegionIDs, "additional-region-ids", nil, "Add backup to the specified additional regions")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

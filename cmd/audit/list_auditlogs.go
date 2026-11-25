@@ -41,7 +41,7 @@ func init() {
 		cmd.ListCmd,
 		&cobra.Command{
 			Use:   "auditlogs",
-			Short: "List auditlogs",
+			Short: "List audit logs",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {

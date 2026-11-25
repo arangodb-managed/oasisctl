@@ -39,14 +39,14 @@ func init() {
 		deleteAuditArchive,
 		&cobra.Command{
 			Use:   "events",
-			Short: "Delete auditlog archive events",
+			Short: "Delete audit log archive events",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				auditLogArchiveID string
 				to                string
 			}{}
-			f.StringVarP(&cargs.auditLogArchiveID, "auditlog-archive-id", "i", "", "Identifier of the auditlog archive to delete events from.")
+			f.StringVarP(&cargs.auditLogArchiveID, "auditlog-archive-id", "i", "", "Identifier of the audit log archive to delete events from.")
 			f.StringVar(&cargs.to, "to", "", "Remove events created before this timestamp.")
 
 			c.Run = func(c *cobra.Command, args []string) {
@@ -77,11 +77,11 @@ func init() {
 					AuditlogarchiveId: auditLogArchive.GetId(),
 					To:                toDate,
 				}); err != nil {
-					log.Fatal().Err(err).Msg("Failed to delete audit archive events log.")
+					log.Fatal().Err(err).Msg("Failed to delete audit log archive events.")
 				}
 
 				// Show result
-				fmt.Println("Deleted auditlog archive events!")
+				fmt.Println("Deleted audit log archive events!")
 			}
 		},
 	)

@@ -69,7 +69,7 @@ func init() {
 				diskPerformanceID          string
 				isPlatformAuthEnabled      bool
 				dropVSTSupport             bool
-				flavour                    string
+				flavor                     string
 			}{}
 			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
@@ -93,11 +93,11 @@ func init() {
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.StringVarP(&cargs.cacertificateID, "cacertificate-id", "c", cmd.DefaultCACertificate(), "Identifier of the CA certificate to use for the deployment")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
-			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
+			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email addresses that will be used for notifications related to this deployment.")
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
-			f.StringVar(&cargs.flavour, "flavour", "", "Set the flavour of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavours' to see the available flavours. Changing it resets the platform charts of the deployment.")
+			f.StringVar(&cargs.flavor, "flavor", "", "Set the flavor of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavors' to see the available flavors. Changing it resets the platform charts of the deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -234,8 +234,8 @@ func init() {
 					item.DropVstSupport = cargs.dropVSTSupport
 					hasChanges = true
 				}
-				if f.Changed("flavour") {
-					item.ArangodbPlatformBundle = cargs.flavour
+				if f.Changed("flavor") {
+					item.ArangodbPlatformBundle = cargs.flavor
 					hasChanges = true
 				}
 				if f.Changed("deployment-profile-id") {

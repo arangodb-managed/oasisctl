@@ -47,7 +47,7 @@ func init() {
 				projectID      string
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to attach to.")
+			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the audit log to attach to.")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 

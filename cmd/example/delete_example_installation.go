@@ -41,7 +41,7 @@ func init() {
 		DeleteExampleCmd,
 		&cobra.Command{
 			Use:   "installation",
-			Short: "Delete an example datasets installation",
+			Short: "Delete an example dataset installation",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -50,7 +50,7 @@ func init() {
 				organizationID string
 				installationID string
 			}{}
-			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment to list installations for")
+			f.StringVarP(&cargs.deploymentID, "deployment-id", "d", cmd.DefaultDeployment(), "Identifier of the deployment the installation belongs to")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.installationID, "installation-id", "", "The ID of the installation to delete.")

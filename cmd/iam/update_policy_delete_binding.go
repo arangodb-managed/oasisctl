@@ -54,7 +54,7 @@ func init() {
 	updatePolicyDeleteCmd.AddCommand(updatePolicyDeleteBindingCmd)
 	f := updatePolicyDeleteBindingCmd.Flags()
 	f.StringVarP(&updatePolicyDeleteBindingArgs.url, "url", "u", cmd.DefaultURL(), "URL of the resource to update the policy for")
-	f.StringVarP(&updatePolicyDeleteBindingArgs.roleID, "role-id", "r", cmd.DefaultRole(), "Identifier of the role to delete bind for")
+	f.StringVarP(&updatePolicyDeleteBindingArgs.roleID, "role-id", "r", cmd.DefaultRole(), "Identifier of the role to delete bindings for")
 	f.StringSliceVar(&updatePolicyDeleteBindingArgs.userIDs, "user-id", nil, "Identifiers of the users to delete bindings for")
 	f.StringSliceVar(&updatePolicyDeleteBindingArgs.groupIDs, "group-id", nil, "Identifiers of the groups to delete bindings for")
 }

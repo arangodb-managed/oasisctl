@@ -32,7 +32,7 @@ var (
 	// DeleteExampleCmd is based for other commands
 	DeleteExampleCmd = &cobra.Command{
 		Use:   "example",
-		Short: "Delete example ...",
+		Short: "Delete example dataset resources",
 		Run:   cmd.ShowUsage,
 	}
 )

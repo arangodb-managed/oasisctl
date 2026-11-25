@@ -40,14 +40,14 @@ func init() {
 		cmd.ListAuditLogCmd,
 		&cobra.Command{
 			Use:   "destinations",
-			Short: "List auditlog destinations",
+			Short: "List audit log destinations",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
 				auditlogID     string
 				organizationID string
 			}{}
-			f.StringVar(&cargs.auditlogID, "auditlog-id", "", "Identifier of the auditlog to list the destinations for")
+			f.StringVar(&cargs.auditlogID, "auditlog-id", "", "Identifier of the audit log to list the destinations for")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 			c.Run = func(c *cobra.Command, args []string) {

@@ -38,7 +38,7 @@ import (
 func MustSelectBackup(ctx context.Context, log zerolog.Logger, id string, backupc backup.BackupServiceClient) *backup.Backup {
 	backup, err := SelectBackup(ctx, log, id, backupc)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list backup")
+		log.Fatal().Err(err).Msg("Failed to get backup")
 	}
 	return backup
 }

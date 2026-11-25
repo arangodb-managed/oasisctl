@@ -52,7 +52,7 @@ var updateBackupCmd = cmd.InitCommand(
 		f.StringVarP(&cargs.backupID, "backup-id", "d", "", "Identifier of the backup")
 		f.StringVar(&cargs.name, "name", "", "Name of the backup")
 		f.StringVar(&cargs.description, "description", "", "Description of the backup")
-		f.BoolVar(&cargs.upload, "upload", false, "The backups should be uploaded")
+		f.BoolVar(&cargs.upload, "upload", false, "The backup should be uploaded")
 		f.IntVar(&cargs.autoDeletedAt, "auto-deleted-at", 0, "Time (h) until auto delete of the backup")
 
 		c.Run = func(c *cobra.Command, args []string) {

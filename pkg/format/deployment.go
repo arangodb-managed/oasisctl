@@ -67,7 +67,7 @@ func Deployment(x *data.Deployment, creds *data.DeploymentCredentials, opts Opti
 		{"scheduled root-password rotation", formatScheduledRootPassRotation(x)},
 
 		{"model", x.Model.Model},
-		{"flavour", formatFlavour(x)},
+		{"flavor", formatFlavor(x)},
 		{"is-clone", x.GetIsClone()},
 		{"clone-backup-id", formatOptionalString(x.GetCloneBackupId())},
 
@@ -120,7 +120,7 @@ func DeploymentList(list []*data.Deployment, opts Options) string {
 			{"locked", formatBool(opts, x.GetLocked())},
 			{"created-at", formatTime(opts, x.GetCreatedAt())},
 			{"model", x.Model.Model},
-			{"flavour", formatFlavour(x)},
+			{"flavor", formatFlavor(x)},
 		}
 		if x.Model.Model != data.ModelFlexible {
 			d = append(d,
@@ -142,8 +142,8 @@ func getDeploymentUpgradeInfo(x *data.Deployment) string {
 	return "-"
 }
 
-// formatFlavour returns the deployment flavour. An unset flavour means coredb.
-func formatFlavour(x *data.Deployment) string {
+// formatFlavor returns the deployment flavor. An unset flavor means coredb.
+func formatFlavor(x *data.Deployment) string {
 	if b := x.GetArangodbPlatformBundle(); b != "" {
 		return b
 	}
@@ -153,7 +153,7 @@ func formatFlavour(x *data.Deployment) string {
 func formatVersion(x *data.Deployment) string {
 	v := x.GetVersion()
 	if x.GetVersionIsEndOfLife() {
-		return fmt.Sprintf("%s (End Of Life)", v)
+		return fmt.Sprintf("%s (end of life)", v)
 	}
 	return v
 }

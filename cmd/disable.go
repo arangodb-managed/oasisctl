@@ -28,7 +28,7 @@ var (
 	// DisableCmd is root for various `enable ...` commands
 	DisableCmd = &cobra.Command{
 		Use:   "disable",
-		Short: "Disable some settings related to deployment",
+		Short: "Disable deployment settings",
 		Run:   ShowUsage,
 	}
 )

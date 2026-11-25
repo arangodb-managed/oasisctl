@@ -39,14 +39,14 @@ var getAuditLogCmd = cmd.InitCommand(
 	cmd.GetCmd,
 	&cobra.Command{
 		Use:   "auditlog",
-		Short: "Get auditlog archive",
+		Short: "Get an audit log",
 	},
 	func(c *cobra.Command, f *flag.FlagSet) {
 		cargs := &struct {
 			auditLogID     string
 			organizationID string
 		}{}
-		f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
+		f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the audit log")
 		f.StringVarP(&cargs.auditLogID, "organization-id", "o", "", "Identifier of the organization")
 
 		c.Run = func(c *cobra.Command, args []string) {

@@ -39,7 +39,7 @@ func NodeSizeList(list []*data.NodeSize, cpuList []*data.CPUSize, opts Options) 
 			{"allowed-disk-sizes", formatAllowedDiskSizes(x.GetDiskSizes())},
 			{"memory-size", fmt.Sprintf("%d%s", x.GetMemorySize(), "GiB")},
 			{"cpu-size", formatCPUSize(x.GetCpuSize(), cpuList)},
-			{"flavours", strings.Join(x.GetSupportedArangodbPlatformBundles(), ", ")},
+			{"flavors", strings.Join(x.GetSupportedArangodbPlatformBundles(), ", ")},
 		}
 	}, true)
 }

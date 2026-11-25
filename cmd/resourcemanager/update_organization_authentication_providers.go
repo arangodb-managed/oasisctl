@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	// updateOrganizationAuthenticationProvidersCmd is base for "update organization authentication ..." commands
+	// updateOrganizationAuthenticationProvidersCmd is base for "Update organization authentication settings" commands
 	updateOrganizationAuthenticationCmd = &cobra.Command{
 		Use:   "authentication",
 		Short: "Update authentication settings for an organization",
@@ -63,11 +63,11 @@ func init() {
 	updateOrganizationAuthenticationCmd.AddCommand(updateOrganizationAuthenticationProvidersCmd)
 	f := updateOrganizationAuthenticationProvidersCmd.Flags()
 	f.StringVarP(&updateOrganizationAuthenticationProvidersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGithub, "enable-github", false, "If set, allow access from user accounts authentication through Github")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGoogle, "enable-google", false, "If set, allow access from user accounts authentication through Google")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableMicrosoft, "enable-microsoft", false, "If set, allow access from user accounts authentication through Microsoft")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableUsernamePassword, "enable-username-password", false, "If set, allow access from user accounts authentication through username-password")
-	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableSso, "enable-sso", false, "If set, allow access from user accounts authentication through single sign on (sso)")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGithub, "enable-github", false, "If set, allow access from user accounts authenticated through GitHub")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableGoogle, "enable-google", false, "If set, allow access from user accounts authenticated through Google")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableMicrosoft, "enable-microsoft", false, "If set, allow access from user accounts authenticated through Microsoft")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableUsernamePassword, "enable-username-password", false, "If set, allow access from user accounts authenticated through username and password")
+	f.BoolVar(&updateOrganizationAuthenticationProvidersArgs.enableSso, "enable-sso", false, "If set, allow access from user accounts authenticated through single sign-on (SSO)")
 }
 
 func updateOrganizationAuthenticationProvidersCmdRun(c *cobra.Command, args []string) {

@@ -32,7 +32,7 @@ var (
 	// ListExampleCmd is based for other commands
 	ListExampleCmd = &cobra.Command{
 		Use:   "example",
-		Short: "List example ...",
+		Short: "List example dataset resources",
 		Run:   cmd.ShowUsage,
 	}
 )

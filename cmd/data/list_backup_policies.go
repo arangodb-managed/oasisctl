@@ -47,7 +47,7 @@ func init() {
 				includeDeleted bool
 			}{}
 			f.StringVar(&cargs.deploymentID, "deployment-id", "", "The ID of the deployment to list backup policies for")
-			f.BoolVar(&cargs.includeDeleted, "include-deleted", false, "If set, the result includes all backup policies, including those who set to deleted, however are not removed from the system currently")
+			f.BoolVar(&cargs.includeDeleted, "include-deleted", false, "If set, the result includes all backup policies, including those marked as deleted but not yet removed from the system")
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
 				log := cmd.CLILog

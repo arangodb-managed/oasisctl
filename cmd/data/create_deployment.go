@@ -72,7 +72,7 @@ func init() {
 				deploymentProfileID        string
 				isPlatformAuthEnabled      bool
 				dropVSTSupport             bool
-				flavour                    string
+				flavor                     string
 				// TODO add other fields
 			}{}
 			f.StringVar(&cargs.name, "name", "", "Name of the deployment")
@@ -98,12 +98,12 @@ func init() {
 			f.BoolVar(&cargs.acceptTAndC, "accept", false, "Accept the current terms and conditions.")
 			f.StringVar(&cargs.customImage, "custom-image", "", "Set a custom image to use for the deployment. Only available for selected customers.")
 			f.BoolVar(&cargs.disableFoxxAuth, "disable-foxx-authentication", false, "Disable authentication of requests to Foxx application.")
-			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email address(-es) that will be used for notifications related to this deployment.")
+			f.StringSliceVar(&cargs.notificationEmailAddresses, "notification-email-address", nil, "Set email addresses that will be used for notifications related to this deployment.")
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.StringVar(&cargs.deploymentProfileID, "deployment-profile-id", "", "Set the Deployment Profile to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
-			f.StringVar(&cargs.flavour, "flavour", data.ArangoDBPlatformBundleCoreDB, "Set the flavour of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavours' to see the available flavours.")
+			f.StringVar(&cargs.flavor, "flavor", data.ArangoDBPlatformBundleCoreDB, "Set the flavor of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavors' to see the available flavors.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -163,10 +163,10 @@ func init() {
 						return nodeSizes.Items[i].MemorySize < nodeSizes.Items[j].MemorySize
 					})
 					idx := slices.IndexFunc(nodeSizes.Items, func(x *data.NodeSize) bool {
-						return nodeSizeSupportsFlavour(x, cargs.flavour)
+						return nodeSizeSupportsFlavor(x, cargs.flavor)
 					})
 					if idx < 0 {
-						log.Fatal().Str("flavour", cargs.flavour).Msg("No available node size supports this flavour.")
+						log.Fatal().Str("flavor", cargs.flavor).Msg("No available node size supports this flavor.")
 					}
 					cargs.nodeSizeID = nodeSizes.Items[idx].Id
 					if cargs.nodeDiskSize == 0 {
@@ -224,7 +224,7 @@ func init() {
 					DeploymentProfileId:             cargs.deploymentProfileID,
 					IsPlatformAuthenticationEnabled: cargs.isPlatformAuthEnabled,
 					DropVstSupport:                  cargs.dropVSTSupport,
-					ArangodbPlatformBundle:          cargs.flavour,
+					ArangodbPlatformBundle:          cargs.flavor,
 				}
 
 				if cargs.acceptTAndC {

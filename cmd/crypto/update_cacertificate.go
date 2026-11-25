@@ -57,7 +57,7 @@ func init() {
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVar(&cargs.name, "name", "", "Name of the CA certificate")
 			f.StringVar(&cargs.description, "description", "", "Description of the CA certificate")
-			f.BoolVar(&cargs.useWellKnownCertificate, "use-well-known-certificate", false, "Sets the usage of a well known certificate ie. Let's Encrypt")
+			f.BoolVar(&cargs.useWellKnownCertificate, "use-well-known-certificate", false, "Use a well-known certificate, e.g., Let's Encrypt")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments

@@ -39,14 +39,14 @@ var deleteAuditLogCmd = cmd.InitCommand(
 	cmd.DeleteCmd,
 	&cobra.Command{
 		Use:   "auditlog",
-		Short: "Delete an auditlog",
+		Short: "Delete an audit log",
 	},
 	func(c *cobra.Command, f *flag.FlagSet) {
 		cargs := &struct {
 			id             string
 			organizationID string
 		}{}
-		f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
+		f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the audit log to delete.")
 		f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 
 		c.Run = func(c *cobra.Command, args []string) {
@@ -66,7 +66,7 @@ var deleteAuditLogCmd = cmd.InitCommand(
 				log.Fatal().Err(err).Msg("Failed to delete audit log.")
 			}
 
-			fmt.Println("Deleted AuditLog!")
+			fmt.Println("Deleted audit log!")
 		}
 	},
 )

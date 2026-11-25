@@ -39,13 +39,13 @@ var deleteAuditArchive = cmd.InitCommand(
 	deleteAuditLogCmd,
 	&cobra.Command{
 		Use:   "archive",
-		Short: "Delete an auditlog archive",
+		Short: "Delete an audit log archive",
 	},
 	func(c *cobra.Command, f *flag.FlagSet) {
 		cargs := &struct {
 			id string
 		}{}
-		f.StringVarP(&cargs.id, "auditlog-archive-id", "i", "", "Identifier of the auditlog archive to delete.")
+		f.StringVarP(&cargs.id, "auditlog-archive-id", "i", "", "Identifier of the audit log archive to delete.")
 
 		c.Run = func(c *cobra.Command, args []string) {
 			// Validate arguments
@@ -61,11 +61,11 @@ var deleteAuditArchive = cmd.InitCommand(
 
 			// Make the call
 			if _, err := auditc.DeleteAuditLogArchive(ctx, &common.IDOptions{Id: item.GetId()}); err != nil {
-				log.Fatal().Err(err).Msg("Failed to delete audit archive log.")
+				log.Fatal().Err(err).Msg("Failed to delete audit log archive.")
 			}
 
 			// Show result
-			fmt.Println("Deleted auditlog archive!")
+			fmt.Println("Deleted audit log archive!")
 		}
 	},
 )

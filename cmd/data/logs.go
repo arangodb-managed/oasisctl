@@ -119,7 +119,7 @@ func init() {
 						// All done
 						break
 					} else if err != nil {
-						log.Fatal().Err(err).Msg("Failed to next deployment logs chunk")
+						log.Fatal().Err(err).Msg("Failed to fetch next deployment logs chunk")
 					}
 					fmt.Print(string(msg.GetChunk()))
 				}

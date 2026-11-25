@@ -38,7 +38,7 @@ import (
 func MustSelectBackupPolicy(ctx context.Context, log zerolog.Logger, id string, backupc backup.BackupServiceClient) *backup.BackupPolicy {
 	policy, err := SelectBackupPolicy(ctx, log, id, backupc)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to list backup policy")
+		log.Fatal().Err(err).Msg("Failed to get backup policy")
 	}
 	return policy
 }

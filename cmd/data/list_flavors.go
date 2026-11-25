@@ -39,8 +39,8 @@ func init() {
 	cmd.InitCommand(
 		cmd.ListCmd,
 		&cobra.Command{
-			Use:   "flavours",
-			Short: "List deployment flavours available for an organization",
+			Use:   "flavors",
+			Short: "List deployment flavors available for an organization",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -65,13 +65,13 @@ func init() {
 				// Select organization
 				org := selection.MustSelectOrganization(ctx, log, organizationID, rmc)
 
-				// Fetch flavours
+				// Fetch flavors
 				list, err := datac.ListArangoPlatformBundles(ctx, &data.ListArangoPlatformBundlesRequest{
 					OrganizationId: org.GetId(),
 					RegionId:       cargs.regionID,
 				})
 				if err != nil {
-					log.Fatal().Err(err).Msg("Failed to list flavours")
+					log.Fatal().Err(err).Msg("Failed to list flavors")
 				}
 
 				// Show result, highest priority first
@@ -79,7 +79,7 @@ func init() {
 				sort.SliceStable(items, func(i, j int) bool {
 					return items[i].GetPriority() > items[j].GetPriority()
 				})
-				fmt.Println(format.FlavourList(items, cmd.RootArgs.Format))
+				fmt.Println(format.FlavorList(items, cmd.RootArgs.Format))
 			}
 		},
 	)

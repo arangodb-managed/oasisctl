@@ -41,7 +41,7 @@ func init() {
 		deleteAuditLogCmd,
 		&cobra.Command{
 			Use:   "destination",
-			Short: "Delete a destination from an auditlog",
+			Short: "Delete a destination from an audit log",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -52,7 +52,7 @@ func init() {
 				url            string
 				organizationID string
 			}{}
-			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the auditlog to delete.")
+			f.StringVarP(&cargs.id, "auditlog-id", "i", "", "Identifier of the audit log to delete the destination from.")
 			f.IntVar(&cargs.index, "index", -1, "Index of the destination to remove. Only one delete option can be specified.")
 			f.StringVar(&cargs.auditlogType, "type", "", "Type of the destination to remove. This will remove ALL destinations with that type.")
 			f.StringVar(&cargs.url, "url", "", "An optional URL which will be used to delete a single destination instead of all.")

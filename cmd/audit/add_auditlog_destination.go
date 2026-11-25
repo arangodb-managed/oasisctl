@@ -42,7 +42,7 @@ func init() {
 		cmd.AddAuditLogCmd,
 		&cobra.Command{
 			Use:   "destination",
-			Short: "Add a destination to an auditlog.",
+			Short: "Add a destination to an audit log.",
 		},
 		func(c *cobra.Command, f *flag.FlagSet) {
 			cargs := &struct {
@@ -56,12 +56,12 @@ func init() {
 				excludedTopics       []string
 				organizationID       string
 			}{}
-			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the auditlog")
+			f.StringVarP(&cargs.auditLogID, "auditlog-id", "i", "", "Identifier of the audit log")
 			f.StringVar(&cargs.destinationType, "destination-type", "", `Type of destination. Possible values are: "cloud", "https-post"`)
 			f.StringVar(&cargs.url, "destination-https-url", "", "URL of the server to POST to. Scheme must be HTTPS.")
-			f.StringVar(&cargs.trustedServerCAPem, "destination-https-trusted-server-ca-pem", "", "PEM encoded public key of the CA used to sign the server TLS certificate. If empty, a well known CA is expected.")
-			f.StringVar(&cargs.clientCertificatePem, "destination-https-client-certificate-pem", "", "PEM encoded public key of the client certificate.")
-			f.StringVar(&cargs.clientKeyPem, "destination-https-client-key-pem", "", "PEM encoded private key of the client certificate.")
+			f.StringVar(&cargs.trustedServerCAPem, "destination-https-trusted-server-ca-pem", "", "PEM-encoded public key of the CA used to sign the server TLS certificate. If empty, a well-known CA is expected.")
+			f.StringVar(&cargs.clientCertificatePem, "destination-https-client-certificate-pem", "", "PEM-encoded public key of the client certificate.")
+			f.StringVar(&cargs.clientKeyPem, "destination-https-client-key-pem", "", "PEM-encoded private key of the client certificate.")
 			f.StringSliceVar(&cargs.headers, "destination-https-headers", nil, "A key=value formatted list of headers for the request. Repeating headers are allowed.")
 			f.StringSliceVar(&cargs.excludedTopics, "destination-excluded-topics", nil, "Do not send audit events with these topics to this destination.")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")

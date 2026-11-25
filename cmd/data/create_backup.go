@@ -37,7 +37,7 @@ var createBackupCmd = cmd.InitCommand(
 	cmd.CreateCmd,
 	&cobra.Command{
 		Use:   "backup",
-		Short: "Create backup ...",
+		Short: "Create a backup",
 	},
 	func(c *cobra.Command, f *flag.FlagSet) {
 		cargs := &struct {

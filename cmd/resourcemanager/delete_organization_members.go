@@ -52,7 +52,7 @@ func init() {
 
 	f := deleteOrgMembersCmd.Flags()
 	f.StringVarP(&deleteOrgMembersArgs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
-	deleteOrgMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma separated list of user email addresses")
+	deleteOrgMembersArgs.userEmails = f.StringSliceP("user-emails", "u", []string{}, "A comma-separated list of user email addresses")
 
 }
 
@@ -77,7 +77,7 @@ func deleteOrgMembersCmdRun(c *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to get organization.")
 	}
 	if org.IsDeleted {
-		log.Fatal().Str("organization_id", organization.Id).Msg("May not delete members from deleted organization.")
+		log.Fatal().Str("organization_id", organization.Id).Msg("Cannot delete members from a deleted organization.")
 	}
 
 	membersToDelete := &rm.MemberList{Items: make([]*rm.Member, 0)}
