@@ -54,14 +54,15 @@ func init() {
 				organizationID string
 				providerID     string
 				model          string
-				flavour        string
+				flavor         string
 			}{}
 			f.StringVarP(&cargs.regionID, "region-id", "r", cmd.DefaultRegion(), "Identifier of the region")
 			f.StringVarP(&cargs.projectID, "project-id", "p", cmd.DefaultProject(), "Identifier of the project")
 			f.StringVarP(&cargs.organizationID, "organization-id", "o", cmd.DefaultOrganization(), "Identifier of the organization")
 			f.StringVar(&cargs.providerID, "provider-id", cmd.DefaultProvider(), "Identifier of the provider")
 			f.StringVar(&cargs.model, "model", data.ModelOneShard, "Identifier of the model")
-			f.StringVar(&cargs.flavour, "flavour", "", "Only list node sizes that support this flavour (coredb, datascience, aisuite)")
+			f.StringVar(&cargs.flavor, "flavor", "", "Only list node sizes that support this flavor (coredb, datascience, aisuite)")
+			acceptFlavourFlag(f)
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -103,9 +104,9 @@ func init() {
 
 				// Show result
 				items := list.GetItems()
-				if cargs.flavour != "" {
+				if cargs.flavor != "" {
 					items = slices.DeleteFunc(items, func(x *data.NodeSize) bool {
-						return !nodeSizeSupportsFlavour(x, cargs.flavour)
+						return !nodeSizeSupportsFlavor(x, cargs.flavor)
 					})
 				}
 				sort.Slice(items, func(i, j int) bool {
@@ -117,12 +118,12 @@ func init() {
 	)
 }
 
-// nodeSizeSupportsFlavour reports whether the given flavour (empty means coredb) can be used with the node size.
-// A node size without a list of supported flavours comes from an older API and is assumed to support all.
-func nodeSizeSupportsFlavour(ns *data.NodeSize, flavour string) bool {
-	if flavour == "" {
-		flavour = data.ArangoDBPlatformBundleCoreDB
+// nodeSizeSupportsFlavor reports whether the given flavor (empty means coredb) can be used with the node size.
+// A node size without a list of supported flavors comes from an older API and is assumed to support all.
+func nodeSizeSupportsFlavor(ns *data.NodeSize, flavor string) bool {
+	if flavor == "" {
+		flavor = data.ArangoDBPlatformBundleCoreDB
 	}
 	supported := ns.GetSupportedArangodbPlatformBundles()
-	return len(supported) == 0 || slices.Contains(supported, flavour)
+	return len(supported) == 0 || slices.Contains(supported, flavor)
 }

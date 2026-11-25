@@ -24,8 +24,8 @@ import (
 	data "github.com/arangodb-managed/apis/data/v1"
 )
 
-// FlavourList returns a list of deployment flavours (platform bundles in the API).
-func FlavourList(list []*data.ArangoPlatformBundle, opts Options) string {
+// FlavorList returns a list of deployment flavors (platform bundles in the API).
+func FlavorList(list []*data.ArangoPlatformBundle, opts Options) string {
 	return formatList(opts, list, func(i int) []kv {
 		x := list[i]
 		return []kv{
