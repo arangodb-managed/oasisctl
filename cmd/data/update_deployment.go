@@ -97,7 +97,7 @@ func init() {
 			f.StringVar(&cargs.diskPerformanceID, "disk-performance-id", "", "Set the disk performance to use for this deployment.")
 			f.BoolVar(&cargs.isPlatformAuthEnabled, "is-platform-authentication-enabled", false, "Enable platform authentication for deployment.")
 			f.BoolVar(&cargs.dropVSTSupport, "drop-vst-support", false, "Drop VST protocol support to improve resilience.")
-			f.StringVar(&cargs.flavour, "flavour", "", "Set the flavour of the deployment (coredb, datascience, aisuite). Use 'oasisctl list flavours' to see the available flavours. Changing it resets the platform charts of the deployment.")
+			f.StringVar(&cargs.flavour, "flavor", "", "Set the flavor of the deployment (coredb, aisuite = Contextual Data Platform). Use 'oasisctl list flavors' to see the available flavors. Changing it resets the platform charts of the deployment.")
 
 			c.Run = func(c *cobra.Command, args []string) {
 				// Validate arguments
@@ -234,7 +234,7 @@ func init() {
 					item.DropVstSupport = cargs.dropVSTSupport
 					hasChanges = true
 				}
-				if f.Changed("flavour") {
+				if f.Changed("flavor") {
 					item.ArangodbPlatformBundle = cargs.flavour
 					hasChanges = true
 				}
